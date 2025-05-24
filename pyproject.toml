@@ -32,3 +32,8 @@ ja = "ja.cli:main"
 
 [tool.setuptools]
 packages = ["ja"]
+
+[project.urls]
+"Homepage" = "https://queelius.github.io/jsonl-algebra"
+"Documentation" = "https://queelius.github.io/jsonl-algebra"
+"Source" = "https://github.com/queelius/jsonl-algebra"
