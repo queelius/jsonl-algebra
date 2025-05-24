@@ -1,2 +1,6 @@
 *.pyc
 dev
+*.egg-info
+__pycache__
+*.pyo
+.vscode
