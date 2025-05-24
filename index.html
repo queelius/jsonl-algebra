@@ -1,0 +1,813 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      
+        <link rel="next" href="reference/">
+      
+      
+      <link rel="icon" href="assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.14">
+    
+    
+      
+        <title>JSONL Algebra</title>
+      
+    
+    
+      <link rel="stylesheet" href="assets/stylesheets/main.342714a4.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#ja-jsonl-algebra" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="." title="JSONL Algebra" class="md-header__button md-logo" aria-label="JSONL Algebra" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            JSONL Algebra
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Home
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="." title="JSONL Algebra" class="md-nav__button md-logo" aria-label="JSONL Algebra" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    JSONL Algebra
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="." class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#features" class="md-nav__link">
+    <span class="md-ellipsis">
+      Features
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Installation
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Installation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#for-users-from-pypi" class="md-nav__link">
+    <span class="md-ellipsis">
+      For users (from PyPI):
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#for-developers-from-local-repository" class="md-nav__link">
+    <span class="md-ellipsis">
+      For developers (from local repository):**
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cli-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      CLI Usage
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="CLI Usage">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      Examples
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#available-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      Available Commands
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#programmatic-api-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      Programmatic API Usage
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#extending-group-by-aggregations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Extending Group By Aggregations
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Extending Group By Aggregations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#define-an-aggregation-helper-function" class="md-nav__link">
+    <span class="md-ellipsis">
+      Define an aggregation helper function
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#contributing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Contributing
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#license" class="md-nav__link">
+    <span class="md-ellipsis">
+      License
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Reference
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#features" class="md-nav__link">
+    <span class="md-ellipsis">
+      Features
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Installation
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Installation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#for-users-from-pypi" class="md-nav__link">
+    <span class="md-ellipsis">
+      For users (from PyPI):
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#for-developers-from-local-repository" class="md-nav__link">
+    <span class="md-ellipsis">
+      For developers (from local repository):**
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cli-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      CLI Usage
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="CLI Usage">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      Examples
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#available-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      Available Commands
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#programmatic-api-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      Programmatic API Usage
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#extending-group-by-aggregations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Extending Group By Aggregations
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Extending Group By Aggregations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#define-an-aggregation-helper-function" class="md-nav__link">
+    <span class="md-ellipsis">
+      Define an aggregation helper function
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#contributing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Contributing
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#license" class="md-nav__link">
+    <span class="md-ellipsis">
+      License
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="ja-jsonl-algebra">ja - JSONL Algebra</h1>
+<p><strong>ja</strong> is a lightweight command-line tool and Python library for performing relational algebra operations on JSONL (JSON Lines) data. It's designed to be a simple, dependency-free alternative for common data manipulation tasks, inspired by tools like <code>jq</code> and traditional SQL.</p>
+<h2 id="features">Features</h2>
+<ul>
+<li>
+<p>Perform common relational algebra operations: select, project, join, union, intersection, difference, distinct, sort, product, and group by with aggregations.</p>
+</li>
+<li>
+<p><code>groupby</code>: A powerful feature that allows you to group data by one or more keys and perform various aggregations on the grouped data.</p>
+</li>
+<li>By default, includes <code>sum</code>, <code>avg</code>, <code>min</code>, <code>max</code>, <code>count</code>, <code>list</code> (collect all values), <code>first</code> (first value in group), <code>last</code> (last value in group) aggregations.</li>
+<li>Can be extended with custom aggregation functions. See "Extending Group By Aggregations" section.</li>
+<li>Works with JSONL files or piped data from stdin/stdout.</li>
+<li>Can be used as a CLI tool or as a Python library.</li>
+<li>No external dependencies.</li>
+</ul>
+<h2 id="installation">Installation</h2>
+<p>There are two main ways to install <code>ja</code>:</p>
+<h3 id="for-users-from-pypi">For users (from PyPI):</h3>
+<p>You can install the package directly from PyPI (Python Package Index) using pip. We'll assume the package is published under the name <code>jsonl-algebra</code> (as <code>ja</code> is likely taken):</p>
+<pre><code class="language-bash">pip install jsonl-algebra
+</code></pre>
+<h3 id="for-developers-from-local-repository">For developers (from local repository):**</h3>
+<p>If you have cloned this repository and want to install it for development or from local sources:</p>
+<pre><code class="language-bash">pip install .
+</code></pre>
+<p>To install in editable mode for development:</p>
+<pre><code class="language-bash">pip install -e .
+</code></pre>
+<h2 id="cli-usage">CLI Usage</h2>
+<p>The <code>ja</code> command-line tool provides several subcommands for different operations.</p>
+<p><strong>General Syntax:</strong>
+<code>ja &lt;command&gt; [options] [file(s)]</code></p>
+<p>If <code>file</code> is omitted for commands that expect a single input, <code>ja</code> reads from stdin.</p>
+<h3 id="examples">Examples</h3>
+<ul>
+<li>
+<p><strong>Select rows where 'amount' is greater than 100:</strong></p>
+<p><code>bash
+cat data.jsonl | ja select 'amount &gt; 100'</code></p>
+<p><code>bash
+ja select 'amount &gt; 100' data.jsonl</code></p>
+</li>
+<li>
+<p><strong>Project 'id' and 'name' columns:</strong></p>
+<p><code>bash
+cat data.jsonl | ja project id,name</code></p>
+</li>
+<li>
+<p><strong>Join two files on a common key:</strong></p>
+<p><code>bash
+ja join users.jsonl orders.jsonl --on user_id=customer_id</code></p>
+</li>
+<li>
+<p><strong>Group by 'category' and count items:</strong></p>
+<p><code>bash
+cat products.jsonl | ja groupby category --agg count</code></p>
+</li>
+<li>
+<p><strong>Group by 'category', count items, and list all product names:</strong></p>
+<p><code>bash
+cat products.jsonl | ja groupby category --agg count --agg list:name\</code></p>
+<p>This will produce output like: <code>{"category": "electronics", "count": 5, "list_name": ["laptop", "mouse", ...]}</code></p>
+</li>
+<li>
+<p><strong>Group by 'user_id' and get the first action:</strong></p>
+<p><code>bash
+cat user_actions.jsonl | ja groupby user_id --agg first:action</code></p>
+</li>
+<li>
+<p><strong>Sort data by 'timestamp':</strong></p>
+<p><code>bash
+cat logs.jsonl | ja sort timestamp</code></p>
+</li>
+</ul>
+<h3 id="available-commands">Available Commands</h3>
+<ul>
+<li><code>select</code>: Filter rows based on a Python expression.</li>
+<li><code>project</code>: Select specific columns.</li>
+<li><code>join</code>: Join two relations on specified keys.</li>
+<li><code>rename</code>: Rename columns.</li>
+<li><code>union</code>: Combine two relations (all rows).</li>
+<li><code>difference</code>: Rows in the first relation but not the second.</li>
+<li><code>distinct</code>: Remove duplicate rows.</li>
+<li><code>intersection</code>: Rows common to both relations.</li>
+<li><code>sort</code> (maps to <code>sort_by</code>): Sort a relation by specified keys.</li>
+<li><code>product</code>: Cartesian product of two relations.</li>
+<li><code>groupby</code> (maps to <code>groupby_agg</code>): Group rows by a key and perform aggregations.</li>
+</ul>
+<p>Use <code>ja &lt;command&gt; --help</code> for more details on specific commands.</p>
+<h2 id="programmatic-api-usage">Programmatic API Usage</h2>
+<p>You can also use <code>ja</code> as a Python library:</p>
+<pre><code class="language-python">import ja
+from ja import Row, Relation # For type hinting if needed
+
+# Load data from JSONL files
+# users_data = ja.read_jsonl(&quot;users.jsonl&quot;)
+# orders_data = ja.read_jsonl(&quot;orders.jsonl&quot;)
+
+# Example data (replace with ja.read_jsonl for actual files)
+users_data: Relation = [
+    {&quot;user_id&quot;: 1, &quot;name&quot;: &quot;Alice&quot;, &quot;status&quot;: &quot;active&quot;, &quot;email&quot;: &quot;alice@example.com&quot;},
+    {&quot;user_id&quot;: 2, &quot;name&quot;: &quot;Bob&quot;, &quot;status&quot;: &quot;inactive&quot;, &quot;email&quot;: &quot;bob@example.com&quot;},
+    {&quot;user_id&quot;: 1, &quot;name&quot;: &quot;Alice&quot;, &quot;status&quot;: &quot;active&quot;, &quot;email&quot;: &quot;alice@example.com&quot;} # Duplicate for distinct example
+]
+orders_data: Relation = [
+    {&quot;order_id&quot;: 101, &quot;customer_id&quot;: 1, &quot;item&quot;: &quot;Book&quot;, &quot;quantity&quot;: 1},
+    {&quot;order_id&quot;: 102, &quot;customer_id&quot;: 2, &quot;item&quot;: &quot;Pen&quot;, &quot;quantity&quot;: 5},
+    {&quot;order_id&quot;: 103, &quot;customer_id&quot;: 1, &quot;item&quot;: &quot;Notebook&quot;, &quot;quantity&quot;: 2},
+    {&quot;order_id&quot;: 104, &quot;customer_id&quot;: 1, &quot;item&quot;: &quot;Book&quot;, &quot;quantity&quot;: 3}
+]
+
+
+# Example: Select active users
+active_users = ja.select(users_data, lambda row: row.get(&quot;status&quot;) == &quot;active&quot;)
+# active_users will be:
+# [{'user_id': 1, 'name': 'Alice', 'status': 'active', 'email': 'alice@example.com'},
+#  {'user_id': 1, 'name': 'Alice', 'status': 'active', 'email': 'alice@example.com'}]
+
+# Example: Project name and email from distinct active users
+distinct_active_users = ja.distinct(active_users)
+user_info = ja.project(distinct_active_users, [&quot;name&quot;, &quot;email&quot;])
+# user_info will be:
+# [{'name': 'Alice', 'email': 'alice@example.com'}]
+
+# Example: Join distinct active users with their orders
+# Ensure the join key 'user_id' is present in the projected active_users relation
+active_users_with_id = ja.project(distinct_active_users, [&quot;user_id&quot;, &quot;name&quot;, &quot;email&quot;])
+joined_data = ja.join(active_users_with_id, orders_data, on=[(&quot;user_id&quot;, &quot;customer_id&quot;)])
+# joined_data will be:
+# [{'user_id': 1, 'name': 'Alice', 'email': 'alice@example.com', 'order_id': 101, 'item': 'Book', 'quantity': 1},
+#  {'user_id': 1, 'name': 'Alice', 'email': 'alice@example.com', 'order_id': 103, 'item': 'Notebook', 'quantity': 2},
+#  {'user_id': 1, 'name': 'Alice', 'email': 'alice@example.com', 'order_id': 104, 'item': 'Book', 'quantity': 3}]
+
+# Example: Group joined data by user and sum quantities, list items
+grouped_orders = ja.groupby_agg(
+    joined_data,
+    group_by_key=&quot;user_id&quot;,
+    aggregations=[
+        (&quot;sum&quot;, &quot;quantity&quot;),
+        (&quot;list&quot;, &quot;item&quot;),
+        (&quot;count&quot;, &quot;&quot;) # Count groups
+    ]
+)
+# grouped_orders might be (depending on Alice's orders):
+# [{'user_id': 1, 'sum_quantity': 6, 'list_item': ['Book', 'Notebook', 'Book'], 'count': 3}]
+
+
+# Print results (example)
+for row in grouped_orders:
+    print(row)
+
+# Available functions mirror the CLI commands:
+# ja.select, ja.project, ja.join, ja.rename, ja.union,
+# ja.difference, ja.distinct, ja.intersection, ja.sort_by,
+# ja.product, ja.groupby_agg
+</code></pre>
+<h2 id="extending-group-by-aggregations">Extending Group By Aggregations</h2>
+<p>By default, <code>ja</code> supports several built-in aggregation functions for the <code>groupby_agg</code> operation. These include: <code>count</code>, <code>sum</code>, <code>avg</code>, <code>min</code>, <code>max</code>, <code>list</code>, <code>first</code>, and <code>last</code>. Syntax for aggregations: <code>agg_name</code> (for count) or <code>agg_name:column_name</code> (e.g., <code>sum:price</code>, <code>list:product_id</code>).</p>
+<p>The <code>groupby_agg</code> functionality is designed to be extensible. The core logic resides in the <code>ja.groupby</code> module, which uses a dispatcher pattern.</p>
+<h3 id="define-an-aggregation-helper-function">Define an aggregation helper function</h3>
+<p>This function will take the collected data for a group (typically a list of values, or a single value for aggregations like <code>first</code>/<code>last</code>) and return the aggregated result.</p>
+<p>For instance, if you want to add a custom aggregation function for calculating the median, you would define a function that takes a list of values and returns the median.</p>
+<pre><code class="language-python">def _my_custom_median_agg(collected_values: list) -&gt; float | None:
+    numeric_vals = sorted([v for v in collected_values if isinstance(v, (int, float))])
+    if not numeric_vals:
+        return None
+    n = len(numeric_vals)
+    mid = n // 2
+    if n % 2 == 0:
+        return (numeric_vals[mid - 1] + numeric_vals[mid]) / 2
+    else:
+        return numeric_vals[mid]
+</code></pre>
+<p>Now, register it (if modifying <code>ja</code> directly or for illustration):</p>
+<pre><code class="language-python"># In ja/groupby.py
+AGGREGATION_DISPATCHER = {
+    # ...
+    &quot;median&quot;: _my_custom_median_agg,
+}
+</code></pre>
+<p>For programmatic use with your own <code>ja</code> instance or a forked version, you could potentially expose a way to register custom aggregators or pass them directly if the API supported it.</p>
+<p>If your aggregation requires a specific way of collecting data during the first pass of <code>groupby_agg</code> (different from how <code>list</code>, <code>first</code>, or <code>last</code> collect data), you would need to modify the data collection logic in <code>ja.groupby.groupby_agg</code>.</p>
+<p>This structure allows for significant flexibility. For instance, one could implement a general <code>reduce</code> aggregation that takes Python expressions for an initial value and a step function, operating on the list of values collected for a group.</p>
+<h2 id="contributing">Contributing</h2>
+<p>Contributions are welcome! Please feel free to submit a pull request or open an issue.</p>
+<h2 id="license">License</h2>
+<p>This project is licensed under the MIT License.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": ".", "features": [], "search": "assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="assets/javascripts/bundle.13a4f30d.min.js"></script>
+      
+    
+  </body>
+</html>
