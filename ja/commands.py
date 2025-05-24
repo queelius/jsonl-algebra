@@ -2,6 +2,7 @@ import sys
 import json
 from pathlib import Path
 from .core import *
+from .groupby import groupby_agg
 
 # Helper functions moved from cli.py
 def read_jsonl(file_or_fp):

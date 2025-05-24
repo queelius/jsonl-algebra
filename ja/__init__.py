@@ -16,9 +16,11 @@ from .core import (
     distinct,
     intersection,
     sort_by,
-    product,
-    groupby_agg
+    product
 )
+
+from .groupby import groupby_agg
+
 from .commands import read_jsonl
 
 __all__ = [
