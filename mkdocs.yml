@@ -1,0 +1,15 @@
+site_name: JSONL Algebra
+theme:
+  name: material
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: ["."]
+
+
+nav:
+  - Home: index.md
+  - Reference: reference.md
