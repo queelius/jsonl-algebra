@@ -1,17 +1,15 @@
 [build-system]
-requires = ["setuptools>=77.0.0", "wheel"]
+requires = ["setuptools>=77.0.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "jsonl-algebra"
-version = "0.7.2"
+version = "0.8"
 description = "A lightweight relational algebra CLI over JSONL"
 readme = "README.md"
 authors = [{ name = "Alex Towell" }]
 requires-python = ">=3.8"
-
-license = "MIT" 
-license-files = ["LICENSE"] # This is often good practice
+license = { file = "LICENSE" }
 
 dependencies = []
 classifiers = [
@@ -33,5 +31,4 @@ classifiers = [
 ja = "ja.cli:main"
 
 [tool.setuptools]
-# package-dir = {"" = "."}
 packages = ["ja"]
