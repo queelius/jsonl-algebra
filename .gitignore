@@ -4,3 +4,4 @@ dev
 __pycache__
 *.pyo
 .vscode
+dist
