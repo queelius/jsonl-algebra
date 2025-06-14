@@ -586,7 +586,7 @@
 <h2 id="installation">Installation</h2>
 <p>There are two main ways to install <code>ja</code>:</p>
 <h3 id="for-users-from-pypi">For users (from PyPI):</h3>
-<p>You can install the package directly from PyPI (Python Package Index) using pip. We'll assume the package is published under the name <code>jsonl-algebra</code> (as <code>ja</code> is likely taken):</p>
+<p>You can install the package directly from PyPI (Python Package Index) using pip.</p>
 <pre><code class="language-bash">pip install jsonl-algebra
 </code></pre>
 <h3 id="for-developers-from-local-repository">For developers (from local repository):**</h3>
@@ -641,6 +641,46 @@ cat user_actions.jsonl | ja groupby user_id --agg first:action</code></p>
 <p><code>bash
 cat logs.jsonl | ja sort timestamp</code></p>
 </li>
+<li>
+<p><strong>Infer the schema of a JSONL file:</strong>
+    <code>bash
+    ja schema data.jsonl</code>
+    Or from stdin:
+    <code>bash
+    cat data.jsonl | ja schema</code></p>
+</li>
+<li>
+<p><strong>Start an interactive REPL session:</strong>
+    <code>bash
+    ja repl</code>
+    Inside the REPL, you can build a pipeline:
+    <code>ja&gt; from data.jsonl
+    ja&gt; select 'age &gt; 30'
+    ja&gt; project name,email
+    ja&gt; execute --lines=5 
+    ja&gt; compile</code></p>
+</li>
+<li>
+<p><strong>Export JSONL to a JSON array:</strong>
+    <code>bash
+    ja export to-array data.jsonl &gt; data.json</code></p>
+</li>
+<li>
+<p><strong>Convert a JSON array back to JSONL:</strong>
+    <code>bash
+    ja export to-jsonl data.json &gt; data.jsonl</code></p>
+</li>
+<li>
+<p><strong>Explode a JSONL file into a directory of individual JSON files:</strong>
+    <code>bash
+    ja export explode data.jsonl -o data_exploded</code>
+    This will create a directory <code>data_exploded</code> with files like <code>item-0.json</code>, <code>item-1.json</code>, etc.</p>
+</li>
+<li>
+<p><strong>Implode a directory of JSON files back into a JSONL stream:</strong>
+    <code>bash
+    ja export implode data_exploded --add-filename-key source_file &gt; combined.jsonl</code></p>
+</li>
 </ul>
 <h3 id="available-commands">Available Commands</h3>
 <ul>
@@ -655,8 +695,17 @@ cat logs.jsonl | ja sort timestamp</code></p>
 <li><code>sort</code> (maps to <code>sort_by</code>): Sort a relation by specified keys.</li>
 <li><code>product</code>: Cartesian product of two relations.</li>
 <li><code>groupby</code> (maps to <code>groupby_agg</code>): Group rows by a key and perform aggregations.</li>
+<li><code>schema</code>: Infer and display the schema of a JSONL file.</li>
+<li><code>repl</code>: Start an interactive REPL session to build command pipelines.</li>
+<li><code>export</code>: A group of commands for transforming data formats.<ul>
+<li><code>to-array</code>: Convert JSONL to a single JSON array.</li>
+<li><code>to-jsonl</code>: Convert a JSON array (from a file or stdin) to JSONL.</li>
+<li><code>explode</code>: Export each line of a JSONL file to a separate JSON file in a directory.</li>
+<li><code>implode</code>: Combine JSON files from a directory into a JSONL stream.</li>
 </ul>
-<p>Use <code>ja &lt;command&gt; --help</code> for more details on specific commands.</p>
+</li>
+</ul>
+<p>Use <code>ja &lt;command&gt; --help</code> or <code>ja export &lt;subcommand&gt; --help</code> for more details on specific commands.</p>
 <h2 id="programmatic-api-usage">Programmatic API Usage</h2>
 <p>You can also use <code>ja</code> as a Python library:</p>
 <pre><code class="language-python">import ja
