@@ -3,8 +3,14 @@ import json
 from pathlib import Path
 from .core import *
 from .groupby import groupby_agg
+from .schema import infer_schema
+from .export import (
+    jsonl_to_json_array_string,
+    json_array_to_jsonl_lines,
+    jsonl_to_dir,
+    dir_to_jsonl
+)
 
-# Helper functions moved from cli.py
 def read_jsonl(file_or_fp):
     if isinstance(file_or_fp, str) or isinstance(file_or_fp, Path):
         with open(file_or_fp) as f:
@@ -15,6 +21,9 @@ def read_jsonl(file_or_fp):
 def write_jsonl(rows):
     for row in rows:
         print(json.dumps(row))
+
+def write_json_object(obj):
+    print(json.dumps(obj, indent=2))
 
 # Command handlers
 def handle_select(args):
@@ -28,14 +37,16 @@ def handle_select(args):
 
 def handle_project(args):
     data = read_jsonl(args.file or sys.stdin)
-    cols = args.columns.split(",")
+    cols = [col.strip() for col in args.columns.split(",")]
     write_jsonl(project(data, cols))
 
 def handle_join(args):
     left_input = sys.stdin if args.left == "-" else args.left
     left = read_jsonl(left_input or sys.stdin) # Default to stdin if left is None (not specified)
     right = read_jsonl(args.right)
-    lcol, rcol = args.on.split("=")
+    lcol_str, rcol_str = args.on.split("=", 1)
+    lcol = lcol_str.strip()
+    rcol = rcol_str.strip()
     write_jsonl(join(left, right, [(lcol, rcol)]))
 
 def handle_product(args):
@@ -45,7 +56,16 @@ def handle_product(args):
 
 def handle_rename(args):
     data = read_jsonl(args.file or sys.stdin)
-    mapping = dict(pair.split("=") for pair in args.mapping.split(","))
+    mapping_pairs = args.mapping.split(",")
+    mapping = {}
+    for pair_str in mapping_pairs:
+        parts = pair_str.split("=", 1)
+        if len(parts) == 2:
+            old_name, new_name = parts
+            mapping[old_name.strip()] = new_name.strip()
+        else:
+            # Optionally, handle malformed pairs, e.g., by printing a warning or raising an error
+            print(f"Warning: Malformed rename pair '{pair_str.strip()}' ignored.", file=sys.stderr)
     write_jsonl(rename(data, mapping))
 
 def handle_union(args):
@@ -69,16 +89,81 @@ def handle_distinct(args):
 
 def handle_sort(args):
     data = read_jsonl(args.file or sys.stdin)
-    keys = args.columns.split(",")
+    keys = [key.strip() for key in args.columns.split(",")]
     write_jsonl(sort_by(data, keys))
 
 def handle_groupby(args):
     data = read_jsonl(args.file or sys.stdin)
+    group_by_key_cleaned = args.key.strip() # Clean the group_by key
+    
     aggs = []
-    for part in args.agg.split(","):
-        if ":" in part:
-            func, field = part.split(":", 1)
+    for part_str in args.agg.split(","):
+        stripped_part = part_str.strip() # Strip the whole "func:field" or "func" part
+        if ":" in stripped_part:
+            func, field = stripped_part.split(":", 1)
+            aggs.append((func.strip(), field.strip()))
         else:
-            func, field = part, "" # Default field to empty string if not provided
-        aggs.append((func, field))
-    write_jsonl(groupby_agg(data, args.key, aggs))
+            # This is for aggregations like 'count' that don't take a field
+            aggs.append((stripped_part.strip(), "")) 
+    write_jsonl(groupby_agg(data, group_by_key_cleaned, aggs))
+
+def handle_schema(args):
+    data = read_jsonl(args.file or sys.stdin)
+    schema = infer_schema(data)
+    write_json_object(schema)
+
+def handle_to_array(args):
+    """Converts JSONL input to a single JSON array string."""
+    input_stream = open(args.file, 'r') if args.file else sys.stdin
+    try:
+        array_string = jsonl_to_json_array_string(input_stream)
+        print(array_string)
+    finally:
+        if args.file:
+            input_stream.close()
+
+def handle_to_jsonl(args):
+    """Converts a JSON array input to JSONL lines."""
+    input_stream = open(args.file, 'r') if args.file else sys.stdin
+    try:
+        for line in json_array_to_jsonl_lines(input_stream):
+            print(line)
+    except ValueError as e:
+        print(f"Error: {e}", file=sys.stderr)
+        sys.exit(1)
+    finally:
+        if args.file:
+            input_stream.close()
+
+def handle_explode(args):
+    """Exports JSONL lines to individual JSON files in a directory."""
+    input_stream = open(args.file, 'r') if args.file else sys.stdin
+    
+    input_filename_stem = "jsonl_output" # Default stem
+    if args.file:
+        input_filename_stem = Path(args.file).stem
+    
+    # If output_dir is not specified, use the input filename stem as the directory name in the CWD.
+    # If output_dir IS specified, it's the target directory.
+    output_directory = args.output_dir if args.output_dir else input_filename_stem
+
+    try:
+        jsonl_to_dir(input_stream, output_directory, input_filename_stem)
+    except Exception as e:
+        print(f"Error during explode operation: {e}", file=sys.stderr)
+        sys.exit(1)
+    finally:
+        if args.file:
+            input_stream.close()
+
+def handle_implode(args):
+    """Converts JSON files in a directory to JSONL lines."""
+    try:
+        for line in dir_to_jsonl(args.input_dir, args.add_filename_key, args.recursive):
+            print(line)
+    except ValueError as e:
+        print(f"Error: {e}", file=sys.stderr)
+        sys.exit(1)
+    except Exception as e:
+        print(f"An unexpected error occurred during implode: {e}", file=sys.stderr)
+        sys.exit(1)

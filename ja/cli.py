@@ -12,7 +12,28 @@ from .commands import (
     handle_distinct,
     handle_sort,
     handle_groupby,
+    handle_schema,
+    handle_to_array,    # These will be used by the new export handler
+    handle_to_jsonl,
+    handle_explode,
+    handle_implode,
 )
+from .repl import repl
+
+def handle_export_command_group(args):
+    export_command_handlers = {
+        "to-array": handle_to_array,
+        "to-jsonl": handle_to_jsonl,
+        "explode": handle_explode,
+        "implode": handle_implode,
+    }
+    handler = export_command_handlers.get(args.export_cmd)
+    if handler:
+        handler(args)
+    else:
+        # This should not be reached if 'required=True' for export_subparsers
+        print(f"Unknown export command: {args.export_cmd}", file=sys.stderr)
+        sys.exit(1)
 
 def main():
     parser = argparse.ArgumentParser(prog="ja", description="JSONL algebra")
@@ -74,6 +95,42 @@ def main():
     sp_group.add_argument("file", nargs="?", help="Input file (defaults to stdin)")
     sp_group.add_argument("--agg", required=True, help="Aggregations: count,sum:amount,max:amount,...")
 
+    # REPL subparser
+    sp_repl = subparsers.add_parser("repl", help="Start an interactive REPL session to build command pipelines.")
+    sp_repl.add_argument(
+        "initial_args", 
+        nargs="*",
+        help="Optional: initial file to load (e.g., 'data.jsonl') or a full command (e.g., \"from data.jsonl\")"
+    )
+    
+    # Schema subparser
+    sp_schema = subparsers.add_parser("schema", help="Infer and display the schema of a JSONL file.")
+    sp_schema.add_argument("file", nargs="?", help="Input JSONL file (defaults to stdin)")
+
+    # Export command group
+    sp_export_group = subparsers.add_parser("export", help="Export or transform data formats.")
+    export_subparsers = sp_export_group.add_subparsers(dest="export_cmd", required=True, help="Export sub-command")
+
+    # 1. export to-array (JSONL to JSON Array)
+    sp_to_array = export_subparsers.add_parser("to-array", help="Convert JSONL to a single JSON array.")
+    sp_to_array.add_argument("file", nargs="?", help="Input JSONL file (defaults to stdin).")
+
+    # 2. export to-jsonl (JSON Array to JSONL)
+    sp_to_jsonl = export_subparsers.add_parser("to-jsonl", help="Convert a JSON array to JSONL.")
+    sp_to_jsonl.add_argument("file", nargs="?", help="Input JSON file containing an array (defaults to stdin).")
+
+    # 3. export explode (JSONL to Directory of JSON files)
+    sp_explode = export_subparsers.add_parser("explode", help="Export JSONL lines to a directory of JSON files.")
+    sp_explode.add_argument("file", nargs="?", help="Input JSONL file (defaults to stdin).")
+    sp_explode.add_argument("-o", "--output-dir", help="Output directory name. Defaults to input filename stem.")
+
+    # 4. export implode (Directory of JSON files to JSONL)
+    sp_implode = export_subparsers.add_parser("implode", help="Convert a directory of JSON files to JSONL.")
+    sp_implode.add_argument("input_dir", help="Input directory containing JSON files.")
+    sp_implode.add_argument("--add-filename-key", metavar="KEY_NAME", help="Add filename as a value with this key to each JSON object.")
+    sp_implode.add_argument("--recursive", action="store_true", help="Recursively search for JSON files in subdirectories.")
+
+
     args = parser.parse_args()
 
     command_handlers = {
@@ -88,6 +145,9 @@ def main():
         "distinct": handle_distinct,
         "sort": handle_sort,
         "groupby": handle_groupby,
+        "repl": repl,
+        "schema": handle_schema,
+        "export": handle_export_command_group, # New top-level handler
     }
 
     handler = command_handlers.get(args.cmd)

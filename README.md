@@ -19,7 +19,7 @@ There are two main ways to install `ja`:
 
 ### For users (from PyPI):
 
-You can install the package directly from PyPI (Python Package Index) using pip. We'll assume the package is published under the name `jsonl-algebra` (as `ja` is likely taken):
+You can install the package directly from PyPI (Python Package Index) using pip.
 
 ```bash
 pip install jsonl-algebra
@@ -98,6 +98,49 @@ If `file` is omitted for commands that expect a single input, `ja` reads from st
     cat logs.jsonl | ja sort timestamp
     ```
 
+* **Infer the schema of a JSONL file:**
+    ```bash
+    ja schema data.jsonl
+    ```
+    Or from stdin:
+    ```bash
+    cat data.jsonl | ja schema
+    ```
+
+* **Start an interactive REPL session:**
+    ```bash
+    ja repl
+    ```
+    Inside the REPL, you can build a pipeline:
+    ```
+    ja> from data.jsonl
+    ja> select 'age > 30'
+    ja> project name,email
+    ja> execute --lines=5 
+    ja> compile
+    ```
+
+* **Export JSONL to a JSON array:**
+    ```bash
+    ja export to-array data.jsonl > data.json
+    ```
+
+* **Convert a JSON array back to JSONL:**
+    ```bash
+    ja export to-jsonl data.json > data.jsonl
+    ```
+
+* **Explode a JSONL file into a directory of individual JSON files:**
+    ```bash
+    ja export explode data.jsonl -o data_exploded
+    ```
+    This will create a directory `data_exploded` with files like `item-0.json`, `item-1.json`, etc.
+
+* **Implode a directory of JSON files back into a JSONL stream:**
+    ```bash
+    ja export implode data_exploded --add-filename-key source_file > combined.jsonl
+    ```
+
 ### Available Commands
 
 * `select`: Filter rows based on a Python expression.
@@ -111,8 +154,15 @@ If `file` is omitted for commands that expect a single input, `ja` reads from st
 * `sort` (maps to `sort_by`): Sort a relation by specified keys.
 * `product`: Cartesian product of two relations.
 * `groupby` (maps to `groupby_agg`): Group rows by a key and perform aggregations.
+* `schema`: Infer and display the schema of a JSONL file.
+* `repl`: Start an interactive REPL session to build command pipelines.
+* `export`: A group of commands for transforming data formats.
+    * `to-array`: Convert JSONL to a single JSON array.
+    * `to-jsonl`: Convert a JSON array (from a file or stdin) to JSONL.
+    * `explode`: Export each line of a JSONL file to a separate JSON file in a directory.
+    * `implode`: Combine JSON files from a directory into a JSONL stream.
 
-Use `ja <command> --help` for more details on specific commands.
+Use `ja <command> --help` or `ja export <subcommand> --help` for more details on specific commands.
 
 ## Programmatic API Usage
 
