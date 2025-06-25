@@ -10,6 +10,8 @@ from .export import (
     jsonl_to_dir,
     dir_to_jsonl
 )
+from .importer import csv_to_jsonl_lines
+from .exporter import jsonl_to_csv_stream
 
 def read_jsonl(file_or_fp):
     if isinstance(file_or_fp, str) or isinstance(file_or_fp, Path):
@@ -159,7 +161,7 @@ def handle_explode(args):
 def handle_implode(args):
     """Converts JSON files in a directory to JSONL lines."""
     try:
-        for line in dir_to_jsonl(args.input_dir, args.add_filename_key, args.recursive):
+        for line in dir_to_jsonl_lines(args.input_dir, args.add_filename_key, args.recursive):
             print(line)
     except ValueError as e:
         print(f"Error: {e}", file=sys.stderr)
@@ -167,3 +169,57 @@ def handle_implode(args):
     except Exception as e:
         print(f"An unexpected error occurred during implode: {e}", file=sys.stderr)
         sys.exit(1)
+
+def handle_import_csv(args):
+    """Imports a CSV file and converts it to JSONL."""
+    input_stream = open(args.file, 'r') if args.file else sys.stdin
+    try:
+        # The --no-header flag in argparse sets has_header to False if present.
+        # If the flag is not present, args.has_header will be True by default.
+        for line in csv_to_jsonl_lines(
+            input_stream,
+            has_header=args.has_header,
+            infer_types=args.infer_types
+        ):
+            print(line)
+    except Exception as e:
+        print(f"An unexpected error occurred during CSV import: {e}", file=sys.stderr)
+        sys.exit(1)
+    finally:
+        if args.file:
+            input_stream.close()
+
+def handle_to_csv(args):
+    """Converts a JSONL input to CSV format."""
+    input_stream = open(args.file, 'r') if args.file else sys.stdin
+
+    column_functions = {}
+    if args.apply:
+        for col, expr_str in args.apply:
+            try:
+                # WARNING: eval() is a security risk if the expression is not from a trusted source.
+                func = eval(expr_str)
+                if not callable(func):
+                    raise ValueError(f"Expression for column '{col}' did not evaluate to a callable function.")
+                column_functions[col] = func
+            except Exception as e:
+                print(f"Error parsing --apply expression for column '{col}': {e}", file=sys.stderr)
+                sys.exit(1)
+
+    try:
+        # The output stream for the CSV writer must be a text stream.
+        # sys.stdout is a text stream, so it's suitable.
+        jsonl_to_csv_stream(
+            input_stream,
+            sys.stdout,
+            flatten=args.flatten,
+            flatten_sep=args.flatten_sep,
+            column_functions=column_functions
+        )
+    except Exception as e:
+        # Use stderr for error messages to not corrupt stdout if it's being piped
+        print(f"An unexpected error occurred during CSV export: {e}", file=sys.stderr)
+        sys.exit(1)
+    finally:
+        if args.file:
+            input_stream.close()

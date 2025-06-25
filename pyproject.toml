@@ -4,15 +4,13 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "jsonl-algebra"
-version = "0.7.2"
+version = "0.81"
 description = "A lightweight relational algebra CLI over JSONL"
 readme = "README.md"
-authors = [{ name = "Alex Towell" }]
+authors = [{ name = "Alex Towell", email = "lex@metafunctor.com" }]
 requires-python = ">=3.8"
-
-license = "MIT" 
-license-files = ["LICENSE"] # This is often good practice
-
+license = "MIT"
+license-files = ["LICENSE"]
 dependencies = []
 classifiers = [
     "Development Status :: 3 - Alpha",
@@ -33,8 +31,8 @@ classifiers = [
 ja = "ja.cli:main"
 
 [tool.setuptools]
-# package-dir = {"" = "."}
 packages = ["ja"]
+# No need for license-files here if specified under [project]
 
 [project.urls]
 "Homepage" = "https://queelius.github.io/jsonl-algebra"

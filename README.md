@@ -141,6 +141,11 @@ If `file` is omitted for commands that expect a single input, `ja` reads from st
     ja export implode data_exploded --add-filename-key source_file > combined.jsonl
     ```
 
+* **Export JSONL to a flattened CSV file:**
+    ```bash
+    ja export to-csv data.jsonl > data.csv
+    ```
+
 ### Available Commands
 
 * `select`: Filter rows based on a Python expression.
@@ -161,6 +166,9 @@ If `file` is omitted for commands that expect a single input, `ja` reads from st
     * `to-jsonl`: Convert a JSON array (from a file or stdin) to JSONL.
     * `explode`: Export each line of a JSONL file to a separate JSON file in a directory.
     * `implode`: Combine JSON files from a directory into a JSONL stream.
+    * `to-csv`: Convert JSONL to CSV, flattening nested objects by default.
+* `import`: A group of commands for importing data into JSONL.
+    * `csv`: Convert a CSV file to JSONL.
 
 Use `ja <command> --help` or `ja export <subcommand> --help` for more details on specific commands.
 

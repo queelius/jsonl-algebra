@@ -13,19 +13,22 @@ from .commands import (
     handle_sort,
     handle_groupby,
     handle_schema,
-    handle_to_array,    # These will be used by the new export handler
+    handle_to_array,
     handle_to_jsonl,
     handle_explode,
     handle_implode,
+    handle_import_csv,
+    handle_to_csv,
 )
 from .repl import repl
 
+# New handler for the 'export' command group
 def handle_export_command_group(args):
     export_command_handlers = {
-        "to-array": handle_to_array,
-        "to-jsonl": handle_to_jsonl,
+        "array": handle_to_array,
+        "jsonl": handle_to_jsonl,
         "explode": handle_explode,
-        "implode": handle_implode,
+        "csv": handle_to_csv,
     }
     handler = export_command_handlers.get(args.export_cmd)
     if handler:
@@ -33,6 +36,18 @@ def handle_export_command_group(args):
     else:
         # This should not be reached if 'required=True' for export_subparsers
         print(f"Unknown export command: {args.export_cmd}", file=sys.stderr)
+        sys.exit(1)
+
+def handle_import_command_group(args):
+    import_command_handlers = {
+        "csv": handle_import_csv,
+        "implode": handle_implode,
+    }
+    handler = import_command_handlers.get(args.import_cmd)
+    if handler:
+        handler(args)
+    else:
+        print(f"Unknown import command: {args.import_cmd}", file=sys.stderr)
         sys.exit(1)
 
 def main():
@@ -111,21 +126,47 @@ def main():
     sp_export_group = subparsers.add_parser("export", help="Export or transform data formats.")
     export_subparsers = sp_export_group.add_subparsers(dest="export_cmd", required=True, help="Export sub-command")
 
-    # 1. export to-array (JSONL to JSON Array)
-    sp_to_array = export_subparsers.add_parser("to-array", help="Convert JSONL to a single JSON array.")
-    sp_to_array.add_argument("file", nargs="?", help="Input JSONL file (defaults to stdin).")
+    # 1. export array (JSONL to JSON Array)
+    sp_array = export_subparsers.add_parser("array", help="Convert JSONL to a single JSON array.")
+    sp_array.add_argument("file", nargs="?", help="Input JSONL file (defaults to stdin).")
 
-    # 2. export to-jsonl (JSON Array to JSONL)
-    sp_to_jsonl = export_subparsers.add_parser("to-jsonl", help="Convert a JSON array to JSONL.")
-    sp_to_jsonl.add_argument("file", nargs="?", help="Input JSON file containing an array (defaults to stdin).")
+    # 2. export jsonl (JSON Array to JSONL)
+    sp_jsonl = export_subparsers.add_parser("jsonl", help="Convert a JSON array to JSONL.")
+    sp_jsonl.add_argument("file", nargs="?", help="Input JSON file containing an array (defaults to stdin).")
 
     # 3. export explode (JSONL to Directory of JSON files)
     sp_explode = export_subparsers.add_parser("explode", help="Export JSONL lines to a directory of JSON files.")
     sp_explode.add_argument("file", nargs="?", help="Input JSONL file (defaults to stdin).")
     sp_explode.add_argument("-o", "--output-dir", help="Output directory name. Defaults to input filename stem.")
 
-    # 4. export implode (Directory of JSON files to JSONL)
-    sp_implode = export_subparsers.add_parser("implode", help="Convert a directory of JSON files to JSONL.")
+    # 4. export csv (JSONL to CSV)
+    sp_csv = export_subparsers.add_parser("csv", help="Convert JSONL to CSV with flattening for nested objects.")
+    sp_csv.add_argument("file", nargs="?", help="Input JSONL file (defaults to stdin).")
+    sp_csv.add_argument("--no-flatten", dest="flatten", action="store_false", help="Disable automatic flattening of nested objects.")
+    sp_csv.add_argument("--flatten-sep", default=".", help="Separator to use for flattened keys (default: '.').")
+    sp_csv.add_argument(
+        "--apply",
+        nargs=2,
+        metavar=('COLUMN', 'LAMBDA_EXPR'),
+        action='append',
+        help="Apply a Python lambda expression to a column. Example: --apply timestamp \"lambda t: t.split('T')[0]\""
+    )
+    sp_csv.set_defaults(flatten=True)
+
+
+    # Import command group
+    sp_import_group = subparsers.add_parser("import", help="Import data from other formats into JSONL.")
+    import_subparsers = sp_import_group.add_subparsers(dest="import_cmd", required=True, help="Import sub-command")
+
+    # 1. import csv
+    sp_import_csv = import_subparsers.add_parser("csv", help="Convert a CSV file to JSONL.")
+    sp_import_csv.add_argument("file", nargs="?", help="Input CSV file (defaults to stdin).")
+    sp_import_csv.add_argument("--no-header", dest="has_header", action="store_false", help="Specify that the CSV file has no header row. Keys will be auto-generated.")
+    sp_import_csv.add_argument("--infer-types", action="store_true", help="Automatically infer types (e.g., numeric, boolean) for CSV values.")
+    sp_import_csv.set_defaults(has_header=True, infer_types=False)
+
+    # 2. import implode (Directory of JSON files to JSONL)
+    sp_implode = import_subparsers.add_parser("implode", help="Convert a directory of JSON files to JSONL.")
     sp_implode.add_argument("input_dir", help="Input directory containing JSON files.")
     sp_implode.add_argument("--add-filename-key", metavar="KEY_NAME", help="Add filename as a value with this key to each JSON object.")
     sp_implode.add_argument("--recursive", action="store_true", help="Recursively search for JSON files in subdirectories.")
@@ -147,7 +188,8 @@ def main():
         "groupby": handle_groupby,
         "repl": repl,
         "schema": handle_schema,
-        "export": handle_export_command_group, # New top-level handler
+        "export": handle_export_command_group,
+        "import": handle_import_command_group,
     }
 
     handler = command_handlers.get(args.cmd)
