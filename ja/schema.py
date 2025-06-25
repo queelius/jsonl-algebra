@@ -62,6 +62,33 @@ def infer_value_schema(value):
                 schema['items'] = item_schema
     return schema
 
+def add_required_fields(schema, data_samples):
+    """Add required fields to a schema based on data samples"""
+    if schema.get('type') == 'object' and 'properties' in schema:
+        # For object schemas, find fields present in all samples
+        dict_samples = [s for s in data_samples if isinstance(s, dict)]
+        if dict_samples:
+            required_keys = set(dict_samples[0].keys())
+            for sample in dict_samples[1:]:
+                required_keys.intersection_update(sample.keys())
+            if required_keys:
+                schema['required'] = sorted(list(required_keys))
+        
+        # Recursively add required fields to nested object properties
+        for prop_name, prop_schema in schema['properties'].items():
+            prop_samples = [s.get(prop_name) for s in dict_samples if prop_name in s]
+            if prop_samples:
+                add_required_fields(prop_schema, prop_samples)
+    
+    elif schema.get('type') == 'array' and 'items' in schema:
+        # For array schemas, collect all array items and add required fields
+        array_items = []
+        for sample in data_samples:
+            if isinstance(sample, list):
+                array_items.extend(sample)
+        if array_items:
+            add_required_fields(schema['items'], array_items)
+
 def infer_schema(data):
     records = list(data)
     if not records:
@@ -79,16 +106,9 @@ def infer_schema(data):
     for s in inferred_schemas:
         merged_schema = merge_schemas(merged_schema, s)
 
-    # Determine required fields for object schemas
-    if merged_schema and merged_schema.get('type') == 'object':
-        dict_records = [r for r in records if isinstance(r, dict)]
-        if dict_records:
-            # Find keys present in all dict records
-            required_keys = set(dict_records[0].keys())
-            for record in dict_records[1:]:
-                required_keys.intersection_update(record.keys())
-            if required_keys:
-                merged_schema['required'] = sorted(list(required_keys))
+    # Add required fields recursively
+    if merged_schema:
+        add_required_fields(merged_schema, records)
 
     # Add the meta-schema URL
     final_schema = {"$schema": "http://json-schema.org/draft-07/schema#"}

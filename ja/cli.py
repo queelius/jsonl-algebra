@@ -12,14 +12,14 @@ from .commands import (
     handle_distinct,
     handle_sort,
     handle_groupby,
-    handle_schema,
+    handle_schema_infer,
     handle_to_array,
     handle_to_jsonl,
     handle_explode,
     handle_implode,
     handle_import_csv,
     handle_to_csv,
-    handle_validate,
+    handle_schema_validate,
 )
 from .repl import repl
 
@@ -53,8 +53,8 @@ def handle_import_command_group(args):
 
 def handle_schema_command_group(args):
     schema_command_handlers = {
-        "infer": handle_schema,
-        "validate": handle_validate,
+        "infer": handle_schema_infer,
+        "validate": handle_schema_validate,
     }
     handler = schema_command_handlers.get(args.schema_cmd)
     if handler:

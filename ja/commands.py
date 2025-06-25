@@ -2,6 +2,7 @@ import sys
 import json
 import jmespath
 from pathlib import Path
+from contextlib import contextmanager
 from .core import (
     select,
     project,
@@ -20,21 +21,21 @@ from .export import jsonl_to_json_array_string, json_array_to_jsonl_lines, jsonl
 from .schema import infer_schema
 from .groupby import groupby_agg
 
-def get_input_lines(file_path):
+@contextmanager
+def get_input_stream(file_path):
+    """Context manager for getting an input stream from a file or stdin."""
     if file_path and file_path != '-':
-        with open(file_path, 'r') as f:
-            for line in f:
-                yield line
+        try:
+            f = open(file_path, 'r')
+            yield f
+        finally:
+            f.close()
     else:
-        for line in sys.stdin:
-            yield line
+        yield sys.stdin
 
-def read_jsonl(file_or_fp):
-    if isinstance(file_or_fp, str) or isinstance(file_or_fp, Path):
-        with open(file_or_fp) as f:
-            return [json.loads(line) for line in f]
-    else:
-        return [json.loads(line) for line in file_or_fp]
+def read_jsonl(input_stream):
+    """Reads JSONL data from a file-like object."""
+    return [json.loads(line) for line in input_stream]
 
 def write_jsonl(rows):
     for row in rows:
@@ -45,7 +46,8 @@ def write_json_object(obj):
 
 # Command handlers
 def handle_select(args):
-    data = read_jsonl(args.file or sys.stdin)
+    with get_input_stream(args.file) as f:
+        data = read_jsonl(f)
     try:
         # JMESPath expects a query that filters a list (the relation).
         # A simple way to adapt row-by-row logic is to use a filter expression.
@@ -60,26 +62,31 @@ def handle_select(args):
         sys.exit(1)
 
 def handle_project(args):
-    data = read_jsonl(args.file or sys.stdin)
+    with get_input_stream(args.file) as f:
+        data = read_jsonl(f)
     cols = [col.strip() for col in args.columns.split(",")]
     write_jsonl(project(data, cols))
 
 def handle_join(args):
-    left_input = sys.stdin if args.left == "-" else args.left
-    left = read_jsonl(left_input or sys.stdin) # Default to stdin if left is None (not specified)
-    right = read_jsonl(args.right)
+    with get_input_stream(args.left) as f:
+        left = read_jsonl(f)
+    with get_input_stream(args.right) as f:
+        right = read_jsonl(f)
     lcol_str, rcol_str = args.on.split("=", 1)
     lcol = lcol_str.strip()
     rcol = rcol_str.strip()
     write_jsonl(join(left, right, [(lcol, rcol)]))
 
 def handle_product(args):
-    a = read_jsonl(args.left)
-    b = read_jsonl(args.right)
+    with get_input_stream(args.left) as f:
+        a = read_jsonl(f)
+    with get_input_stream(args.right) as f:
+        b = read_jsonl(f)
     write_jsonl(product(a, b))
 
 def handle_rename(args):
-    data = read_jsonl(args.file or sys.stdin)
+    with get_input_stream(args.file) as f:
+        data = read_jsonl(f)
     mapping_pairs = args.mapping.split(",")
     mapping = {}
     for pair_str in mapping_pairs:
@@ -93,31 +100,40 @@ def handle_rename(args):
     write_jsonl(rename(data, mapping))
 
 def handle_union(args):
-    a = read_jsonl(args.left)
-    b = read_jsonl(args.right)
+    with get_input_stream(args.left) as f:
+        a = read_jsonl(f)
+    with get_input_stream(args.right) as f:
+        b = read_jsonl(f)
     write_jsonl(union(a, b))
 
 def handle_intersection(args):
-    a = read_jsonl(args.left)
-    b = read_jsonl(args.right)
+    with get_input_stream(args.left) as f:
+        a = read_jsonl(f)
+    with get_input_stream(args.right) as f:
+        b = read_jsonl(f)
     write_jsonl(intersection(a, b))
 
 def handle_difference(args):
-    a = read_jsonl(args.left)
-    b = read_jsonl(args.right)
+    with get_input_stream(args.left) as f:
+        a = read_jsonl(f)
+    with get_input_stream(args.right) as f:
+        b = read_jsonl(f)
     write_jsonl(difference(a, b))
 
 def handle_distinct(args):
-    data = read_jsonl(args.file or sys.stdin)
+    with get_input_stream(args.file) as f:
+        data = read_jsonl(f)
     write_jsonl(distinct(data))
 
 def handle_sort(args):
-    data = read_jsonl(args.file or sys.stdin)
+    with get_input_stream(args.file) as f:
+        data = read_jsonl(f)
     keys = [key.strip() for key in args.keys.split(",")]
     write_jsonl(sort_by(data, keys, reverse=args.desc))
 
 def handle_groupby(args):
-    data = read_jsonl(args.file or sys.stdin)
+    with get_input_stream(args.file) as f:
+        data = read_jsonl(f)
     group_by_key_cleaned = args.key.strip() # Clean the group_by key
     
     aggs = []
@@ -131,54 +147,44 @@ def handle_groupby(args):
             aggs.append((stripped_part.strip(), "")) 
     write_jsonl(groupby_agg(data, group_by_key_cleaned, aggs))
 
-def handle_schema(args):
-    data = read_jsonl(args.file or sys.stdin)
+def handle_schema_infer(args):
+    with get_input_stream(args.file) as f:
+        data = read_jsonl(f)
     schema = infer_schema(data)
     write_json_object(schema)
 
 def handle_to_array(args):
     """Converts JSONL input to a single JSON array string."""
-    input_stream = open(args.file, 'r') if args.file else sys.stdin
-    try:
+    with get_input_stream(args.file) as input_stream:
         array_string = jsonl_to_json_array_string(input_stream)
         print(array_string)
-    finally:
-        if args.file:
-            input_stream.close()
 
 def handle_to_jsonl(args):
     """Converts a JSON array input to JSONL lines."""
-    input_stream = open(args.file, 'r') if args.file else sys.stdin
-    try:
-        for line in json_array_to_jsonl_lines(input_stream):
-            print(line)
-    except ValueError as e:
-        print(f"Error: {e}", file=sys.stderr)
-        sys.exit(1)
-    finally:
-        if args.file:
-            input_stream.close()
+    with get_input_stream(args.file) as input_stream:
+        try:
+            for line in json_array_to_jsonl_lines(input_stream):
+                print(line)
+        except ValueError as e:
+            print(f"Error: {e}", file=sys.stderr)
+            sys.exit(1)
 
 def handle_explode(args):
     """Exports JSONL lines to individual JSON files in a directory."""
-    input_stream = open(args.file, 'r') if args.file else sys.stdin
-    
     input_filename_stem = "jsonl_output" # Default stem
-    if args.file:
+    if args.file and args.file != '-':
         input_filename_stem = Path(args.file).stem
     
     # If output_dir is not specified, use the input filename stem as the directory name in the CWD.
     # If output_dir IS specified, it's the target directory.
     output_directory = args.output_dir if args.output_dir else input_filename_stem
 
-    try:
-        jsonl_to_dir(input_stream, output_directory, input_filename_stem)
-    except Exception as e:
-        print(f"Error during explode operation: {e}", file=sys.stderr)
-        sys.exit(1)
-    finally:
-        if args.file:
-            input_stream.close()
+    with get_input_stream(args.file) as input_stream:
+        try:
+            jsonl_to_dir(input_stream, output_directory, input_filename_stem)
+        except Exception as e:
+            print(f"Error during explode operation: {e}", file=sys.stderr)
+            sys.exit(1)
 
 def handle_implode(args):
     """Converts JSON files in a directory to JSONL lines."""
@@ -194,27 +200,22 @@ def handle_implode(args):
 
 def handle_import_csv(args):
     """Imports a CSV file and converts it to JSONL."""
-    input_stream = open(args.file, 'r') if args.file else sys.stdin
-    try:
-        # The --no-header flag in argparse sets has_header to False if present.
-        # If the flag is not present, args.has_header will be True by default.
-        for line in csv_to_jsonl_lines(
-            input_stream,
-            has_header=args.has_header,
-            infer_types=args.infer_types
-        ):
-            print(line)
-    except Exception as e:
-        print(f"An unexpected error occurred during CSV import: {e}", file=sys.stderr)
-        sys.exit(1)
-    finally:
-        if args.file:
-            input_stream.close()
+    with get_input_stream(args.file) as input_stream:
+        try:
+            # The --no-header flag in argparse sets has_header to False if present.
+            # If the flag is not present, args.has_header will be True by default.
+            for line in csv_to_jsonl_lines(
+                input_stream,
+                has_header=args.has_header,
+                infer_types=args.infer_types
+            ):
+                print(line)
+        except Exception as e:
+            print(f"An unexpected error occurred during CSV import: {e}", file=sys.stderr)
+            sys.exit(1)
 
 def handle_to_csv(args):
     """Converts a JSONL input to CSV format."""
-    input_stream = open(args.file, 'r') if args.file else sys.stdin
-
     column_functions = {}
     if args.apply:
         for col, expr_str in args.apply:
@@ -228,59 +229,57 @@ def handle_to_csv(args):
                 print(f"Error parsing --apply expression for column '{col}': {e}", file=sys.stderr)
                 sys.exit(1)
 
-    try:
-        # The output stream for the CSV writer must be a text stream.
-        # sys.stdout is a text stream, so it's suitable.
-        jsonl_to_csv_stream(
-            input_stream,
-            sys.stdout,
-            flatten=args.flatten,
-            flatten_sep=args.flatten_sep,
-            column_functions=column_functions
-        )
-    except Exception as e:
-        # Use stderr for error messages to not corrupt stdout if it's being piped
-        print(f"An unexpected error occurred during CSV export: {e}", file=sys.stderr)
-        sys.exit(1)
-    finally:
-        if args.file:
-            input_stream.close()
+    with get_input_stream(args.file) as input_stream:
+        try:
+            # The output stream for the CSV writer must be a text stream.
+            # sys.stdout is a text stream, so it's suitable.
+            jsonl_to_csv_stream(
+                input_stream,
+                sys.stdout,
+                flatten=args.flatten,
+                flatten_sep=args.flatten_sep,
+                column_functions=column_functions
+            )
+        except Exception as e:
+            # Use stderr for error messages to not corrupt stdout if it's being piped
+            print(f"An unexpected error occurred during CSV export: {e}", file=sys.stderr)
+            sys.exit(1)
 
-def handle_validate(args):
+def handle_schema_validate(args):
     try:
         import jsonschema
     except ImportError:
         print("jsonschema is not installed. Please install it with: pip install jsonschema", file=sys.stderr)
         sys.exit(1)
 
+    # Can't read both from stdin
+    if args.schema == '-' and (not args.file or args.file == '-'):
+        print("Error: When reading schema from stdin, a file argument for the data to validate must be provided.", file=sys.stderr)
+        sys.exit(1)
+
     try:
-        if args.schema == '-':
-            # Schema is from stdin. The file to validate must be from a file argument.
-            if not args.file or args.file == '-':
-                print("Error: When reading schema from stdin, a file argument for the data to validate must be provided.", file=sys.stderr)
-                sys.exit(1)
-            schema = json.load(sys.stdin)
-        else:
-            with open(args.schema, 'r') as f:
-                schema = json.load(f)
+        with get_input_stream(args.schema) as f:
+            schema = json.load(f)
     except (IOError, json.JSONDecodeError) as e:
         print(f"Error reading or parsing schema file {args.schema}: {e}", file=sys.stderr)
         sys.exit(1)
 
-    # The input data can be from a file or stdin (if schema is not from stdin).
-    lines = get_input_lines(args.file)
-    validation_failed = False
-    for i, line in enumerate(lines, 1):
-        try:
-            instance = json.loads(line)
-            jsonschema.validate(instance=instance, schema=schema)
-            print(line.strip())
-        except json.JSONDecodeError as e:
-            print(f"Error decoding JSON on line {i}: {e}", file=sys.stderr)
-            validation_failed = True
-        except jsonschema.exceptions.ValidationError as e:
-            print(f"Validation error on line {i}: {e.message}", file=sys.stderr)
-            validation_failed = True
+    # If schema was from stdin, the file MUST be from a file, not stdin.
+    data_source = args.file if args.schema == '-' else (args.file or '-')
+
+    with get_input_stream(data_source) as lines:
+        validation_failed = False
+        for i, line in enumerate(lines, 1):
+            try:
+                instance = json.loads(line)
+                jsonschema.validate(instance=instance, schema=schema)
+                print(line.strip())
+            except json.JSONDecodeError as e:
+                print(f"Error decoding JSON on line {i}: {e}", file=sys.stderr)
+                validation_failed = True
+            except jsonschema.exceptions.ValidationError as e:
+                print(f"Validation error on line {i}: {e.message}", file=sys.stderr)
+                validation_failed = True
     
     if validation_failed:
         sys.exit(1)
