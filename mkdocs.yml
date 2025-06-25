@@ -1,9 +1,9 @@
 site_name: JSONL Algebra
 site_description: A powerful relational algebra CLI and library for JSONL data manipulation
 site_author: Alex Towell
-site_url: https://username.github.io/jsonl-algebra
-repo_url: https://github.com/username/jsonl-algebra
-repo_name: username/jsonl-algebra
+site_url: https://queelius.github.io/jsonl-algebra
+repo_url: https://github.com/queelius/jsonl-algebra
+repo_name: queelius/jsonl-algebra
 
 theme:
   name: material
