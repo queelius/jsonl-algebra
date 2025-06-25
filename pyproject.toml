@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=45.0.0", "wheel"]
+requires = ["setuptools>=40.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -31,18 +31,18 @@ classifiers = [
 
 [project.optional-dependencies]
 dev = [
-    "pytest>=7.0",
-    "pytest-cov>=4.0",
-    "black>=23.0",
+    "pytest>=6.0",
+    "pytest-cov>=3.0",
+    "black>=22.0",
     "isort>=5.0",
-    "flake8>=5.0",
-    "mypy>=1.0",
+    "flake8>=4.0",
+    "mypy>=0.950",
     "bump2version>=1.0",
-    "twine>=4.0",
-    "build>=0.10",
-    "mkdocs>=1.5",
-    "mkdocs-material>=9.0",
-    "mkdocstrings[python]>=0.20",
+    "twine>=3.0",
+    "build>=0.8",
+    "mkdocs>=1.4",
+    "mkdocs-material>=8.0",
+    "mkdocstrings[python]>=0.18",
 ]
 
 [project.scripts]
