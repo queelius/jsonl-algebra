@@ -19,6 +19,7 @@ from .commands import (
     handle_implode,
     handle_import_csv,
     handle_to_csv,
+    handle_validate,
 )
 from .repl import repl
 
@@ -48,6 +49,19 @@ def handle_import_command_group(args):
         handler(args)
     else:
         print(f"Unknown import command: {args.import_cmd}", file=sys.stderr)
+        sys.exit(1)
+
+def handle_schema_command_group(args):
+    schema_command_handlers = {
+        "infer": handle_schema,
+        "validate": handle_validate,
+    }
+    handler = schema_command_handlers.get(args.schema_cmd)
+    if handler:
+        handler(args)
+    else:
+        # This should not be reached if 'required=True' for schema_subparsers
+        print(f"Unknown schema command: {args.schema_cmd}", file=sys.stderr)
         sys.exit(1)
 
 def main():
@@ -100,15 +114,16 @@ def main():
     sp_dist.add_argument("file", nargs="?", help="Input file (defaults to stdin)")
 
     # sort
-    sp_sort = subparsers.add_parser("sort", help="Sort by column(s)")
-    sp_sort.add_argument("columns", help="Comma-separated columns")
+    sp_sort = subparsers.add_parser("sort", help="Sort rows by key(s)")
+    sp_sort.add_argument("keys", help="Comma-separated key names to sort by")
     sp_sort.add_argument("file", nargs="?", help="Input file (defaults to stdin)")
+    sp_sort.add_argument("--desc", action="store_true", help="Sort in descending order")
 
     # groupby
-    sp_group = subparsers.add_parser("groupby", help="Group by a key and aggregate")
-    sp_group.add_argument("key", help="Group-by key")
-    sp_group.add_argument("file", nargs="?", help="Input file (defaults to stdin)")
-    sp_group.add_argument("--agg", required=True, help="Aggregations: count,sum:amount,max:amount,...")
+    sp_groupby = subparsers.add_parser("groupby", help="Group rows by a key")
+    sp_groupby.add_argument("key", help="Group-by key")
+    sp_groupby.add_argument("file", nargs="?", help="Input file (defaults to stdin)")
+    sp_groupby.add_argument("--agg", required=True, help="Aggregations: count,sum:amount,max:amount,...")
 
     # REPL subparser
     sp_repl = subparsers.add_parser("repl", help="Start an interactive REPL session to build command pipelines.")
@@ -118,9 +133,18 @@ def main():
         help="Optional: initial file to load (e.g., 'data.jsonl') or a full command (e.g., \"from data.jsonl\")"
     )
     
-    # Schema subparser
-    sp_schema = subparsers.add_parser("schema", help="Infer and display the schema of a JSONL file.")
-    sp_schema.add_argument("file", nargs="?", help="Input JSONL file (defaults to stdin)")
+    # Schema command group
+    sp_schema_group = subparsers.add_parser("schema", help="Infer, validate, and work with JSONL schemas.")
+    schema_subparsers = sp_schema_group.add_subparsers(dest="schema_cmd", required=True, help="Schema sub-command")
+
+    # 1. schema infer
+    sp_infer = schema_subparsers.add_parser("infer", help="Infer and display the schema of a JSONL file.")
+    sp_infer.add_argument("file", nargs="?", help="Input JSONL file (defaults to stdin)")
+
+    # 2. schema validate
+    sp_validate = schema_subparsers.add_parser("validate", help="Validate JSONL data against a JSON schema.")
+    sp_validate.add_argument("schema", help="Path to the JSON schema file (use '-' for stdin).")
+    sp_validate.add_argument("file", nargs="?", help="Input JSONL file to validate (defaults to stdin).")
 
     # Export command group
     sp_export_group = subparsers.add_parser("export", help="Export or transform data formats.")
@@ -186,8 +210,8 @@ def main():
         "distinct": handle_distinct,
         "sort": handle_sort,
         "groupby": handle_groupby,
-        "repl": repl,
-        "schema": handle_schema,
+        "schema": handle_schema_command_group,
+        "repl": lambda args: repl(),
         "export": handle_export_command_group,
         "import": handle_import_command_group,
     }

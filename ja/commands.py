@@ -2,17 +2,32 @@ import sys
 import json
 import jmespath
 from pathlib import Path
-from .core import *
-from .groupby import groupby_agg
-from .schema import infer_schema
-from .export import (
-    jsonl_to_json_array_string,
-    json_array_to_jsonl_lines,
-    jsonl_to_dir,
-    dir_to_jsonl
+from .core import (
+    select,
+    project,
+    join,
+    product,
+    rename,
+    union,
+    intersection,
+    difference,
+    distinct,
+    sort_by,
 )
 from .importer import csv_to_jsonl_lines, dir_to_jsonl_lines
 from .exporter import jsonl_to_csv_stream
+from .export import jsonl_to_json_array_string, json_array_to_jsonl_lines, jsonl_to_dir
+from .schema import infer_schema
+from .groupby import groupby_agg
+
+def get_input_lines(file_path):
+    if file_path and file_path != '-':
+        with open(file_path, 'r') as f:
+            for line in f:
+                yield line
+    else:
+        for line in sys.stdin:
+            yield line
 
 def read_jsonl(file_or_fp):
     if isinstance(file_or_fp, str) or isinstance(file_or_fp, Path):
@@ -98,8 +113,8 @@ def handle_distinct(args):
 
 def handle_sort(args):
     data = read_jsonl(args.file or sys.stdin)
-    keys = [key.strip() for key in args.columns.split(",")]
-    write_jsonl(sort_by(data, keys))
+    keys = [key.strip() for key in args.keys.split(",")]
+    write_jsonl(sort_by(data, keys, reverse=args.desc))
 
 def handle_groupby(args):
     data = read_jsonl(args.file or sys.stdin)
@@ -230,3 +245,42 @@ def handle_to_csv(args):
     finally:
         if args.file:
             input_stream.close()
+
+def handle_validate(args):
+    try:
+        import jsonschema
+    except ImportError:
+        print("jsonschema is not installed. Please install it with: pip install jsonschema", file=sys.stderr)
+        sys.exit(1)
+
+    try:
+        if args.schema == '-':
+            # Schema is from stdin. The file to validate must be from a file argument.
+            if not args.file or args.file == '-':
+                print("Error: When reading schema from stdin, a file argument for the data to validate must be provided.", file=sys.stderr)
+                sys.exit(1)
+            schema = json.load(sys.stdin)
+        else:
+            with open(args.schema, 'r') as f:
+                schema = json.load(f)
+    except (IOError, json.JSONDecodeError) as e:
+        print(f"Error reading or parsing schema file {args.schema}: {e}", file=sys.stderr)
+        sys.exit(1)
+
+    # The input data can be from a file or stdin (if schema is not from stdin).
+    lines = get_input_lines(args.file)
+    validation_failed = False
+    for i, line in enumerate(lines, 1):
+        try:
+            instance = json.loads(line)
+            jsonschema.validate(instance=instance, schema=schema)
+            print(line.strip())
+        except json.JSONDecodeError as e:
+            print(f"Error decoding JSON on line {i}: {e}", file=sys.stderr)
+            validation_failed = True
+        except jsonschema.exceptions.ValidationError as e:
+            print(f"Validation error on line {i}: {e.message}", file=sys.stderr)
+            validation_failed = True
+    
+    if validation_failed:
+        sys.exit(1)

@@ -38,16 +38,25 @@ def _infer_value(value: str):
 
 def dir_to_jsonl_lines(dir_path):
     """
-    Reads all .json files in a directory, yielding each as a JSONL line.
+    Reads all .json and .jsonl files in a directory, yielding each as a JSONL line.
+    - For .json files, the entire file is treated as a single JSON object.
+    - For .jsonl files, each line is treated as a separate JSON object.
     """
     for filename in sorted(os.listdir(dir_path)):
+        file_path = os.path.join(dir_path, filename)
         if filename.endswith('.json'):
-            file_path = os.path.join(dir_path, filename)
             try:
                 with open(file_path, 'r') as f:
                     yield f.read().strip()
             except (IOError, json.JSONDecodeError) as e:
                 print(f"Error reading or parsing {file_path}: {e}", file=sys.stderr)
+        elif filename.endswith('.jsonl'):
+            try:
+                with open(file_path, 'r') as f:
+                    for line in f:
+                        yield line.strip()
+            except IOError as e:
+                print(f"Error reading {file_path}: {e}", file=sys.stderr)
 
 
 def csv_to_jsonl_lines(csv_input_stream, has_header: bool, infer_types: bool = False):

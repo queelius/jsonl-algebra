@@ -180,7 +180,7 @@ def intersection(a: Relation, b: Relation) -> Relation:
     b_set = {_row_to_hashable_key(r) for r in b}
     return [r for r in a if _row_to_hashable_key(r) in b_set]
 
-def sort_by(relation: Relation, keys: List[str]) -> Relation:
+def sort_by(relation: Relation, keys: List[str], reverse: bool = False) -> Relation:
     """
     Sorts a relation by specified keys.
 
@@ -189,6 +189,7 @@ def sort_by(relation: Relation, keys: List[str]) -> Relation:
         keys: A list of column names to sort by. The sort is performed in
               the order of the columns specified. Missing values (None)
               are sorted before non-None values.
+        reverse: If True, sort in descending order.
 
     Returns:
         A new relation sorted by the specified keys.
@@ -204,7 +205,7 @@ def sort_by(relation: Relation, keys: List[str]) -> Relation:
                 key_parts.append((1, value))
         return tuple(key_parts)
 
-    return sorted(relation, key=sort_key_func)
+    return sorted(relation, key=sort_key_func, reverse=reverse)
 
 def product(a: Relation, b: Relation) -> Relation:
     """

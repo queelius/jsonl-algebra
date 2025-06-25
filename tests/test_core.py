@@ -380,6 +380,33 @@ class TestCoreFunctions(unittest.TestCase):
         grouped_no_max = groupby_agg(data_no_valid_vals, "key", [("max", "val")])
         self.assertEqual(grouped_no_max[0]["max_val"], None)
 
+    def test_sort_by_descending(self):
+        data: Relation = [
+            {"name": "Charlie", "age": 30},
+            {"name": "Alice", "age": 25},
+            {"name": "Bob", "age": 30},
+            {"name": "Alice", "age": 20},
+        ]
+        
+        # Sort by name descending
+        sorted_by_name_desc = sort_by(data, ["name"], reverse=True)
+        self.assertEqual([r["name"] for r in sorted_by_name_desc], ["Charlie", "Bob", "Alice", "Alice"])
+        
+        # Sort by age descending, then name ascending
+        sorted_by_age_desc_name_asc = sort_by(data, ["age", "name"], reverse=True)
+        expected_age_desc_name_asc: Relation = [
+            {"name": "Charlie", "age": 30},
+            {"name": "Bob", "age": 30},
+            {"name": "Alice", "age": 25},
+            {"name": "Alice", "age": 20},
+        ]
+        # This is tricky. The primary key (age) is reversed, but the secondary (name) is not.
+        # Python's sort is stable, so for equal ages, the original order of names is preserved.
+        # To sort by age descending and name ascending, we would need a more complex key.
+        # The current implementation sorts all keys in the same direction (all asc or all desc).
+        # Let's test the current behavior.
+        self.assertEqual(sorted_by_age_desc_name_asc, expected_age_desc_name_asc)
+
 
 if __name__ == '__main__':
     unittest.main()
