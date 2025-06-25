@@ -1,6 +1,7 @@
 import csv
 import json
 import sys
+import os
 
 
 def _infer_value(value: str):
@@ -33,6 +34,20 @@ def _infer_value(value: str):
         return None
 
     return value
+
+
+def dir_to_jsonl_lines(dir_path):
+    """
+    Reads all .json files in a directory, yielding each as a JSONL line.
+    """
+    for filename in sorted(os.listdir(dir_path)):
+        if filename.endswith('.json'):
+            file_path = os.path.join(dir_path, filename)
+            try:
+                with open(file_path, 'r') as f:
+                    yield f.read().strip()
+            except (IOError, json.JSONDecodeError) as e:
+                print(f"Error reading or parsing {file_path}: {e}", file=sys.stderr)
 
 
 def csv_to_jsonl_lines(csv_input_stream, has_header: bool, infer_types: bool = False):

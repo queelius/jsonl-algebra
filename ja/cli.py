@@ -55,8 +55,8 @@ def main():
     subparsers = parser.add_subparsers(dest="cmd", required=True)
 
     # select
-    sp_sel = subparsers.add_parser("select", help="Filter rows with a Python expression")
-    sp_sel.add_argument("expr", help="e.g. 'amount > 100 and user_id == 3'")
+    sp_sel = subparsers.add_parser("select", help="Filter rows with a JMESPath expression")
+    sp_sel.add_argument("expr", help="e.g. 'amount > `100` && user_id == `3`'")
     sp_sel.add_argument("file", nargs="?", help="Input file (defaults to stdin)")
 
     # project

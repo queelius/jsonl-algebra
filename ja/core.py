@@ -1,3 +1,4 @@
+import jmespath
 from typing import List, Dict, Callable, Tuple, Any
 
 Row = Dict[str, any]
@@ -29,19 +30,22 @@ def _row_to_hashable_key(row: Row) -> tuple:
         )
     return tuple(sorted(row.items()))
 
-def select(relation: Relation, predicate: Callable[[Row], bool]) -> Relation:
+def select(relation: Relation, expression) -> Relation:
     """
-    Filters rows from a relation based on a predicate.
+    Filters rows from a relation based on a JMESPath expression.
 
     Args:
         relation: The input relation (list of rows).
-        predicate: A function that takes a row and returns True if the row
-                   should be included in the result.
+        expression: A JMESPath expression string or a compiled JMESPath expression.
 
     Returns:
-        A new relation containing only the rows for which the predicate is True.
+        A new relation containing only the rows that match the expression.
     """
-    return [row for row in relation if predicate(row)]
+    if isinstance(expression, str):
+        expression = jmespath.compile(f"[?{expression}]")
+
+    # JMESPath works on the entire relation (JSON document)
+    return expression.search(relation)
 
 def project(relation: Relation, columns: List[str]) -> Relation:
     """

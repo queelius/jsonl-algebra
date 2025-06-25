@@ -17,22 +17,22 @@ class TestCoreFunctions(unittest.TestCase):
         ]
         
         # Test selecting by age
-        selected_by_age = select(data, lambda row: row.get("age") == 30)
+        selected_by_age = select(data, "age == `30`")
         self.assertEqual(len(selected_by_age), 2)
-        self.assertEqual(selected_by_age[0]["name"], "Alice")
-        self.assertEqual(selected_by_age[1]["name"], "Charlie")
+        self.assertEqual(selected_by_age[0], {"id": 1, "name": "Alice", "age": 30})
+        self.assertEqual(selected_by_age[1], {"id": 3, "name": "Charlie", "age": 30})
 
         # Test selecting by name
-        selected_by_name = select(data, lambda row: row.get("name") == "Bob")
+        selected_by_name = select(data, "name == 'Bob'")
         self.assertEqual(len(selected_by_name), 1)
-        self.assertEqual(selected_by_name[0]["id"], 2)
+        self.assertEqual(selected_by_name[0], {"id": 2, "name": "Bob", "age": 24})
 
         # Test selecting with no matches
-        selected_no_match = select(data, lambda row: row.get("age") == 100)
+        selected_no_match = select(data, "age == `100`")
         self.assertEqual(len(selected_no_match), 0)
 
         # Test selecting with an empty relation
-        selected_empty = select([], lambda row: row.get("age") == 30)
+        selected_empty = select([], "age == `30`")
         self.assertEqual(len(selected_empty), 0)
 
     def test_project(self):

@@ -1,5 +1,6 @@
 import sys
 import json
+import jmespath
 from pathlib import Path
 from .core import *
 from .groupby import groupby_agg
@@ -10,7 +11,7 @@ from .export import (
     jsonl_to_dir,
     dir_to_jsonl
 )
-from .importer import csv_to_jsonl_lines
+from .importer import csv_to_jsonl_lines, dir_to_jsonl_lines
 from .exporter import jsonl_to_csv_stream
 
 def read_jsonl(file_or_fp):
@@ -31,11 +32,17 @@ def write_json_object(obj):
 def handle_select(args):
     data = read_jsonl(args.file or sys.stdin)
     try:
-        predicate = lambda row: eval(args.expr, {}, row)
-    except Exception as e:
-        print(f"Invalid expression: {e}", file=sys.stderr)
+        # JMESPath expects a query that filters a list (the relation).
+        # A simple way to adapt row-by-row logic is to use a filter expression.
+        # The expression in `args.expr` should be a valid JMESPath expression.
+        expression = jmespath.compile(f"[?{args.expr}]")
+        write_jsonl(select(data, expression))
+    except jmespath.exceptions.ParseError as e:
+        print(f"Invalid JMESPath expression: {e}", file=sys.stderr)
         sys.exit(1)
-    write_jsonl(select(data, predicate))
+    except Exception as e:
+        print(f"An unexpected error occurred during select: {e}", file=sys.stderr)
+        sys.exit(1)
 
 def handle_project(args):
     data = read_jsonl(args.file or sys.stdin)

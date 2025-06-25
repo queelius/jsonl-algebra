@@ -22,7 +22,8 @@ def json_array_to_jsonl_lines(json_array_input_stream):
     Reads a JSON array from a stream and yields each element as a JSONL line.
     """
     try:
-        data = json.load(json_array_input_stream)
+        json_string = "".join(json_array_input_stream)
+        data = json.loads(json_string)
         if not isinstance(data, list):
             raise ValueError("Input is not a JSON array.")
         for record in data:

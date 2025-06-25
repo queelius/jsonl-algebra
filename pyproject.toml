@@ -11,7 +11,7 @@ authors = [{ name = "Alex Towell", email = "lex@metafunctor.com" }]
 requires-python = ">=3.8"
 license = "MIT"
 license-files = ["LICENSE"]
-dependencies = []
+dependencies = ["jmespath"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
