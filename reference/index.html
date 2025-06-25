@@ -6,7 +6,13 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
+        <meta name="description" content="A powerful relational algebra CLI and library for JSONL data manipulation">
       
+      
+        <meta name="author" content="Alex Towell">
+      
+      
+        <link rel="canonical" href="https://username.github.io/jsonl-algebra/reference/">
       
       
         <link rel="prev" href="..">
@@ -23,6 +29,9 @@
     
     
       <link rel="stylesheet" href="../assets/stylesheets/main.342714a4.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
       
       
 
@@ -53,7 +62,14 @@
   </head>
   
   
-    <body dir="ltr">
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="blue">
   
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
@@ -74,9 +90,7 @@
     
       
 
-  
-
-<header class="md-header md-header--shadow" data-md-component="header">
+<header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
     <a href=".." title="JSONL Algebra" class="md-header__button md-logo" aria-label="JSONL Algebra" data-md-component="logo">
       
@@ -105,6 +119,32 @@
       </div>
     </div>
     
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="blue"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="blue" data-md-color-accent="blue"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
     
       <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
     
@@ -129,6 +169,11 @@
       </label>
       <nav class="md-search__options" aria-label="Search">
         
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
         <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
           
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
@@ -151,6 +196,18 @@
       
     
     
+      <div class="md-header__source">
+        <a href="https://github.com/username/jsonl-algebra" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    username/jsonl-algebra
+  </div>
+</a>
+      </div>
+    
   </nav>
   
 </header>
@@ -159,6 +216,55 @@
       
       
         
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Reference
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
           
         
       
@@ -173,8 +279,10 @@
                     
 
 
+  
 
-<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
     <a href=".." title="JSONL Algebra" class="md-nav__button md-logo" aria-label="JSONL Algebra" data-md-component="logo">
       
@@ -184,6 +292,18 @@
     </a>
     JSONL Algebra
   </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/username/jsonl-algebra" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    username/jsonl-algebra
+  </div>
+</a>
+    </div>
   
   <ul class="md-nav__list" data-md-scrollfix>
     
@@ -338,6 +458,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#ja.read_jsonl" class="md-nav__link">
+    <span class="md-ellipsis">
+      read_jsonl
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#ja.rename" class="md-nav__link">
     <span class="md-ellipsis">
       rename
@@ -480,6 +609,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#ja.read_jsonl" class="md-nav__link">
+    <span class="md-ellipsis">
+      read_jsonl
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#ja.rename" class="md-nav__link">
     <span class="md-ellipsis">
       rename
@@ -530,6 +668,9 @@
                   
 
 
+  
+  
+
 
 <h1 id="api-reference">API Reference</h1>
 
@@ -541,10 +682,30 @@
 <a id="ja"></a>
     <div class="doc doc-contents first">
 
-        <p>ja (JSONL Algebra)</p>
+        <p>JSONL Algebra - Relational algebra operations for JSONL data.</p>
 <p>A Python package for performing relational algebra operations on lists of
-JSON objects (JSONL data).</p>
+JSON objects (JSONL data). Provides both a CLI and a library interface
+for data manipulation, schema inference, and format conversion.</p>
+<p>This package allows you to:
+- Perform relational operations like select, project, join, union, etc.
+- Infer and validate JSON schemas from data
+- Convert between various data formats (CSV, JSON arrays, directories)
+- Work with data interactively via REPL or programmatically via library functions</p>
 
+
+<details class="example" open>
+  <summary>Example</summary>
+  <blockquote>
+<blockquote>
+<blockquote>
+<p>from ja import select, project
+data = [{"name": "Alice", "age": 30}, {"name": "Bob", "age": 25}]
+young_people = select(data, "age &lt; <code>30</code>")
+names_only = project(young_people, ["name"])</p>
+</blockquote>
+</blockquote>
+</blockquote>
+</details>
 
 
 
@@ -574,8 +735,9 @@ JSON objects (JSONL data).</p>
 
     <div class="doc doc-contents ">
 
-        <p>Returns rows present in the first relation but not in the second.
-Row comparison is based on their hashable representation.</p>
+        <p>Return rows present in the first relation but not in the second.</p>
+<p>Performs set difference operation, removing from the first relation
+any rows that also appear in the second relation.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -598,7 +760,7 @@ Row comparison is based on their hashable representation.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The first relation (list of rows).</p>
+                <p>The first relation (list of dictionaries).</p>
               </div>
             </td>
             <td>
@@ -614,7 +776,7 @@ Row comparison is based on their hashable representation.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The second relation (list of rows), whose rows will be excluded from 'a'.</p>
+                <p>The second relation (list of dictionaries), whose rows will be excluded from 'a'.</p>
               </div>
             </td>
             <td>
@@ -648,32 +810,60 @@ Row comparison is based on their hashable representation.</p>
     </table>
 
 
+<details class="example" open>
+  <summary>Example</summary>
+  <blockquote>
+<blockquote>
+<blockquote>
+<p>a = [{"name": "Alice"}, {"name": "Bob"}]
+b = [{"name": "Alice"}]
+difference(a, b)
+[{"name": "Bob"}]</p>
+</blockquote>
+</blockquote>
+</blockquote>
+</details>
+
             <details class="quote">
               <summary>Source code in <code>ja/core.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">128</span>
-<span class="normal">129</span>
-<span class="normal">130</span>
-<span class="normal">131</span>
-<span class="normal">132</span>
-<span class="normal">133</span>
-<span class="normal">134</span>
-<span class="normal">135</span>
-<span class="normal">136</span>
-<span class="normal">137</span>
-<span class="normal">138</span>
-<span class="normal">139</span>
-<span class="normal">140</span>
-<span class="normal">141</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">difference</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="n">Relation</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">Relation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Relation</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Returns rows present in the first relation but not in the second.</span>
-<span class="sd">    Row comparison is based on their hashable representation.</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">187</span>
+<span class="normal">188</span>
+<span class="normal">189</span>
+<span class="normal">190</span>
+<span class="normal">191</span>
+<span class="normal">192</span>
+<span class="normal">193</span>
+<span class="normal">194</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span>
+<span class="normal">200</span>
+<span class="normal">201</span>
+<span class="normal">202</span>
+<span class="normal">203</span>
+<span class="normal">204</span>
+<span class="normal">205</span>
+<span class="normal">206</span>
+<span class="normal">207</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">difference</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="n">Relation</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">Relation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Relation</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return rows present in the first relation but not in the second.</span>
+
+<span class="sd">    Performs set difference operation, removing from the first relation</span>
+<span class="sd">    any rows that also appear in the second relation.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        a: The first relation (list of rows).</span>
-<span class="sd">        b: The second relation (list of rows), whose rows will be excluded from &#39;a&#39;.</span>
+<span class="sd">        a: The first relation (list of dictionaries).</span>
+<span class="sd">        b: The second relation (list of dictionaries), whose rows will be excluded from &#39;a&#39;.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A new relation containing rows from &#39;a&#39; that are not in &#39;b&#39;.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; a = [{&quot;name&quot;: &quot;Alice&quot;}, {&quot;name&quot;: &quot;Bob&quot;}]</span>
+<span class="sd">        &gt;&gt;&gt; b = [{&quot;name&quot;: &quot;Alice&quot;}]</span>
+<span class="sd">        &gt;&gt;&gt; difference(a, b)</span>
+<span class="sd">        [{&quot;name&quot;: &quot;Bob&quot;}]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">b_set</span> <span class="o">=</span> <span class="p">{</span><span class="n">_row_to_hashable_key</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">b</span><span class="p">}</span>
     <span class="k">return</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">a</span> <span class="k">if</span> <span class="n">_row_to_hashable_key</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">b_set</span><span class="p">]</span>
@@ -694,8 +884,9 @@ Row comparison is based on their hashable representation.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Removes duplicate rows from a relation.
-Row comparison is based on their hashable representation.</p>
+        <p>Remove duplicate rows from a relation.</p>
+<p>Creates a new relation with duplicate rows removed, preserving the
+first occurrence of each unique row.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -718,7 +909,7 @@ Row comparison is based on their hashable representation.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The input relation (list of rows).</p>
+                <p>The input relation (list of dictionaries).</p>
               </div>
             </td>
             <td>
@@ -744,17 +935,7 @@ Row comparison is based on their hashable representation.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>A new relation with duplicate rows removed. The first occurrence of</p>
-              </div>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                  <code><span title="ja.core.Relation">Relation</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>each unique row is preserved.</p>
+                <p>A new relation with duplicate rows removed.</p>
               </div>
             </td>
           </tr>
@@ -762,38 +943,61 @@ Row comparison is based on their hashable representation.</p>
     </table>
 
 
+<details class="example" open>
+  <summary>Example</summary>
+  <blockquote>
+<blockquote>
+<blockquote>
+<p>data = [{"name": "Alice"}, {"name": "Alice"}, {"name": "Bob"}]
+distinct(data)
+[{"name": "Alice"}, {"name": "Bob"}]</p>
+</blockquote>
+</blockquote>
+</blockquote>
+</details>
+
             <details class="quote">
               <summary>Source code in <code>ja/core.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">143</span>
-<span class="normal">144</span>
-<span class="normal">145</span>
-<span class="normal">146</span>
-<span class="normal">147</span>
-<span class="normal">148</span>
-<span class="normal">149</span>
-<span class="normal">150</span>
-<span class="normal">151</span>
-<span class="normal">152</span>
-<span class="normal">153</span>
-<span class="normal">154</span>
-<span class="normal">155</span>
-<span class="normal">156</span>
-<span class="normal">157</span>
-<span class="normal">158</span>
-<span class="normal">159</span>
-<span class="normal">160</span>
-<span class="normal">161</span>
-<span class="normal">162</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">distinct</span><span class="p">(</span><span class="n">relation</span><span class="p">:</span> <span class="n">Relation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Relation</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Removes duplicate rows from a relation.</span>
-<span class="sd">    Row comparison is based on their hashable representation.</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">210</span>
+<span class="normal">211</span>
+<span class="normal">212</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span>
+<span class="normal">223</span>
+<span class="normal">224</span>
+<span class="normal">225</span>
+<span class="normal">226</span>
+<span class="normal">227</span>
+<span class="normal">228</span>
+<span class="normal">229</span>
+<span class="normal">230</span>
+<span class="normal">231</span>
+<span class="normal">232</span>
+<span class="normal">233</span>
+<span class="normal">234</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">distinct</span><span class="p">(</span><span class="n">relation</span><span class="p">:</span> <span class="n">Relation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Relation</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Remove duplicate rows from a relation.</span>
+
+<span class="sd">    Creates a new relation with duplicate rows removed, preserving the</span>
+<span class="sd">    first occurrence of each unique row.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        relation: The input relation (list of rows).</span>
+<span class="sd">        relation: The input relation (list of dictionaries).</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        A new relation with duplicate rows removed. The first occurrence of</span>
-<span class="sd">        each unique row is preserved.</span>
+<span class="sd">        A new relation with duplicate rows removed.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; data = [{&quot;name&quot;: &quot;Alice&quot;}, {&quot;name&quot;: &quot;Alice&quot;}, {&quot;name&quot;: &quot;Bob&quot;}]</span>
+<span class="sd">        &gt;&gt;&gt; distinct(data)</span>
+<span class="sd">        [{&quot;name&quot;: &quot;Alice&quot;}, {&quot;name&quot;: &quot;Bob&quot;}]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">seen</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
     <span class="n">out</span> <span class="o">=</span> <span class="p">[]</span>
@@ -820,19 +1024,12 @@ Row comparison is based on their hashable representation.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Groups rows by a key and performs specified aggregations on other columns.</p>
+        <p>Group rows by a key and perform specified aggregations on other columns.</p>
 <p>This function works in two main passes:
-1. Data Collection Pass: Iterates through the input relation, grouping rows
-   by the <code>group_by_key</code>. For each group, it collects the necessary data
-   for each specified aggregation (e.g., a list of values for 'sum', the
-   first value for 'first'). It also maintains a count of items in each group.
-2. Aggregation Processing Pass: Iterates through the collected grouped data.
-   For each group and each specified aggregation, it retrieves the collected
-   data and applies the corresponding aggregation function (obtained via
-   <code>AGGREGATION_DISPATCHER</code> or special handling for 'count') to compute
-   the final aggregated value.</p>
-<p>The resulting relation contains one row per unique value of <code>group_by_key</code>,
-with columns for the group key and each specified aggregation.</p>
+1. Data Collection Pass: Groups rows by the <code>group_by_key</code> and collects
+   the necessary data for each specified aggregation.
+2. Aggregation Processing Pass: Applies aggregation functions to compute
+   the final aggregated values for each group.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -855,7 +1052,7 @@ with columns for the group key and each specified aggregation.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The input relation (list of rows/dictionaries).</p>
+                <p>The input relation (list of dictionaries).</p>
               </div>
             </td>
             <td>
@@ -871,7 +1068,7 @@ with columns for the group key and each specified aggregation.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The column name (key in the dictionaries) to group by.</p>
+                <p>The column name to group by.</p>
               </div>
             </td>
             <td>
@@ -887,20 +1084,11 @@ with columns for the group key and each specified aggregation.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>A list of tuples, where each tuple specifies an aggregation
-          to perform. The structure of the tuple is typically:
-          <code>(agg_func_name: str, agg_col_name: str, *extra_args: Any)</code>
-          - <code>agg_func_name</code>: The name of the aggregation function
-            (e.g., "sum", "list", "count").
-          - <code>agg_col_name</code>: The name of the column on which to perform
-            the aggregation. For "count", this is often ignored or
-            can be an empty string.
-          - <code>*extra_args</code>: Optional additional arguments that might be
-            required by specific aggregation functions (e.g., for a
-            future "reduce" function, these could be expression strings).</p>
-<pre><code>      Supported `agg_func_name` values are defined as keys in
-      `AGGREGATION_DISPATCHER`, plus "count".
-</code></pre>
+                <p>A list of tuples specifying aggregations to perform.
+          Each tuple format: (agg_func_name, agg_col_name, *extra_args)
+          - agg_func_name: Name of aggregation function (e.g., "sum", "count")
+          - agg_col_name: Column name to aggregate (ignored for "count")
+          - extra_args: Additional arguments for the aggregation function</p>
               </div>
             </td>
             <td>
@@ -926,7 +1114,7 @@ with columns for the group key and each specified aggregation.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>A new relation (list of rows) where each row represents a group and</p>
+                <p>A new relation with one row per unique group key value, containing</p>
               </div>
             </td>
           </tr>
@@ -936,37 +1124,7 @@ with columns for the group key and each specified aggregation.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>contains the group_by_key value along with the results of the</p>
-              </div>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                  <code><span title="ja.core.Relation">Relation</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>specified aggregations. Aggregation result columns are typically named</p>
-              </div>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                  <code><span title="ja.core.Relation">Relation</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p><code>f"{agg_func_name}_{agg_col_name}"</code> (e.g., "sum_amount") or just</p>
-              </div>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                  <code><span title="ja.core.Relation">Relation</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p><code>agg_func_name</code> if <code>agg_col_name</code> is empty (common for "count").</p>
+                <p>the group key and all requested aggregations.</p>
               </div>
             </td>
           </tr>
@@ -974,37 +1132,22 @@ with columns for the group key and each specified aggregation.</p>
     </table>
 
 
-<p><span class="doc-section-title">Raises:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                  <code><span title="ValueError">ValueError</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>If an unsupported <code>agg_func_name</code> is provided or if
-        an aggregation function encounters an issue (e.g., trying
-        to sum non-numeric data that isn't None).</p>
-              </div>
-            </td>
-          </tr>
-      </tbody>
-    </table>
-
+<details class="example" open>
+  <summary>Example</summary>
+  <blockquote>
+<blockquote>
+<blockquote>
+<p>data = [{"category": "A", "value": 10}, {"category": "A", "value": 20}, {"category": "B", "value": 30}]
+groupby_agg(data, "category", [("sum", "value"), ("count", "")])
+[{"category": "A", "sum_value": 30, "count": 2}, {"category": "B", "sum_value": 30, "count": 1}]</p>
+</blockquote>
+</blockquote>
+</blockquote>
+</details>
 
             <details class="quote">
               <summary>Source code in <code>ja/groupby.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">160</span>
-<span class="normal">161</span>
-<span class="normal">162</span>
-<span class="normal">163</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">163</span>
 <span class="normal">164</span>
 <span class="normal">165</span>
 <span class="normal">166</span>
@@ -1124,57 +1267,34 @@ with columns for the group key and each specified aggregation.</p>
 <span class="normal">280</span>
 <span class="normal">281</span>
 <span class="normal">282</span>
-<span class="normal">283</span>
-<span class="normal">284</span>
-<span class="normal">285</span>
-<span class="normal">286</span>
-<span class="normal">287</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">groupby_agg</span><span class="p">(</span><span class="n">relation</span><span class="p">:</span> <span class="n">Relation</span><span class="p">,</span> <span class="n">group_by_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">aggregations</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">Relation</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Groups rows by a key and performs specified aggregations on other columns.</span>
+<span class="normal">283</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">groupby_agg</span><span class="p">(</span>
+    <span class="n">relation</span><span class="p">:</span> <span class="n">Relation</span><span class="p">,</span> <span class="n">group_by_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">aggregations</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Relation</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Group rows by a key and perform specified aggregations on other columns.</span>
 
 <span class="sd">    This function works in two main passes:</span>
-<span class="sd">    1. Data Collection Pass: Iterates through the input relation, grouping rows</span>
-<span class="sd">       by the `group_by_key`. For each group, it collects the necessary data</span>
-<span class="sd">       for each specified aggregation (e.g., a list of values for &#39;sum&#39;, the</span>
-<span class="sd">       first value for &#39;first&#39;). It also maintains a count of items in each group.</span>
-<span class="sd">    2. Aggregation Processing Pass: Iterates through the collected grouped data.</span>
-<span class="sd">       For each group and each specified aggregation, it retrieves the collected</span>
-<span class="sd">       data and applies the corresponding aggregation function (obtained via</span>
-<span class="sd">       `AGGREGATION_DISPATCHER` or special handling for &#39;count&#39;) to compute</span>
-<span class="sd">       the final aggregated value.</span>
-
-<span class="sd">    The resulting relation contains one row per unique value of `group_by_key`,</span>
-<span class="sd">    with columns for the group key and each specified aggregation.</span>
+<span class="sd">    1. Data Collection Pass: Groups rows by the `group_by_key` and collects</span>
+<span class="sd">       the necessary data for each specified aggregation.</span>
+<span class="sd">    2. Aggregation Processing Pass: Applies aggregation functions to compute</span>
+<span class="sd">       the final aggregated values for each group.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        relation: The input relation (list of rows/dictionaries).</span>
-<span class="sd">        group_by_key: The column name (key in the dictionaries) to group by.</span>
-<span class="sd">        aggregations: A list of tuples, where each tuple specifies an aggregation</span>
-<span class="sd">                      to perform. The structure of the tuple is typically:</span>
-<span class="sd">                      `(agg_func_name: str, agg_col_name: str, *extra_args: Any)`</span>
-<span class="sd">                      - `agg_func_name`: The name of the aggregation function</span>
-<span class="sd">                        (e.g., &quot;sum&quot;, &quot;list&quot;, &quot;count&quot;).</span>
-<span class="sd">                      - `agg_col_name`: The name of the column on which to perform</span>
-<span class="sd">                        the aggregation. For &quot;count&quot;, this is often ignored or</span>
-<span class="sd">                        can be an empty string.</span>
-<span class="sd">                      - `*extra_args`: Optional additional arguments that might be</span>
-<span class="sd">                        required by specific aggregation functions (e.g., for a</span>
-<span class="sd">                        future &quot;reduce&quot; function, these could be expression strings).</span>
-
-<span class="sd">                      Supported `agg_func_name` values are defined as keys in</span>
-<span class="sd">                      `AGGREGATION_DISPATCHER`, plus &quot;count&quot;.</span>
+<span class="sd">        relation: The input relation (list of dictionaries).</span>
+<span class="sd">        group_by_key: The column name to group by.</span>
+<span class="sd">        aggregations: A list of tuples specifying aggregations to perform.</span>
+<span class="sd">                      Each tuple format: (agg_func_name, agg_col_name, *extra_args)</span>
+<span class="sd">                      - agg_func_name: Name of aggregation function (e.g., &quot;sum&quot;, &quot;count&quot;)</span>
+<span class="sd">                      - agg_col_name: Column name to aggregate (ignored for &quot;count&quot;)</span>
+<span class="sd">                      - extra_args: Additional arguments for the aggregation function</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        A new relation (list of rows) where each row represents a group and</span>
-<span class="sd">        contains the group_by_key value along with the results of the</span>
-<span class="sd">        specified aggregations. Aggregation result columns are typically named</span>
-<span class="sd">        `f&quot;{agg_func_name}_{agg_col_name}&quot;` (e.g., &quot;sum_amount&quot;) or just</span>
-<span class="sd">        `agg_func_name` if `agg_col_name` is empty (common for &quot;count&quot;).</span>
+<span class="sd">        A new relation with one row per unique group key value, containing</span>
+<span class="sd">        the group key and all requested aggregations.</span>
 
-<span class="sd">    Raises:</span>
-<span class="sd">        ValueError: If an unsupported `agg_func_name` is provided or if</span>
-<span class="sd">                    an aggregation function encounters an issue (e.g., trying</span>
-<span class="sd">                    to sum non-numeric data that isn&#39;t None).</span>
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; data = [{&quot;category&quot;: &quot;A&quot;, &quot;value&quot;: 10}, {&quot;category&quot;: &quot;A&quot;, &quot;value&quot;: 20}, {&quot;category&quot;: &quot;B&quot;, &quot;value&quot;: 30}]</span>
+<span class="sd">        &gt;&gt;&gt; groupby_agg(data, &quot;category&quot;, [(&quot;sum&quot;, &quot;value&quot;), (&quot;count&quot;, &quot;&quot;)])</span>
+<span class="sd">        [{&quot;category&quot;: &quot;A&quot;, &quot;sum_value&quot;: 30, &quot;count&quot;: 2}, {&quot;category&quot;: &quot;B&quot;, &quot;sum_value&quot;: 30, &quot;count&quot;: 1}]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">grouped_data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
 
@@ -1183,7 +1303,7 @@ with columns for the group key and each specified aggregation.</p>
         <span class="n">key_value</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">group_by_key</span><span class="p">)</span>
         <span class="n">group</span> <span class="o">=</span> <span class="n">grouped_data</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">key_value</span><span class="p">,</span> <span class="p">{</span><span class="n">group_by_key</span><span class="p">:</span> <span class="n">key_value</span><span class="p">})</span>
         <span class="c1"># _values stores the raw data needed for each aggregation within the group</span>
-        <span class="n">group_values</span> <span class="o">=</span> <span class="n">group</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;_values&quot;</span><span class="p">,</span> <span class="p">{})</span> 
+        <span class="n">group_values</span> <span class="o">=</span> <span class="n">group</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;_values&quot;</span><span class="p">,</span> <span class="p">{})</span>
 
         <span class="c1"># Always maintain a count for the group</span>
         <span class="n">group_values</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;_count&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
@@ -1192,14 +1312,14 @@ with columns for the group key and each specified aggregation.</p>
         <span class="k">for</span> <span class="n">agg_spec</span> <span class="ow">in</span> <span class="n">aggregations</span><span class="p">:</span>
             <span class="n">agg_func</span> <span class="o">=</span> <span class="n">agg_spec</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="c1"># Ensure agg_col is present, default to empty string if not (e.g. for count)</span>
-            <span class="n">agg_col</span> <span class="o">=</span> <span class="n">agg_spec</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">agg_spec</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span> 
+            <span class="n">agg_col</span> <span class="o">=</span> <span class="n">agg_spec</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">agg_spec</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
 
-            <span class="k">if</span> <span class="n">agg_func</span> <span class="o">==</span> <span class="s2">&quot;count&quot;</span><span class="p">:</span> 
-                <span class="k">continue</span> <span class="c1"># Count is handled by _count increment above</span>
+            <span class="k">if</span> <span class="n">agg_func</span> <span class="o">==</span> <span class="s2">&quot;count&quot;</span><span class="p">:</span>
+                <span class="k">continue</span>  <span class="c1"># Count is handled by _count increment above</span>
 
             <span class="n">val</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">agg_col</span><span class="p">)</span>
             <span class="c1"># storage_key_for_agg is used to store the collected data for a specific (agg_func, agg_col) pair</span>
-            <span class="n">storage_key_for_agg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">agg_func</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">agg_col</span><span class="si">}</span><span class="s2">&quot;</span> 
+            <span class="n">storage_key_for_agg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">agg_func</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">agg_col</span><span class="si">}</span><span class="s2">&quot;</span>
 
             <span class="k">if</span> <span class="n">agg_func</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;sum&quot;</span><span class="p">,</span> <span class="s2">&quot;avg&quot;</span><span class="p">,</span> <span class="s2">&quot;min&quot;</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">,</span> <span class="s2">&quot;list&quot;</span><span class="p">]:</span>
                 <span class="c1"># These aggregations collect all values from agg_col into a list</span>
@@ -1211,8 +1331,12 @@ with columns for the group key and each specified aggregation.</p>
             <span class="k">elif</span> <span class="n">agg_func</span> <span class="o">==</span> <span class="s2">&quot;last&quot;</span><span class="p">:</span>
                 <span class="c1"># Always store/overwrite with the latest value for this agg_col in the group</span>
                 <span class="n">group_values</span><span class="p">[</span><span class="n">storage_key_for_agg</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
-            <span class="k">elif</span> <span class="n">agg_func</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">AGGREGATION_DISPATCHER</span><span class="p">:</span> <span class="c1"># Check for unknown agg functions early</span>
-                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported aggregation function during collection: </span><span class="si">{</span><span class="n">agg_func</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="p">(</span>
+                <span class="n">agg_func</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">AGGREGATION_DISPATCHER</span>
+            <span class="p">):</span>  <span class="c1"># Check for unknown agg functions early</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Unsupported aggregation function during collection: </span><span class="si">{</span><span class="n">agg_func</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
             <span class="c1"># Else: If agg_func is in dispatcher but not explicitly handled above,</span>
             <span class="c1"># it implies it doesn&#39;t need special data collection beyond what other</span>
             <span class="c1"># similar functions might do, or it&#39;s an error in dispatcher setup.</span>
@@ -1228,7 +1352,9 @@ with columns for the group key and each specified aggregation.</p>
             <span class="n">agg_col_name</span> <span class="o">=</span> <span class="n">agg_spec</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">agg_spec</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
             <span class="c1"># extra_args = agg_spec[2:] # For future use, e.g., a general reduce</span>
 
-            <span class="n">output_col_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">agg_func_name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">agg_col_name</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="n">agg_col_name</span> <span class="k">else</span> <span class="n">agg_func_name</span>
+            <span class="n">output_col_name</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">agg_func_name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">agg_col_name</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="n">agg_col_name</span> <span class="k">else</span> <span class="n">agg_func_name</span>
+            <span class="p">)</span>
 
             <span class="k">if</span> <span class="n">agg_func_name</span> <span class="o">==</span> <span class="s2">&quot;count&quot;</span><span class="p">:</span>
                 <span class="n">processed_row</span><span class="p">[</span><span class="n">output_col_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">collected_group_values</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;_count&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
@@ -1239,10 +1365,14 @@ with columns for the group key and each specified aggregation.</p>
 
                 <span class="k">if</span> <span class="n">agg_func_name</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;first&quot;</span><span class="p">,</span> <span class="s2">&quot;last&quot;</span><span class="p">]:</span>
                     <span class="c1"># For &#39;first&#39;/&#39;last&#39;, the stored data is the single value itself</span>
-                    <span class="n">data_to_aggregate</span> <span class="o">=</span> <span class="n">collected_group_values</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">raw_data_storage_key</span><span class="p">)</span> <span class="c1"># Defaults to None</span>
-                <span class="k">else</span><span class="p">:</span> 
+                    <span class="n">data_to_aggregate</span> <span class="o">=</span> <span class="n">collected_group_values</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                        <span class="n">raw_data_storage_key</span>
+                    <span class="p">)</span>  <span class="c1"># Defaults to None</span>
+                <span class="k">else</span><span class="p">:</span>
                     <span class="c1"># For list-based aggregations (&#39;sum&#39;, &#39;avg&#39;, &#39;min&#39;, &#39;max&#39;, &#39;list&#39;)</span>
-                    <span class="n">data_to_aggregate</span> <span class="o">=</span> <span class="n">collected_group_values</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">raw_data_storage_key</span><span class="p">,</span> <span class="p">[])</span>
+                    <span class="n">data_to_aggregate</span> <span class="o">=</span> <span class="n">collected_group_values</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                        <span class="n">raw_data_storage_key</span><span class="p">,</span> <span class="p">[]</span>
+                    <span class="p">)</span>
 
                 <span class="c1"># If aggregator_func needed extra_args (e.g. for a future &#39;reduce&#39;),</span>
                 <span class="c1"># they would be passed here:</span>
@@ -1251,7 +1381,9 @@ with columns for the group key and each specified aggregation.</p>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># This case should ideally not be reached if the collection phase</span>
                 <span class="c1"># and dispatcher are correctly set up.</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported aggregation function during processing: </span><span class="si">{</span><span class="n">agg_func_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Unsupported aggregation function during processing: </span><span class="si">{</span><span class="n">agg_func_name</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
 
         <span class="n">result_relation</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">processed_row</span><span class="p">)</span>
 
@@ -1273,8 +1405,9 @@ with columns for the group key and each specified aggregation.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Returns rows common to both relations.
-Row comparison is based on their hashable representation.</p>
+        <p>Return rows common to both relations.</p>
+<p>Creates a new relation containing only rows that are present in both
+input relations.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -1297,7 +1430,7 @@ Row comparison is based on their hashable representation.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The first relation (list of rows).</p>
+                <p>The first relation (list of dictionaries).</p>
               </div>
             </td>
             <td>
@@ -1313,7 +1446,7 @@ Row comparison is based on their hashable representation.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The second relation (list of rows).</p>
+                <p>The second relation (list of dictionaries).</p>
               </div>
             </td>
             <td>
@@ -1347,32 +1480,60 @@ Row comparison is based on their hashable representation.</p>
     </table>
 
 
+<details class="example" open>
+  <summary>Example</summary>
+  <blockquote>
+<blockquote>
+<blockquote>
+<p>a = [{"name": "Alice"}, {"name": "Bob"}]
+b = [{"name": "Alice"}, {"name": "Carol"}]
+intersection(a, b)
+[{"name": "Alice"}]</p>
+</blockquote>
+</blockquote>
+</blockquote>
+</details>
+
             <details class="quote">
               <summary>Source code in <code>ja/core.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">164</span>
-<span class="normal">165</span>
-<span class="normal">166</span>
-<span class="normal">167</span>
-<span class="normal">168</span>
-<span class="normal">169</span>
-<span class="normal">170</span>
-<span class="normal">171</span>
-<span class="normal">172</span>
-<span class="normal">173</span>
-<span class="normal">174</span>
-<span class="normal">175</span>
-<span class="normal">176</span>
-<span class="normal">177</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">intersection</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="n">Relation</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">Relation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Relation</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Returns rows common to both relations.</span>
-<span class="sd">    Row comparison is based on their hashable representation.</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">237</span>
+<span class="normal">238</span>
+<span class="normal">239</span>
+<span class="normal">240</span>
+<span class="normal">241</span>
+<span class="normal">242</span>
+<span class="normal">243</span>
+<span class="normal">244</span>
+<span class="normal">245</span>
+<span class="normal">246</span>
+<span class="normal">247</span>
+<span class="normal">248</span>
+<span class="normal">249</span>
+<span class="normal">250</span>
+<span class="normal">251</span>
+<span class="normal">252</span>
+<span class="normal">253</span>
+<span class="normal">254</span>
+<span class="normal">255</span>
+<span class="normal">256</span>
+<span class="normal">257</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">intersection</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="n">Relation</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">Relation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Relation</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return rows common to both relations.</span>
+
+<span class="sd">    Creates a new relation containing only rows that are present in both</span>
+<span class="sd">    input relations.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        a: The first relation (list of rows).</span>
-<span class="sd">        b: The second relation (list of rows).</span>
+<span class="sd">        a: The first relation (list of dictionaries).</span>
+<span class="sd">        b: The second relation (list of dictionaries).</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A new relation containing only rows that are present in both &#39;a&#39; and &#39;b&#39;.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; a = [{&quot;name&quot;: &quot;Alice&quot;}, {&quot;name&quot;: &quot;Bob&quot;}]</span>
+<span class="sd">        &gt;&gt;&gt; b = [{&quot;name&quot;: &quot;Alice&quot;}, {&quot;name&quot;: &quot;Carol&quot;}]</span>
+<span class="sd">        &gt;&gt;&gt; intersection(a, b)</span>
+<span class="sd">        [{&quot;name&quot;: &quot;Alice&quot;}]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">b_set</span> <span class="o">=</span> <span class="p">{</span><span class="n">_row_to_hashable_key</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">b</span><span class="p">}</span>
     <span class="k">return</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">a</span> <span class="k">if</span> <span class="n">_row_to_hashable_key</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="ow">in</span> <span class="n">b_set</span><span class="p">]</span>
@@ -1393,7 +1554,9 @@ Row comparison is based on their hashable representation.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Combines rows from two relations based on specified join conditions.</p>
+        <p>Combine rows from two relations based on specified join conditions.</p>
+<p>Performs an inner join between two relations, matching rows where the
+specified columns have equal values.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -1416,7 +1579,7 @@ Row comparison is based on their hashable representation.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The left relation (list of rows).</p>
+                <p>The left relation (list of dictionaries).</p>
               </div>
             </td>
             <td>
@@ -1432,7 +1595,7 @@ Row comparison is based on their hashable representation.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The right relation (list of rows).</p>
+                <p>The right relation (list of dictionaries).</p>
               </div>
             </td>
             <td>
@@ -1485,7 +1648,7 @@ specifies the columns to join on.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The resulting row initially contains all columns from the left row.</p>
+                <p>The resulting rows contain all columns from the left row, plus columns</p>
               </div>
             </td>
           </tr>
@@ -1495,37 +1658,7 @@ specifies the columns to join on.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Then, columns from the matching right row are considered: if a right</p>
-              </div>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                  <code><span title="ja.core.Relation">Relation</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>column's name is not present in the left row's columns AND is not one</p>
-              </div>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                  <code><span title="ja.core.Relation">Relation</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>of the column names used on the right side of the join condition (from</p>
-              </div>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                  <code><span title="ja.core.Relation">Relation</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>the <code>on</code> parameter), it is added to the result.</p>
+                <p>from the matching right row (excluding right columns used in join conditions).</p>
               </div>
             </td>
           </tr>
@@ -1533,63 +1666,87 @@ specifies the columns to join on.</p>
     </table>
 
 
+<details class="example" open>
+  <summary>Example</summary>
+  <blockquote>
+<blockquote>
+<blockquote>
+<p>left = [{"id": 1, "name": "Alice"}]
+right = [{"user_id": 1, "score": 95}]
+join(left, right, [("id", "user_id")])
+[{"id": 1, "name": "Alice", "score": 95}]</p>
+</blockquote>
+</blockquote>
+</blockquote>
+</details>
+
             <details class="quote">
               <summary>Source code in <code>ja/core.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">60</span>
-<span class="normal">61</span>
-<span class="normal">62</span>
-<span class="normal">63</span>
-<span class="normal">64</span>
-<span class="normal">65</span>
-<span class="normal">66</span>
-<span class="normal">67</span>
-<span class="normal">68</span>
-<span class="normal">69</span>
-<span class="normal">70</span>
-<span class="normal">71</span>
-<span class="normal">72</span>
-<span class="normal">73</span>
-<span class="normal">74</span>
-<span class="normal">75</span>
-<span class="normal">76</span>
-<span class="normal">77</span>
-<span class="normal">78</span>
-<span class="normal">79</span>
-<span class="normal">80</span>
-<span class="normal">81</span>
-<span class="normal">82</span>
-<span class="normal">83</span>
-<span class="normal">84</span>
-<span class="normal">85</span>
-<span class="normal">86</span>
-<span class="normal">87</span>
-<span class="normal">88</span>
-<span class="normal">89</span>
-<span class="normal">90</span>
-<span class="normal">91</span>
-<span class="normal">92</span>
-<span class="normal">93</span>
-<span class="normal">94</span>
-<span class="normal">95</span>
-<span class="normal">96</span>
-<span class="normal">97</span>
-<span class="normal">98</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">join</span><span class="p">(</span><span class="n">left</span><span class="p">:</span> <span class="n">Relation</span><span class="p">,</span> <span class="n">right</span><span class="p">:</span> <span class="n">Relation</span><span class="p">,</span> <span class="n">on</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">Relation</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Combines rows from two relations based on specified join conditions.</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span>
+<span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">join</span><span class="p">(</span><span class="n">left</span><span class="p">:</span> <span class="n">Relation</span><span class="p">,</span> <span class="n">right</span><span class="p">:</span> <span class="n">Relation</span><span class="p">,</span> <span class="n">on</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">Relation</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Combine rows from two relations based on specified join conditions.</span>
+
+<span class="sd">    Performs an inner join between two relations, matching rows where the</span>
+<span class="sd">    specified columns have equal values.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        left: The left relation (list of rows).</span>
-<span class="sd">        right: The right relation (list of rows).</span>
+<span class="sd">        left: The left relation (list of dictionaries).</span>
+<span class="sd">        right: The right relation (list of dictionaries).</span>
 <span class="sd">        on: A list of tuples, where each tuple (left_col, right_col)</span>
 <span class="sd">            specifies the columns to join on.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A new relation containing the merged rows that satisfy the join conditions.</span>
-<span class="sd">        The resulting row initially contains all columns from the left row.</span>
-<span class="sd">        Then, columns from the matching right row are considered: if a right</span>
-<span class="sd">        column&#39;s name is not present in the left row&#39;s columns AND is not one</span>
-<span class="sd">        of the column names used on the right side of the join condition (from</span>
-<span class="sd">        the `on` parameter), it is added to the result.</span>
+<span class="sd">        The resulting rows contain all columns from the left row, plus columns</span>
+<span class="sd">        from the matching right row (excluding right columns used in join conditions).</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; left = [{&quot;id&quot;: 1, &quot;name&quot;: &quot;Alice&quot;}]</span>
+<span class="sd">        &gt;&gt;&gt; right = [{&quot;user_id&quot;: 1, &quot;score&quot;: 95}]</span>
+<span class="sd">        &gt;&gt;&gt; join(left, right, [(&quot;id&quot;, &quot;user_id&quot;)])</span>
+<span class="sd">        [{&quot;id&quot;: 1, &quot;name&quot;: &quot;Alice&quot;, &quot;score&quot;: 95}]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">right_index</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">r_row_build_idx</span> <span class="ow">in</span> <span class="n">right</span><span class="p">:</span>
@@ -1629,7 +1786,8 @@ specifies the columns to join on.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Computes the Cartesian product of two relations.</p>
+        <p>Compute the Cartesian product of two relations.</p>
+<p>Creates all possible combinations of rows from the two input relations.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -1652,7 +1810,7 @@ specifies the columns to join on.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The first relation (list of rows).</p>
+                <p>The first relation (list of dictionaries).</p>
               </div>
             </td>
             <td>
@@ -1668,7 +1826,7 @@ specifies the columns to join on.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The second relation (list of rows).</p>
+                <p>The second relation (list of dictionaries).</p>
               </div>
             </td>
             <td>
@@ -1702,37 +1860,65 @@ specifies the columns to join on.</p>
     </table>
 
 
+<details class="example" open>
+  <summary>Example</summary>
+  <blockquote>
+<blockquote>
+<blockquote>
+<p>a = [{"x": 1}]
+b = [{"y": 2}, {"y": 3}]
+product(a, b)
+[{"x": 1, "y": 2}, {"x": 1, "y": 3}]</p>
+</blockquote>
+</blockquote>
+</blockquote>
+</details>
+
             <details class="quote">
               <summary>Source code in <code>ja/core.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">205</span>
-<span class="normal">206</span>
-<span class="normal">207</span>
-<span class="normal">208</span>
-<span class="normal">209</span>
-<span class="normal">210</span>
-<span class="normal">211</span>
-<span class="normal">212</span>
-<span class="normal">213</span>
-<span class="normal">214</span>
-<span class="normal">215</span>
-<span class="normal">216</span>
-<span class="normal">217</span>
-<span class="normal">218</span>
-<span class="normal">219</span>
-<span class="normal">220</span>
-<span class="normal">221</span>
-<span class="normal">222</span>
-<span class="normal">223</span>
-<span class="normal">224</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">product</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="n">Relation</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">Relation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Relation</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Computes the Cartesian product of two relations.</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">295</span>
+<span class="normal">296</span>
+<span class="normal">297</span>
+<span class="normal">298</span>
+<span class="normal">299</span>
+<span class="normal">300</span>
+<span class="normal">301</span>
+<span class="normal">302</span>
+<span class="normal">303</span>
+<span class="normal">304</span>
+<span class="normal">305</span>
+<span class="normal">306</span>
+<span class="normal">307</span>
+<span class="normal">308</span>
+<span class="normal">309</span>
+<span class="normal">310</span>
+<span class="normal">311</span>
+<span class="normal">312</span>
+<span class="normal">313</span>
+<span class="normal">314</span>
+<span class="normal">315</span>
+<span class="normal">316</span>
+<span class="normal">317</span>
+<span class="normal">318</span>
+<span class="normal">319</span>
+<span class="normal">320</span>
+<span class="normal">321</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">product</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="n">Relation</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">Relation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Relation</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute the Cartesian product of two relations.</span>
+
+<span class="sd">    Creates all possible combinations of rows from the two input relations.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        a: The first relation (list of rows).</span>
-<span class="sd">        b: The second relation (list of rows).</span>
+<span class="sd">        a: The first relation (list of dictionaries).</span>
+<span class="sd">        b: The second relation (list of dictionaries).</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A new relation containing all combinations of rows from &#39;a&#39; and &#39;b&#39;.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; a = [{&quot;x&quot;: 1}]</span>
+<span class="sd">        &gt;&gt;&gt; b = [{&quot;y&quot;: 2}, {&quot;y&quot;: 3}]</span>
+<span class="sd">        &gt;&gt;&gt; product(a, b)</span>
+<span class="sd">        [{&quot;x&quot;: 1, &quot;y&quot;: 2}, {&quot;x&quot;: 1, &quot;y&quot;: 3}]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">out</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">r1</span> <span class="ow">in</span> <span class="n">a</span><span class="p">:</span>
@@ -1760,7 +1946,9 @@ specifies the columns to join on.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Selects specific columns from a relation.</p>
+        <p>Select specific columns from a relation.</p>
+<p>Creates a new relation containing only the specified columns from each row.
+If a row doesn't contain a specified column, it's omitted for that row.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -1783,7 +1971,7 @@ specifies the columns to join on.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The input relation (list of rows).</p>
+                <p>The input relation (list of dictionaries).</p>
               </div>
             </td>
             <td>
@@ -1829,13 +2017,151 @@ specifies the columns to join on.</p>
               </div>
             </td>
           </tr>
+      </tbody>
+    </table>
+
+
+<details class="example" open>
+  <summary>Example</summary>
+  <blockquote>
+<blockquote>
+<blockquote>
+<p>data = [{"name": "Alice", "age": 30, "city": "NYC"}]
+project(data, ["name", "age"])
+[{"name": "Alice", "age": 30}]</p>
+</blockquote>
+</blockquote>
+</blockquote>
+</details>
+
+            <details class="quote">
+              <summary>Source code in <code>ja/core.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">77</span>
+<span class="normal">78</span>
+<span class="normal">79</span>
+<span class="normal">80</span>
+<span class="normal">81</span>
+<span class="normal">82</span>
+<span class="normal">83</span>
+<span class="normal">84</span>
+<span class="normal">85</span>
+<span class="normal">86</span>
+<span class="normal">87</span>
+<span class="normal">88</span>
+<span class="normal">89</span>
+<span class="normal">90</span>
+<span class="normal">91</span>
+<span class="normal">92</span>
+<span class="normal">93</span>
+<span class="normal">94</span>
+<span class="normal">95</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">project</span><span class="p">(</span><span class="n">relation</span><span class="p">:</span> <span class="n">Relation</span><span class="p">,</span> <span class="n">columns</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Relation</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Select specific columns from a relation.</span>
+
+<span class="sd">    Creates a new relation containing only the specified columns from each row.</span>
+<span class="sd">    If a row doesn&#39;t contain a specified column, it&#39;s omitted for that row.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        relation: The input relation (list of dictionaries).</span>
+<span class="sd">        columns: A list of column names to include in the result.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A new relation containing only the specified columns for each row.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; data = [{&quot;name&quot;: &quot;Alice&quot;, &quot;age&quot;: 30, &quot;city&quot;: &quot;NYC&quot;}]</span>
+<span class="sd">        &gt;&gt;&gt; project(data, [&quot;name&quot;, &quot;age&quot;])</span>
+<span class="sd">        [{&quot;name&quot;: &quot;Alice&quot;, &quot;age&quot;: 30}]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[{</span><span class="n">col</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">columns</span> <span class="k">if</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">row</span><span class="p">}</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">relation</span><span class="p">]</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="ja.read_jsonl" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">read_jsonl</span><span class="p">(</span><span class="n">input_stream</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Read JSONL data from a file-like object.</p>
+<p>Parses each line as JSON and returns a list of the parsed objects.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ja.core.Relation">Relation</span></code>
+                <code>input_stream</code>
+            </td>
+            <td>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>If a row does not contain a specified column, it's omitted for that row.</p>
+                <p>A file-like object containing JSONL data.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>A list of parsed JSON objects.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<p><span class="doc-section-title">Raises:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="json.JSONDecodeError">JSONDecodeError</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>If any line contains invalid JSON.</p>
               </div>
             </td>
           </tr>
@@ -1844,32 +2170,36 @@ specifies the columns to join on.</p>
 
 
             <details class="quote">
-              <summary>Source code in <code>ja/core.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">46</span>
-<span class="normal">47</span>
-<span class="normal">48</span>
-<span class="normal">49</span>
-<span class="normal">50</span>
-<span class="normal">51</span>
-<span class="normal">52</span>
-<span class="normal">53</span>
-<span class="normal">54</span>
-<span class="normal">55</span>
-<span class="normal">56</span>
+              <summary>Source code in <code>ja/commands.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">56</span>
 <span class="normal">57</span>
-<span class="normal">58</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">project</span><span class="p">(</span><span class="n">relation</span><span class="p">:</span> <span class="n">Relation</span><span class="p">,</span> <span class="n">columns</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Relation</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Selects specific columns from a relation.</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read_jsonl</span><span class="p">(</span><span class="n">input_stream</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read JSONL data from a file-like object.</span>
+
+<span class="sd">    Parses each line as JSON and returns a list of the parsed objects.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        relation: The input relation (list of rows).</span>
-<span class="sd">        columns: A list of column names to include in the result.</span>
+<span class="sd">        input_stream: A file-like object containing JSONL data.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        A new relation containing only the specified columns for each row.</span>
-<span class="sd">        If a row does not contain a specified column, it&#39;s omitted for that row.</span>
+<span class="sd">        A list of parsed JSON objects.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        json.JSONDecodeError: If any line contains invalid JSON.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="p">[{</span><span class="n">col</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">columns</span> <span class="k">if</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">row</span><span class="p">}</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">relation</span><span class="p">]</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">input_stream</span><span class="p">]</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -1887,7 +2217,9 @@ specifies the columns to join on.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Renames columns in a relation.</p>
+        <p>Rename columns in a relation.</p>
+<p>Creates a new relation with specified columns renamed according to
+the provided mapping.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -1910,7 +2242,7 @@ specifies the columns to join on.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The input relation (list of rows).</p>
+                <p>The input relation (list of dictionaries).</p>
               </div>
             </td>
             <td>
@@ -1960,29 +2292,56 @@ specifies the columns to join on.</p>
     </table>
 
 
+<details class="example" open>
+  <summary>Example</summary>
+  <blockquote>
+<blockquote>
+<blockquote>
+<p>data = [{"old_name": "Alice", "age": 30}]
+rename(data, {"old_name": "name"})
+[{"name": "Alice", "age": 30}]</p>
+</blockquote>
+</blockquote>
+</blockquote>
+</details>
+
             <details class="quote">
               <summary>Source code in <code>ja/core.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">100</span>
-<span class="normal">101</span>
-<span class="normal">102</span>
-<span class="normal">103</span>
-<span class="normal">104</span>
-<span class="normal">105</span>
-<span class="normal">106</span>
-<span class="normal">107</span>
-<span class="normal">108</span>
-<span class="normal">109</span>
-<span class="normal">110</span>
-<span class="normal">111</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">rename</span><span class="p">(</span><span class="n">relation</span><span class="p">:</span> <span class="n">Relation</span><span class="p">,</span> <span class="n">renames</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Relation</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Renames columns in a relation.</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">rename</span><span class="p">(</span><span class="n">relation</span><span class="p">:</span> <span class="n">Relation</span><span class="p">,</span> <span class="n">renames</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Relation</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Rename columns in a relation.</span>
+
+<span class="sd">    Creates a new relation with specified columns renamed according to</span>
+<span class="sd">    the provided mapping.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        relation: The input relation (list of rows).</span>
+<span class="sd">        relation: The input relation (list of dictionaries).</span>
 <span class="sd">        renames: A dictionary mapping old column names to new column names.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A new relation with specified columns renamed.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; data = [{&quot;old_name&quot;: &quot;Alice&quot;, &quot;age&quot;: 30}]</span>
+<span class="sd">        &gt;&gt;&gt; rename(data, {&quot;old_name&quot;: &quot;name&quot;})</span>
+<span class="sd">        [{&quot;name&quot;: &quot;Alice&quot;, &quot;age&quot;: 30}]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="p">[{</span><span class="n">renames</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">row</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">relation</span><span class="p">]</span>
 </code></pre></div></td></tr></table></div>
@@ -1995,14 +2354,16 @@ specifies the columns to join on.</p>
 
 
 <h2 id="ja.select" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">select</span><span class="p">(</span><span class="n">relation</span><span class="p">,</span> <span class="n">predicate</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">select</span><span class="p">(</span><span class="n">relation</span><span class="p">,</span> <span class="n">expression</span><span class="p">)</span></code>
 
 </h2>
 
 
     <div class="doc doc-contents ">
 
-        <p>Filters rows from a relation based on a predicate.</p>
+        <p>Filter rows from a relation based on a JMESPath expression.</p>
+<p>Uses JMESPath to filter the relation, keeping only rows that match
+the given expression criteria.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -2025,7 +2386,7 @@ specifies the columns to join on.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The input relation (list of rows).</p>
+                <p>The input relation (list of dictionaries).</p>
               </div>
             </td>
             <td>
@@ -2034,15 +2395,13 @@ specifies the columns to join on.</p>
           </tr>
           <tr class="doc-section-item">
             <td>
-                <code>predicate</code>
+                <code>expression</code>
             </td>
             <td>
-                  <code><span title="typing.Callable">Callable</span>[[<span title="ja.core.Row">Row</span>], <span title="bool">bool</span>]</code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>A function that takes a row and returns True if the row
-       should be included in the result.</p>
+                <p>A JMESPath expression string or compiled JMESPath expression.</p>
               </div>
             </td>
             <td>
@@ -2068,7 +2427,7 @@ specifies the columns to join on.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>A new relation containing only the rows for which the predicate is True.</p>
+                <p>A new relation containing only the rows that match the expression.</p>
               </div>
             </td>
           </tr>
@@ -2076,33 +2435,66 @@ specifies the columns to join on.</p>
     </table>
 
 
+<details class="example" open>
+  <summary>Example</summary>
+  <blockquote>
+<blockquote>
+<blockquote>
+<p>data = [{"name": "Alice", "age": 30}, {"name": "Bob", "age": 25}]
+select(data, "age &gt; <code>27</code>")
+[{"name": "Alice", "age": 30}]</p>
+</blockquote>
+</blockquote>
+</blockquote>
+</details>
+
             <details class="quote">
               <summary>Source code in <code>ja/core.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">32</span>
-<span class="normal">33</span>
-<span class="normal">34</span>
-<span class="normal">35</span>
-<span class="normal">36</span>
-<span class="normal">37</span>
-<span class="normal">38</span>
-<span class="normal">39</span>
-<span class="normal">40</span>
-<span class="normal">41</span>
-<span class="normal">42</span>
-<span class="normal">43</span>
-<span class="normal">44</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">select</span><span class="p">(</span><span class="n">relation</span><span class="p">:</span> <span class="n">Relation</span><span class="p">,</span> <span class="n">predicate</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Row</span><span class="p">],</span> <span class="nb">bool</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Relation</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Filters rows from a relation based on a predicate.</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">select</span><span class="p">(</span><span class="n">relation</span><span class="p">:</span> <span class="n">Relation</span><span class="p">,</span> <span class="n">expression</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Relation</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Filter rows from a relation based on a JMESPath expression.</span>
+
+<span class="sd">    Uses JMESPath to filter the relation, keeping only rows that match</span>
+<span class="sd">    the given expression criteria.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        relation: The input relation (list of rows).</span>
-<span class="sd">        predicate: A function that takes a row and returns True if the row</span>
-<span class="sd">                   should be included in the result.</span>
+<span class="sd">        relation: The input relation (list of dictionaries).</span>
+<span class="sd">        expression: A JMESPath expression string or compiled JMESPath expression.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        A new relation containing only the rows for which the predicate is True.</span>
+<span class="sd">        A new relation containing only the rows that match the expression.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; data = [{&quot;name&quot;: &quot;Alice&quot;, &quot;age&quot;: 30}, {&quot;name&quot;: &quot;Bob&quot;, &quot;age&quot;: 25}]</span>
+<span class="sd">        &gt;&gt;&gt; select(data, &quot;age &gt; `27`&quot;)</span>
+<span class="sd">        [{&quot;name&quot;: &quot;Alice&quot;, &quot;age&quot;: 30}]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="p">[</span><span class="n">row</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">relation</span> <span class="k">if</span> <span class="n">predicate</span><span class="p">(</span><span class="n">row</span><span class="p">)]</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expression</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">expression</span> <span class="o">=</span> <span class="n">jmespath</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[?</span><span class="si">{</span><span class="n">expression</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+
+    <span class="c1"># JMESPath works on the entire relation (JSON document)</span>
+    <span class="k">return</span> <span class="n">expression</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">relation</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -2113,14 +2505,16 @@ specifies the columns to join on.</p>
 
 
 <h2 id="ja.sort_by" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">sort_by</span><span class="p">(</span><span class="n">relation</span><span class="p">,</span> <span class="n">keys</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">sort_by</span><span class="p">(</span><span class="n">relation</span><span class="p">,</span> <span class="n">keys</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
 </h2>
 
 
     <div class="doc doc-contents ">
 
-        <p>Sorts a relation by specified keys.</p>
+        <p>Sort a relation by specified keys.</p>
+<p>Sorts the relation by the specified column names in order. Missing values
+(None) are sorted before non-None values.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -2143,7 +2537,7 @@ specifies the columns to join on.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The input relation (list of rows).</p>
+                <p>The input relation (list of dictionaries).</p>
               </div>
             </td>
             <td>
@@ -2160,12 +2554,27 @@ specifies the columns to join on.</p>
             <td>
               <div class="doc-md-description">
                 <p>A list of column names to sort by. The sort is performed in
-  the order of the columns specified. Missing values (None)
-  are sorted before non-None values.</p>
+  the order of the columns specified.</p>
               </div>
             </td>
             <td>
                 <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>reverse</code>
+            </td>
+            <td>
+                  <code><span title="bool">bool</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>If True, sort in descending order.</p>
+              </div>
+            </td>
+            <td>
+                  <code>False</code>
             </td>
           </tr>
       </tbody>
@@ -2195,57 +2604,86 @@ specifies the columns to join on.</p>
     </table>
 
 
+<details class="example" open>
+  <summary>Example</summary>
+  <blockquote>
+<blockquote>
+<blockquote>
+<p>data = [{"name": "Bob", "age": 30}, {"name": "Alice", "age": 25}]
+sort_by(data, ["name"])
+[{"name": "Alice", "age": 25}, {"name": "Bob", "age": 30}]</p>
+</blockquote>
+</blockquote>
+</blockquote>
+</details>
+
             <details class="quote">
               <summary>Source code in <code>ja/core.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">179</span>
-<span class="normal">180</span>
-<span class="normal">181</span>
-<span class="normal">182</span>
-<span class="normal">183</span>
-<span class="normal">184</span>
-<span class="normal">185</span>
-<span class="normal">186</span>
-<span class="normal">187</span>
-<span class="normal">188</span>
-<span class="normal">189</span>
-<span class="normal">190</span>
-<span class="normal">191</span>
-<span class="normal">192</span>
-<span class="normal">193</span>
-<span class="normal">194</span>
-<span class="normal">195</span>
-<span class="normal">196</span>
-<span class="normal">197</span>
-<span class="normal">198</span>
-<span class="normal">199</span>
-<span class="normal">200</span>
-<span class="normal">201</span>
-<span class="normal">202</span>
-<span class="normal">203</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">sort_by</span><span class="p">(</span><span class="n">relation</span><span class="p">:</span> <span class="n">Relation</span><span class="p">,</span> <span class="n">keys</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Relation</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Sorts a relation by specified keys.</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">260</span>
+<span class="normal">261</span>
+<span class="normal">262</span>
+<span class="normal">263</span>
+<span class="normal">264</span>
+<span class="normal">265</span>
+<span class="normal">266</span>
+<span class="normal">267</span>
+<span class="normal">268</span>
+<span class="normal">269</span>
+<span class="normal">270</span>
+<span class="normal">271</span>
+<span class="normal">272</span>
+<span class="normal">273</span>
+<span class="normal">274</span>
+<span class="normal">275</span>
+<span class="normal">276</span>
+<span class="normal">277</span>
+<span class="normal">278</span>
+<span class="normal">279</span>
+<span class="normal">280</span>
+<span class="normal">281</span>
+<span class="normal">282</span>
+<span class="normal">283</span>
+<span class="normal">284</span>
+<span class="normal">285</span>
+<span class="normal">286</span>
+<span class="normal">287</span>
+<span class="normal">288</span>
+<span class="normal">289</span>
+<span class="normal">290</span>
+<span class="normal">291</span>
+<span class="normal">292</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">sort_by</span><span class="p">(</span><span class="n">relation</span><span class="p">:</span> <span class="n">Relation</span><span class="p">,</span> <span class="n">keys</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">reverse</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Relation</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sort a relation by specified keys.</span>
+
+<span class="sd">    Sorts the relation by the specified column names in order. Missing values</span>
+<span class="sd">    (None) are sorted before non-None values.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        relation: The input relation (list of rows).</span>
+<span class="sd">        relation: The input relation (list of dictionaries).</span>
 <span class="sd">        keys: A list of column names to sort by. The sort is performed in</span>
-<span class="sd">              the order of the columns specified. Missing values (None)</span>
-<span class="sd">              are sorted before non-None values.</span>
+<span class="sd">              the order of the columns specified.</span>
+<span class="sd">        reverse: If True, sort in descending order.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A new relation sorted by the specified keys.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; data = [{&quot;name&quot;: &quot;Bob&quot;, &quot;age&quot;: 30}, {&quot;name&quot;: &quot;Alice&quot;, &quot;age&quot;: 25}]</span>
+<span class="sd">        &gt;&gt;&gt; sort_by(data, [&quot;name&quot;])</span>
+<span class="sd">        [{&quot;name&quot;: &quot;Alice&quot;, &quot;age&quot;: 25}, {&quot;name&quot;: &quot;Bob&quot;, &quot;age&quot;: 30}]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span><span class="w"> </span><span class="nf">sort_key_func</span><span class="p">(</span><span class="n">row</span><span class="p">:</span> <span class="n">Row</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
         <span class="n">key_parts</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
             <span class="n">value</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="c1"># Sort None values first by using a lower first element in the tuple part</span>
-                <span class="n">key_parts</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span> 
+                <span class="n">key_parts</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">key_parts</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span>
         <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">key_parts</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">relation</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">sort_key_func</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">relation</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">sort_key_func</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="n">reverse</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -2263,9 +2701,9 @@ specifies the columns to join on.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Returns all rows from two relations; duplicates may be present.
-This is equivalent to list concatenation. For a set union (distinct rows),
-pipe the result through <code>distinct</code>.</p>
+        <p>Return all rows from two relations.</p>
+<p>Concatenates two relations, preserving all rows including duplicates.
+For distinct union, pipe the result through <code>distinct</code>.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -2288,7 +2726,7 @@ pipe the result through <code>distinct</code>.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The first relation (list of rows).</p>
+                <p>The first relation (list of dictionaries).</p>
               </div>
             </td>
             <td>
@@ -2304,7 +2742,7 @@ pipe the result through <code>distinct</code>.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The second relation (list of rows).</p>
+                <p>The second relation (list of dictionaries).</p>
               </div>
             </td>
             <td>
@@ -2338,33 +2776,59 @@ pipe the result through <code>distinct</code>.</p>
     </table>
 
 
+<details class="example" open>
+  <summary>Example</summary>
+  <blockquote>
+<blockquote>
+<blockquote>
+<p>a = [{"name": "Alice"}]
+b = [{"name": "Bob"}]
+union(a, b)
+[{"name": "Alice"}, {"name": "Bob"}]</p>
+</blockquote>
+</blockquote>
+</blockquote>
+</details>
+
             <details class="quote">
               <summary>Source code in <code>ja/core.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">113</span>
-<span class="normal">114</span>
-<span class="normal">115</span>
-<span class="normal">116</span>
-<span class="normal">117</span>
-<span class="normal">118</span>
-<span class="normal">119</span>
-<span class="normal">120</span>
-<span class="normal">121</span>
-<span class="normal">122</span>
-<span class="normal">123</span>
-<span class="normal">124</span>
-<span class="normal">125</span>
-<span class="normal">126</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">union</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="n">Relation</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">Relation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Relation</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Returns all rows from two relations; duplicates may be present.</span>
-<span class="sd">    This is equivalent to list concatenation. For a set union (distinct rows),</span>
-<span class="sd">    pipe the result through `distinct`.</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span>
+<span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span>
+<span class="normal">181</span>
+<span class="normal">182</span>
+<span class="normal">183</span>
+<span class="normal">184</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">union</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="n">Relation</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">Relation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Relation</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return all rows from two relations.</span>
+
+<span class="sd">    Concatenates two relations, preserving all rows including duplicates.</span>
+<span class="sd">    For distinct union, pipe the result through `distinct`.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        a: The first relation (list of rows).</span>
-<span class="sd">        b: The second relation (list of rows).</span>
+<span class="sd">        a: The first relation (list of dictionaries).</span>
+<span class="sd">        b: The second relation (list of dictionaries).</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A new relation containing all rows from both input relations.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; a = [{&quot;name&quot;: &quot;Alice&quot;}]</span>
+<span class="sd">        &gt;&gt;&gt; b = [{&quot;name&quot;: &quot;Bob&quot;}]</span>
+<span class="sd">        &gt;&gt;&gt; union(a, b)</span>
+<span class="sd">        [{&quot;name&quot;: &quot;Alice&quot;}, {&quot;name&quot;: &quot;Bob&quot;}]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
 </code></pre></div></td></tr></table></div>
@@ -2400,6 +2864,12 @@ pipe the result through <code>distinct</code>.</p>
 <script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
         </div>
         
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
       </main>
       
         <footer class="md-footer">
@@ -2428,7 +2898,7 @@ pipe the result through <code>distinct</code>.</p>
     
     
       
-      <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.highlight", "search.share"], "search": "../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
       <script src="../assets/javascripts/bundle.13a4f30d.min.js"></script>
