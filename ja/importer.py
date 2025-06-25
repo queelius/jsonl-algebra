@@ -1,10 +1,27 @@
+"""Import utilities for converting various formats to JSONL data.
+
+This module provides functions for importing data from CSV files and directory
+structures, converting them to JSONL format with type inference capabilities.
+"""
+
 import csv
 import json
-import sys
 import os
+import sys
 
 
 def _infer_value(value: str):
+    """Infer the appropriate Python type for a string value.
+
+    Attempts to convert string values to more appropriate types:
+    integers, floats, booleans, or None for empty strings.
+
+    Args:
+        value: String value to convert.
+
+    Returns:
+        The value converted to the most appropriate type.
+    """
     if not isinstance(value, str):
         return value
 
@@ -44,15 +61,15 @@ def dir_to_jsonl_lines(dir_path):
     """
     for filename in sorted(os.listdir(dir_path)):
         file_path = os.path.join(dir_path, filename)
-        if filename.endswith('.json'):
+        if filename.endswith(".json"):
             try:
-                with open(file_path, 'r') as f:
+                with open(file_path, "r") as f:
                     yield f.read().strip()
             except (IOError, json.JSONDecodeError) as e:
                 print(f"Error reading or parsing {file_path}: {e}", file=sys.stderr)
-        elif filename.endswith('.jsonl'):
+        elif filename.endswith(".jsonl"):
             try:
-                with open(file_path, 'r') as f:
+                with open(file_path, "r") as f:
                     for line in f:
                         yield line.strip()
             except IOError as e:
@@ -60,11 +77,18 @@ def dir_to_jsonl_lines(dir_path):
 
 
 def csv_to_jsonl_lines(csv_input_stream, has_header: bool, infer_types: bool = False):
-    """
-    Converts a CSV stream to JSONL lines.
-    If has_header is True, uses the first row for keys.
-    If has_header is False, generates keys like 'col_0', 'col_1', etc.
-    If infer_types is True, attempts to convert values to numeric or boolean types.
+    """Convert a CSV stream to JSONL lines.
+
+    Reads CSV data and yields JSON lines, with optional type inference
+    and header handling.
+
+    Args:
+        csv_input_stream: Input stream containing CSV data.
+        has_header: Whether the first row contains column headers.
+        infer_types: Whether to infer types for values (int, float, bool, None).
+
+    Yields:
+        JSON strings representing each row.
     """
 
     def process_row(row):

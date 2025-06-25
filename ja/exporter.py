@@ -1,8 +1,26 @@
-import json
+"""Export utilities for converting JSONL data to other formats.
+
+This module provides functions for exporting JSONL data to CSV format,
+with support for flattening nested structures and applying transformation
+functions to columns.
+"""
+
 import csv
+import json
 import sys
 
-def _flatten_dict(d, parent_key='', sep='.'):
+
+def _flatten_dict(d, parent_key="", sep="."):
+    """Flatten a nested dictionary using dot notation.
+
+    Args:
+        d: Dictionary to flatten.
+        parent_key: Prefix for keys (used in recursion).
+        sep: Separator for nested keys.
+
+    Returns:
+        A flattened dictionary with dot-separated keys.
+    """
     items = []
     for k, v in d.items():
         new_key = parent_key + sep + k if parent_key else k
@@ -16,10 +34,25 @@ def _flatten_dict(d, parent_key='', sep='.'):
             items.append((new_key, v))
     return dict(items)
 
-def jsonl_to_csv_stream(jsonl_stream, output_stream, flatten: bool = True, flatten_sep: str = '.', column_functions: dict = None):
-    """
-    Converts a JSONL stream to a CSV stream with smart flattening.
-    Applies transformation functions to specified columns.
+
+def jsonl_to_csv_stream(
+    jsonl_stream,
+    output_stream,
+    flatten: bool = True,
+    flatten_sep: str = ".",
+    column_functions: dict = None,
+):
+    """Convert a JSONL stream to a CSV stream with smart flattening.
+
+    Reads JSONL data and converts it to CSV format, optionally flattening
+    nested structures and applying transformation functions to columns.
+
+    Args:
+        jsonl_stream: Input stream containing JSONL data.
+        output_stream: Output stream for CSV data.
+        flatten: Whether to flatten nested dictionaries.
+        flatten_sep: Separator for flattened nested keys.
+        column_functions: Dictionary mapping column names to transformation functions.
     """
     if column_functions is None:
         column_functions = {}
@@ -37,7 +70,10 @@ def jsonl_to_csv_stream(jsonl_stream, output_stream, flatten: bool = True, flatt
                     rec[col] = func(rec[col])
                 except Exception as e:
                     # Optionally, log this error or handle it as needed
-                    print(f"Error applying function to column '{col}' for a record: {e}", file=sys.stderr)
+                    print(
+                        f"Error applying function to column '{col}' for a record: {e}",
+                        file=sys.stderr,
+                    )
 
     if flatten:
         processed_records = [(_flatten_dict(rec, sep=flatten_sep)) for rec in records]
@@ -51,7 +87,7 @@ def jsonl_to_csv_stream(jsonl_stream, output_stream, flatten: bool = True, flatt
                 else:
                     processed_rec[k] = v
             processed_records.append(processed_rec)
-    
+
     # Discover all unique keys to form the CSV header
     headers = []
     header_set = set()
@@ -60,8 +96,8 @@ def jsonl_to_csv_stream(jsonl_stream, output_stream, flatten: bool = True, flatt
             if key not in header_set:
                 header_set.add(key)
                 headers.append(key)
-    
+
     # Second pass: Write to the output stream
-    writer = csv.DictWriter(output_stream, fieldnames=headers, lineterminator='\n')
+    writer = csv.DictWriter(output_stream, fieldnames=headers, lineterminator="\n")
     writer.writeheader()
     writer.writerows(processed_records)

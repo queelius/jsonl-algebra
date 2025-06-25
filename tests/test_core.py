@@ -1,11 +1,22 @@
 import unittest
-from ja.core import (
-    select, project, join, rename, union, difference,
-    distinct, intersection, sort_by, product,
-    Row, Relation, _row_to_hashable_key
-)
 
+from ja.core import (
+    Relation,
+    Row,
+    _row_to_hashable_key,
+    difference,
+    distinct,
+    intersection,
+    join,
+    product,
+    project,
+    rename,
+    select,
+    sort_by,
+    union,
+)
 from ja.groupby import groupby_agg
+
 
 class TestCoreFunctions(unittest.TestCase):
 
@@ -15,7 +26,7 @@ class TestCoreFunctions(unittest.TestCase):
             {"id": 2, "name": "Bob", "age": 24},
             {"id": 3, "name": "Charlie", "age": 30},
         ]
-        
+
         # Test selecting by age
         selected_by_age = select(data, "age == `30`")
         self.assertEqual(len(selected_by_age), 2)
@@ -58,7 +69,7 @@ class TestCoreFunctions(unittest.TestCase):
         self.assertEqual(len(projected_non_existent), 2)
         self.assertEqual(projected_non_existent[0], {})
         self.assertEqual(projected_non_existent[1], {})
-        
+
         # Test projecting a mix of existing and non-existent columns
         projected_mixed = project(data, ["name", "country"])
         self.assertEqual(len(projected_mixed), 2)
@@ -82,7 +93,7 @@ class TestCoreFunctions(unittest.TestCase):
         self.assertEqual(_row_to_hashable_key(row1), _row_to_hashable_key(row2))
         self.assertNotEqual(_row_to_hashable_key(row1), _row_to_hashable_key(row3))
         with self.assertRaises(TypeError):
-            _row_to_hashable_key({"a": 1, "b": [1, 2]}) # list is unhashable
+            _row_to_hashable_key({"a": 1, "b": [1, 2]})  # list is unhashable
 
     def test_join_basic(self):
         left: Relation = [
@@ -95,7 +106,7 @@ class TestCoreFunctions(unittest.TestCase):
             {"user_id": 2, "order": "Pen"},
             {"user_id": 1, "order": "Paper"},
         ]
-        
+
         joined_data = join(left, right, [("id", "user_id")])
         self.assertEqual(len(joined_data), 3)
         expected_results = [
@@ -105,7 +116,6 @@ class TestCoreFunctions(unittest.TestCase):
         ]
         for res in expected_results:
             self.assertIn(res, joined_data)
-
 
     def test_join_no_matches(self):
         left: Relation = [
@@ -129,15 +139,18 @@ class TestCoreFunctions(unittest.TestCase):
         ]
         empty_right_join = join(left, [], [("id", "user_id")])
         self.assertEqual(len(empty_right_join), 0)
-        
+
     def test_join_column_collision(self):
         # Test join with column name collision (right column not part of 'on' should be excluded)
         left_collision: Relation = [{"id": 1, "name": "Alice", "detail": "L_detail"}]
-        right_collision: Relation = [{"user_id": 1, "name": "Alicia", "detail": "R_detail"}] # 'name' collides
+        right_collision: Relation = [
+            {"user_id": 1, "name": "Alicia", "detail": "R_detail"}
+        ]  # 'name' collides
         joined_collision = join(left_collision, right_collision, [("id", "user_id")])
         self.assertEqual(len(joined_collision), 1)
-        self.assertEqual(joined_collision[0], {"id": 1, "name": "Alice", "detail": "L_detail"})
-
+        self.assertEqual(
+            joined_collision[0], {"id": 1, "name": "Alice", "detail": "L_detail"}
+        )
 
     def test_rename(self):
         data: Relation = [
@@ -156,7 +169,7 @@ class TestCoreFunctions(unittest.TestCase):
         # Test renaming with empty mapping
         renamed_empty_map = rename(data, {})
         self.assertEqual(renamed_empty_map, data)
-        
+
         # Test renaming on empty relation
         renamed_empty_relation = rename([], {"id": "user_id"})
         self.assertEqual(len(renamed_empty_relation), 0)
@@ -174,7 +187,11 @@ class TestCoreFunctions(unittest.TestCase):
         self.assertEqual(union([], []), [])
 
     def test_difference(self):
-        r1: Relation = [{"id": 1, "name": "A"}, {"id": 2, "name": "B"}, {"id": 3, "name": "C"}]
+        r1: Relation = [
+            {"id": 1, "name": "A"},
+            {"id": 2, "name": "B"},
+            {"id": 3, "name": "C"},
+        ]
         r2: Relation = [{"id": 2, "name": "B"}, {"id": 4, "name": "D"}]
         diff = difference(r1, r2)
         self.assertEqual(len(diff), 2)
@@ -187,7 +204,7 @@ class TestCoreFunctions(unittest.TestCase):
 
         # Test difference where r2 is a superset
         self.assertEqual(difference(r2, r1), [{"id": 4, "name": "D"}])
-        
+
         # Test difference with empty relations
         self.assertEqual(difference(r1, []), r1)
         self.assertEqual(difference([], r1), [])
@@ -197,7 +214,7 @@ class TestCoreFunctions(unittest.TestCase):
         data: Relation = [
             {"id": 1, "name": "Alice"},
             {"id": 2, "name": "Bob"},
-            {"id": 1, "name": "Alice"}, # duplicate
+            {"id": 1, "name": "Alice"},  # duplicate
             {"id": 3, "name": "Charlie"},
         ]
         distinct_data = distinct(data)
@@ -205,25 +222,30 @@ class TestCoreFunctions(unittest.TestCase):
         self.assertIn({"id": 1, "name": "Alice"}, distinct_data)
         self.assertIn({"id": 2, "name": "Bob"}, distinct_data)
         self.assertIn({"id": 3, "name": "Charlie"}, distinct_data)
-        
+
         # Test distinct on already distinct data
         already_distinct: Relation = [{"id": 1}, {"id": 2}]
         self.assertEqual(len(distinct(already_distinct)), 2)
 
         # Test distinct on empty relation
         self.assertEqual(distinct([]), [])
-        
+
         # Test distinct preserves order of first appearance
-        ordered_data: Relation = [
-            {"a":1}, {"b":2}, {"a":1}, {"c":3}, {"b":2}
-        ]
-        expected_ordered_distinct: Relation = [{"a":1}, {"b":2}, {"c":3}]
+        ordered_data: Relation = [{"a": 1}, {"b": 2}, {"a": 1}, {"c": 3}, {"b": 2}]
+        expected_ordered_distinct: Relation = [{"a": 1}, {"b": 2}, {"c": 3}]
         self.assertEqual(distinct(ordered_data), expected_ordered_distinct)
 
-
     def test_intersection(self):
-        r1: Relation = [{"id": 1, "name": "A"}, {"id": 2, "name": "B"}, {"id": 3, "name": "C"}]
-        r2: Relation = [{"id": 2, "name": "B"}, {"id": 4, "name": "D"}, {"id": 3, "name": "C"}]
+        r1: Relation = [
+            {"id": 1, "name": "A"},
+            {"id": 2, "name": "B"},
+            {"id": 3, "name": "C"},
+        ]
+        r2: Relation = [
+            {"id": 2, "name": "B"},
+            {"id": 4, "name": "D"},
+            {"id": 3, "name": "C"},
+        ]
         intersected = intersection(r1, r2)
         self.assertEqual(len(intersected), 2)
         self.assertIn({"id": 2, "name": "B"}, intersected)
@@ -245,11 +267,13 @@ class TestCoreFunctions(unittest.TestCase):
             {"name": "Bob", "age": 30},
             {"name": "Alice", "age": 20},
         ]
-        
+
         # Sort by name
         sorted_by_name = sort_by(data, ["name"])
-        self.assertEqual([r["name"] for r in sorted_by_name], ["Alice", "Alice", "Bob", "Charlie"])
-        
+        self.assertEqual(
+            [r["name"] for r in sorted_by_name], ["Alice", "Alice", "Bob", "Charlie"]
+        )
+
         # Sort by age, then name
         sorted_by_age_name = sort_by(data, ["age", "name"])
         expected_age_name: Relation = [
@@ -263,14 +287,14 @@ class TestCoreFunctions(unittest.TestCase):
     def test_sort_by_empty(self):
         # Sort empty relation
         self.assertEqual(sort_by([], ["name"]), [])
- 
+
     def test_sort_by_nonexistent_column(self):
         # Sort by non-existent key (should treat as None, typically sorting first)
         # The exact behavior of None depends on Python's sort, usually None < any value
         data_with_none: Relation = [
             {"id": 1, "val": 10},
-            {"id": 2}, # val is None
-            {"id": 3, "val": 5}
+            {"id": 2},  # val is None
+            {"id": 3, "val": 5},
         ]
         sorted_by_val = sort_by(data_with_none, ["val"])
         # Assuming None values come first
@@ -279,7 +303,7 @@ class TestCoreFunctions(unittest.TestCase):
     def test_product(self):
         r1: Relation = [{"id": 1, "val": "A"}, {"id": 2, "val": "B"}]
         r2: Relation = [{"count": 10}, {"count": 20}]
-        
+
         prod = product(r1, r2)
         self.assertEqual(len(prod), 4)
         expected_prod_results = [
@@ -298,11 +322,12 @@ class TestCoreFunctions(unittest.TestCase):
 
         # Test product with key collision
         r_collide1: Relation = [{"id": 1, "name": "X"}]
-        r_collide2: Relation = [{"id": 10, "name": "Y"}] # 'name' will collide
+        r_collide2: Relation = [{"id": 10, "name": "Y"}]  # 'name' will collide
         prod_collide = product(r_collide1, r_collide2)
         self.assertEqual(len(prod_collide), 1)
-        self.assertEqual(prod_collide[0], {"id": 1, "name": "X", "b_id": 10, "b_name": "Y"})
-
+        self.assertEqual(
+            prod_collide[0], {"id": 1, "name": "X", "b_id": 10, "b_name": "Y"}
+        )
 
     def test_groupby_agg_basic(self):
         data: Relation = [
@@ -310,21 +335,29 @@ class TestCoreFunctions(unittest.TestCase):
             {"category": "B", "amount": 20, "value": 200},
             {"category": "A", "amount": 15, "value": 150},
             {"category": "B", "amount": 25, "value": 250},
-            {"category": "A", "amount": 10}, # missing 'value'
+            {"category": "A", "amount": 10},  # missing 'value'
             {"category": "C", "amount": 30, "value": 300},
         ]
-        aggs = [("count", ""), ("sum", "amount"), ("avg", "value"), ("min", "amount"), ("max", "value")]
+        aggs = [
+            ("count", ""),
+            ("sum", "amount"),
+            ("avg", "value"),
+            ("min", "amount"),
+            ("max", "value"),
+        ]
         grouped = groupby_agg(data, "category", aggs)
         grouped_dict = {g["category"]: g for g in grouped}
 
         self.assertEqual(len(grouped), 3)
-        
+
         # Category A
         self.assertIn("A", grouped_dict)
         cat_a = grouped_dict["A"]
         self.assertEqual(cat_a["count"], 3)
         self.assertEqual(cat_a["sum_amount"], 10 + 15 + 10)
-        self.assertEqual(cat_a["avg_value"], (100 + 150) / 2) # Only 2 'value' entries for A
+        self.assertEqual(
+            cat_a["avg_value"], (100 + 150) / 2
+        )  # Only 2 'value' entries for A
         self.assertEqual(cat_a["min_amount"], 10)
         self.assertEqual(cat_a["max_value"], 150)
 
@@ -353,28 +386,35 @@ class TestCoreFunctions(unittest.TestCase):
         data: Relation = [{"category": "A", "amount": 10}]
         with self.assertRaises(ValueError):
             groupby_agg(data, "category", [("unknown_func", "amount")])
-            
+
     def test_groupby_agg_non_numeric_aggregation(self):
         # Test aggregation on non-numeric field for sum/avg/min/max
         # Current implementation converts to float, so non-convertible would raise ValueError
         data_non_numeric: Relation = [{"key": "X", "val": "abc"}]
-        with self.assertRaises(ValueError): # or TypeError depending on float conversion
-             groupby_agg(data_non_numeric, "key", [("sum", "val")])
+        with self.assertRaises(
+            ValueError
+        ):  # or TypeError depending on float conversion
+            groupby_agg(data_non_numeric, "key", [("sum", "val")])
         with self.assertRaises(ValueError):
-             groupby_agg(data_non_numeric, "key", [("avg", "val")])
+            groupby_agg(data_non_numeric, "key", [("avg", "val")])
         with self.assertRaises(ValueError):
-             groupby_agg(data_non_numeric, "key", [("min", "val")])
+            groupby_agg(data_non_numeric, "key", [("min", "val")])
         with self.assertRaises(ValueError):
-             groupby_agg(data_non_numeric, "key", [("max", "val")])
-
+            groupby_agg(data_non_numeric, "key", [("max", "val")])
 
     def test_groupby_agg_avg_no_valid_values(self):
-        data_no_valid_avg: Relation = [{"key": "X", "val": None}, {"key": "X"}] # no numeric 'val'
+        data_no_valid_avg: Relation = [
+            {"key": "X", "val": None},
+            {"key": "X"},
+        ]  # no numeric 'val'
         grouped_no_avg = groupby_agg(data_no_valid_avg, "key", [("avg", "val")])
         self.assertEqual(grouped_no_avg[0]["avg_val"], None)
 
     def test_groupby_agg_min_max_no_valid_values(self):
-        data_no_valid_vals: Relation = [{"key": "X", "val": None}, {"key": "X"}] # no numeric 'val'
+        data_no_valid_vals: Relation = [
+            {"key": "X", "val": None},
+            {"key": "X"},
+        ]  # no numeric 'val'
         grouped_no_min = groupby_agg(data_no_valid_vals, "key", [("min", "val")])
         self.assertEqual(grouped_no_min[0]["min_val"], None)
         grouped_no_max = groupby_agg(data_no_valid_vals, "key", [("max", "val")])
@@ -387,11 +427,14 @@ class TestCoreFunctions(unittest.TestCase):
             {"name": "Bob", "age": 30},
             {"name": "Alice", "age": 20},
         ]
-        
+
         # Sort by name descending
         sorted_by_name_desc = sort_by(data, ["name"], reverse=True)
-        self.assertEqual([r["name"] for r in sorted_by_name_desc], ["Charlie", "Bob", "Alice", "Alice"])
-        
+        self.assertEqual(
+            [r["name"] for r in sorted_by_name_desc],
+            ["Charlie", "Bob", "Alice", "Alice"],
+        )
+
         # Sort by age descending, then name ascending
         sorted_by_age_desc_name_asc = sort_by(data, ["age", "name"], reverse=True)
         expected_age_desc_name_asc: Relation = [
@@ -408,5 +451,5 @@ class TestCoreFunctions(unittest.TestCase):
         self.assertEqual(sorted_by_age_desc_name_asc, expected_age_desc_name_asc)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

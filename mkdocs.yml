@@ -1,6 +1,32 @@
 site_name: JSONL Algebra
+site_description: A powerful relational algebra CLI and library for JSONL data manipulation
+site_author: Alex Towell
+site_url: https://username.github.io/jsonl-algebra
+repo_url: https://github.com/username/jsonl-algebra
+repo_name: username/jsonl-algebra
+
 theme:
   name: material
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.highlight
+    - search.share
+  palette:
+    - scheme: default
+      primary: blue
+      accent: blue
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: blue
+      accent: blue
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
 
 plugins:
   - search
