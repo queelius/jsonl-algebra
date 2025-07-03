@@ -1,20 +1,34 @@
-"""JSONL Algebra - Relational algebra operations for JSONL data.
+"""JSONL Algebra: Your Command-Line Toolkit for JSONL Data.
 
-A Python package for performing relational algebra operations on lists of
-JSON objects (JSONL data). Provides both a CLI and a library interface
-for data manipulation, schema inference, and format conversion.
+Welcome to `ja`! This package provides a powerful and intuitive suite of tools
+for performing relational algebra on JSONL data, right from your command line
+or in your Python scripts. Think of it as a `sed` / `awk` / `grep` for structured
+JSON, designed to be both powerful for complex tasks and simple for everyday use.
 
-This package allows you to:
-- Perform relational operations like select, project, join, union, etc.
-- Infer and validate JSON schemas from data
-- Convert between various data formats (CSV, JSON arrays, directories)
-- Work with data interactively via REPL or programmatically via library functions
+Whether you need to filter a massive log file, join two datasets, reshape a
+complex nested JSON structure, or simply explore your data, `ja` has your back.
+
+Core Features:
+
+- **Relational Operations**: `select`, `project`, `join`, `union`, `difference`,
+  `distinct`, and more, all supporting nested data via dot notation.
+- **Powerful Aggregation**: A `groupby` command to summarize and aggregate your data.
+- **Schema Inference**: Automatically generate a JSON Schema to understand your
+  data's structure.
+- **Format Conversion**: Easily import from CSV or directories of JSON and export
+  to CSV.
+- **Interactive REPL**: An interactive shell to build data pipelines step-by-step.
+
+Get started with the `ja` command-line tool or import functions directly into
+your Python code.
 
 Example:
-    >>> from ja import select, project
+    >>> from ja.core import select, project
     >>> data = [{"name": "Alice", "age": 30}, {"name": "Bob", "age": 25}]
-    >>> young_people = select(data, "age < `30`")
+    >>> young_people = select(data, "age < 30")
     >>> names_only = project(young_people, ["name"])
+    >>> print(list(names_only))
+    [{'name': 'Bob'}]
 """
 
 from .commands import read_jsonl
@@ -32,7 +46,9 @@ from .core import (
     sort_by,
     union,
 )
-from .groupby import groupby_agg
+# Import from the new modules
+from .agg import aggregate_single_group, aggregate_grouped_data
+from .group import groupby_agg, groupby_with_metadata, groupby_chained
 
 __all__ = [
     "Row",
@@ -48,6 +64,10 @@ __all__ = [
     "sort_by",
     "product",
     "groupby_agg",
+    "groupby_with_metadata",
+    "groupby_chained",
+    "aggregate_single_group",
+    "aggregate_grouped_data",
     "read_jsonl",
 ]
 

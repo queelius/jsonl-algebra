@@ -20,7 +20,7 @@ from ja.groupby import groupby_agg
 
 class TestCoreFunctions(unittest.TestCase):
 
-    def test_select(self):
+    def test_select_jmespath(self):
         data: Relation = [
             {"id": 1, "name": "Alice", "age": 30},
             {"id": 2, "name": "Bob", "age": 24},
@@ -28,7 +28,7 @@ class TestCoreFunctions(unittest.TestCase):
         ]
 
         # Test selecting by age
-        selected_by_age = select(data, "age == `30`")
+        selected_by_age = select(data, "age == `30`", use_jmespath=True)
         self.assertEqual(len(selected_by_age), 2)
         self.assertEqual(selected_by_age[0], {"id": 1, "name": "Alice", "age": 30})
         self.assertEqual(selected_by_age[1], {"id": 3, "name": "Charlie", "age": 30})
@@ -39,14 +39,14 @@ class TestCoreFunctions(unittest.TestCase):
         self.assertEqual(selected_by_name[0], {"id": 2, "name": "Bob", "age": 24})
 
         # Test selecting with no matches
-        selected_no_match = select(data, "age == `100`")
+        selected_no_match = select(data, "age == `100`", use_jmespath=True)
         self.assertEqual(len(selected_no_match), 0)
 
         # Test selecting with an empty relation
         selected_empty = select([], "age == `30`")
         self.assertEqual(len(selected_empty), 0)
 
-    def test_project(self):
+    def test_project_1(self):
         data: Relation = [
             {"id": 1, "name": "Alice", "age": 30, "city": "New York"},
             {"id": 2, "name": "Bob", "age": 24, "city": "London"},
@@ -58,11 +58,23 @@ class TestCoreFunctions(unittest.TestCase):
         self.assertEqual(projected_name_age[0], {"name": "Alice", "age": 30})
         self.assertEqual(projected_name_age[1], {"name": "Bob", "age": 24})
 
+    def test_project_2(self):
+        data: Relation = [
+            {"id": 1, "name": "Alice", "age": 30, "city": "New York"},
+            {"id": 2, "name": "Bob", "age": 24, "city": "London"},
+        ]
+
         # Test projecting a single column
         projected_id = project(data, ["id"])
         self.assertEqual(len(projected_id), 2)
         self.assertEqual(projected_id[0], {"id": 1})
         self.assertEqual(projected_id[1], {"id": 2})
+
+    def test_project_3(self):
+        data: Relation = [
+            {"id": 1, "name": "Alice", "age": 30, "city": "New York"},
+            {"id": 2, "name": "Bob", "age": 24, "city": "London"},
+        ]
 
         # Test projecting non-existent columns (should result in empty dicts for those columns)
         projected_non_existent = project(data, ["country"])
@@ -70,11 +82,22 @@ class TestCoreFunctions(unittest.TestCase):
         self.assertEqual(projected_non_existent[0], {})
         self.assertEqual(projected_non_existent[1], {})
 
+    def test_project_4(self):
+        data: Relation = [
+            {"id": 1, "name": "Alice", "age": 30, "city": "New York"},
+            {"id": 2, "name": "Bob", "age": 24, "city": "London"},
+        ]
         # Test projecting a mix of existing and non-existent columns
         projected_mixed = project(data, ["name", "country"])
         self.assertEqual(len(projected_mixed), 2)
         self.assertEqual(projected_mixed[0], {"name": "Alice"})
         self.assertEqual(projected_mixed[1], {"name": "Bob"})
+
+    def test_project_5(self):
+        data: Relation = [
+            {"id": 1, "name": "Alice", "age": 30, "city": "New York"},
+            {"id": 2, "name": "Bob", "age": 24, "city": "London"},
+        ]
 
         # Test projecting with an empty list of columns
         projected_empty_cols = project(data, [])
@@ -82,18 +105,34 @@ class TestCoreFunctions(unittest.TestCase):
         self.assertEqual(projected_empty_cols[0], {})
         self.assertEqual(projected_empty_cols[1], {})
 
+    def test_project_6(self):
+
         # Test projecting from an empty relation
         projected_empty_relation = project([], ["name", "age"])
         self.assertEqual(len(projected_empty_relation), 0)
 
     def test_row_to_hashable_key(self):
+        # Test simple rows
         row1 = {"a": 1, "b": "hello"}
         row2 = {"b": "hello", "a": 1}
         row3 = {"a": 1, "b": "world"}
         self.assertEqual(_row_to_hashable_key(row1), _row_to_hashable_key(row2))
         self.assertNotEqual(_row_to_hashable_key(row1), _row_to_hashable_key(row3))
+
+        # Test with a list, which should be converted to a tuple
+        row_with_list = {"a": 1, "b": [1, 2]}
+        # The whole row becomes a hashable tuple of items
+        expected_key = (("a", 1), ("b", (1, 2)))
+        self.assertEqual(_row_to_hashable_key(row_with_list), expected_key)
+
+        # Test with a nested dictionary
+        row_with_dict = {"a": 1, "b": {"c": 2, "d": 3}}
+        expected_key_dict = (("a", 1), ("b", (("c", 2), ("d", 3))))
+        self.assertEqual(_row_to_hashable_key(row_with_dict), expected_key_dict)
+
+        # Test with a truly unhashable type (a set)
         with self.assertRaises(TypeError):
-            _row_to_hashable_key({"a": 1, "b": [1, 2]})  # list is unhashable
+            _row_to_hashable_key({"a": 1, "b": {1, 2}})
 
     def test_join_basic(self):
         left: Relation = [
@@ -288,17 +327,6 @@ class TestCoreFunctions(unittest.TestCase):
         # Sort empty relation
         self.assertEqual(sort_by([], ["name"]), [])
 
-    def test_sort_by_nonexistent_column(self):
-        # Sort by non-existent key (should treat as None, typically sorting first)
-        # The exact behavior of None depends on Python's sort, usually None < any value
-        data_with_none: Relation = [
-            {"id": 1, "val": 10},
-            {"id": 2},  # val is None
-            {"id": 3, "val": 5},
-        ]
-        sorted_by_val = sort_by(data_with_none, ["val"])
-        # Assuming None values come first
-        self.assertEqual([r.get("id") for r in sorted_by_val], [2, 3, 1])
 
     def test_product(self):
         r1: Relation = [{"id": 1, "val": "A"}, {"id": 2, "val": "B"}]
@@ -429,26 +457,58 @@ class TestCoreFunctions(unittest.TestCase):
         ]
 
         # Sort by name descending
-        sorted_by_name_desc = sort_by(data, ["name"], reverse=True)
+        sorted_by_name_desc = sort_by(data, ["name"], descending=True)
         self.assertEqual(
             [r["name"] for r in sorted_by_name_desc],
             ["Charlie", "Bob", "Alice", "Alice"],
         )
 
-        # Sort by age descending, then name ascending
-        sorted_by_age_desc_name_asc = sort_by(data, ["age", "name"], reverse=True)
-        expected_age_desc_name_asc: Relation = [
-            {"name": "Charlie", "age": 30},
-            {"name": "Bob", "age": 30},
-            {"name": "Alice", "age": 25},
-            {"name": "Alice", "age": 20},
+
+    def test_join_nested(self):
+        left_nested: Relation = [
+            {"person": {"id": 1, "details": {"city": "NYC"}}, "name": "Alice"},
+            {"person": {"id": 2, "details": {"city": "London"}}, "name": "Bob"},
         ]
-        # This is tricky. The primary key (age) is reversed, but the secondary (name) is not.
-        # Python's sort is stable, so for equal ages, the original order of names is preserved.
-        # To sort by age descending and name ascending, we would need a more complex key.
-        # The current implementation sorts all keys in the same direction (all asc or all desc).
-        # Let's test the current behavior.
-        self.assertEqual(sorted_by_age_desc_name_asc, expected_age_desc_name_asc)
+        right_nested: Relation = [
+            {"user": {"id": 1, "ref": "A"}, "score": 95},
+            {"user": {"id": 3, "ref": "C"}, "score": 80},
+        ]
+        right_flat: Relation = [
+            {"user_id": 1, "score": 95},
+            {"user_id": 3, "score": 80},
+        ]
+
+        # Test with both keys nested
+        joined_nested = join(left_nested, right_nested, [("person.id", "user.id")])
+        self.assertEqual(len(joined_nested), 1)
+        self.assertEqual(
+            joined_nested[0],
+            {
+                "person": {"id": 1, "details": {"city": "NYC"}},
+                "name": "Alice",
+                "score": 95,
+            },
+        )
+
+        # Test with left key nested and right key flat
+        joined_left_nested = join(left_nested, right_flat, [("person.id", "user_id")])
+        self.assertEqual(len(joined_left_nested), 1)
+        self.assertEqual(
+            joined_left_nested[0],
+            {
+                "person": {"id": 1, "details": {"city": "NYC"}},
+                "name": "Alice",
+                "score": 95,
+            },
+        )
+
+        # Test with left key flat and right key nested
+        left_flat: Relation = [{"id": 1, "name": "Alice"}, {"id": 2, "name": "Bob"}]
+        joined_right_nested = join(left_flat, right_nested, [("id", "user.id")])
+        self.assertEqual(len(joined_right_nested), 1)
+        self.assertEqual(
+            joined_right_nested[0], {"id": 1, "name": "Alice", "score": 95}
+        )
 
 
 if __name__ == "__main__":

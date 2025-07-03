@@ -1,12 +1,14 @@
-"""JSON Schema inference and validation utilities.
+"""Discover the structure of your data automatically.
 
-This module provides functionality to infer JSON Schema from JSONL data
-and validate data against schemas.
+This module provides powerful tools to infer a JSON Schema from your JSONL files.
+A schema acts as a blueprint for your data, describing its fields, types, and
+which fields are required. This is incredibly useful for validation, documentation,
+and ensuring data quality.
 """
 
 
 def get_json_type(value):
-    """Get the JSON type name for a Python value.
+    """Determine the appropriate JSON Schema type for a given Python value.
 
     Maps Python types to their corresponding JSON Schema type names.
 
@@ -18,9 +20,9 @@ def get_json_type(value):
 
     Example:
         >>> get_json_type("hello")
-        "string"
+        'string'
         >>> get_json_type(42)
-        "integer"
+        'integer'
     """
     if isinstance(value, str):
         return "string"
@@ -40,10 +42,12 @@ def get_json_type(value):
 
 
 def merge_schemas(s1, s2):
-    """Merge two JSON schemas, handling type unions and nested structures.
+    """Intelligently merge two JSON schemas into one.
 
-    Combines two schemas by merging their types and properties. Used during
-    schema inference when multiple examples have different structures.
+    This is the secret sauce that allows schema inference to work across many
+    different JSON objects, even if they have different fields or types. It handles
+    type unions (e.g., a field that is sometimes a string, sometimes an integer)
+    and recursively merges nested object properties and array item schemas.
 
     Args:
         s1: First JSON schema dictionary or None.
@@ -56,7 +60,7 @@ def merge_schemas(s1, s2):
         >>> s1 = {"type": "string"}
         >>> s2 = {"type": "integer"}
         >>> merge_schemas(s1, s2)
-        {"type": ["integer", "string"]}
+        {'type': ['integer', 'string']}
     """
     if s1 is None:
         return s2
@@ -106,10 +110,10 @@ def merge_schemas(s1, s2):
 
 
 def infer_value_schema(value):
-    """Infer a JSON schema for a single value.
+    """Infer a JSON Schema for a single Python value.
 
-    Creates a schema that describes the structure and type of the given value.
-    Handles nested objects and arrays recursively.
+    Creates a schema that describes the structure and type of the given value,
+    handling nested objects and arrays recursively.
 
     Args:
         value: Any JSON-serializable Python value.
@@ -119,7 +123,7 @@ def infer_value_schema(value):
 
     Example:
         >>> infer_value_schema({"name": "Alice", "age": 30})
-        {"type": "object", "properties": {"name": {"type": "string"}, "age": {"type": "integer"}}}
+        {'type': 'object', 'properties': {'name': {'type': 'string'}, 'age': {'type': 'integer'}}}
     """
     type_name = get_json_type(value)
     schema = {"type": type_name}
@@ -136,18 +140,19 @@ def infer_value_schema(value):
 
 
 def add_required_fields(schema, data_samples):
-    """Add required fields to a schema based on data samples.
+    """Refine a schema by identifying which fields are always present.
 
-    Analyzes data samples to determine which fields are present in all samples,
-    then adds 'required' arrays to object schemas accordingly.
+    This function analyzes a list of data samples and updates the schema to mark
+    fields as 'required' if they appear in every single sample. This process is
+    applied recursively to nested objects, making the resulting schema more precise.
 
     Args:
         schema: The schema dictionary to modify in place.
-        data_samples: List of data samples to analyze for required fields.
+        data_samples: A list of data samples to analyze for required fields.
 
     Example:
-        If all samples have 'name' and 'age' fields, adds:
-        {"required": ["age", "name"]} to the schema.
+        If all samples in `data_samples` have 'name' and 'age' fields, this
+        function adds `{"required": ["age", "name"]}` to the schema.
     """
     if schema.get("type") == "object" and "properties" in schema:
         # For object schemas, find fields present in all samples
@@ -176,24 +181,26 @@ def add_required_fields(schema, data_samples):
 
 
 def infer_schema(data):
-    """Infer a JSON schema from a collection of data records.
+    """Infer a complete JSON schema from a collection of data records.
 
-    Analyzes all records in the data to create a JSON schema that describes
-    the structure, types, and required fields of the data.
+    This is the main entry point for schema inference. Give it an iterable of
+    JSON objects (like a list of dictionaries), and it will return a complete
+    JSON Schema that describes the entire dataset. It automatically handles
+    varying fields, mixed types, nested structures, and identifies required fields.
 
     Args:
         data: An iterable of data records (typically dictionaries).
 
     Returns:
-        A JSON schema dictionary with $schema, type, properties, and required fields.
+        A JSON schema dictionary with `$schema`, type, properties, and required fields.
 
     Example:
         >>> data = [{"name": "Alice", "age": 30}, {"name": "Bob", "age": 25}]
         >>> schema = infer_schema(data)
         >>> schema["properties"]["name"]
-        {"type": "string"}
+        {'type': 'string'}
         >>> schema["required"]
-        ["age", "name"]
+        ['age', 'name']
     """
     records = list(data)
     if not records:

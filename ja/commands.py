@@ -1,15 +1,17 @@
 """Command handlers for the JSONL algebra CLI.
 
-This module contains handler functions for all CLI commands, providing
-the interface between command line arguments and core library functions.
+This module connects the command-line interface to the core data processing
+functions. Each `handle_*` function is responsible for reading input data,
+calling the appropriate core function, and writing the results to stdout.
 """
 
 import json
 import sys
 from contextlib import contextmanager
 from pathlib import Path
+from typing import Any, Dict, List
 
-import jmespath
+import jmespath.exceptions
 
 from .core import (
     difference,
@@ -21,31 +23,34 @@ from .core import (
     rename,
     select,
     sort_by,
-    union,
+    union
+)
+from .group import (
+    groupby_agg,
+    groupby_chained,
+    groupby_with_metadata,
+)
+from .agg import (
+    aggregate_grouped_data,
+    aggregate_single_group,
 )
 from .export import json_array_to_jsonl_lines, jsonl_to_dir, jsonl_to_json_array_string
 from .exporter import jsonl_to_csv_stream
-from .groupby import groupby_agg
 from .importer import csv_to_jsonl_lines, dir_to_jsonl_lines
 from .schema import infer_schema
 
 
 @contextmanager
 def get_input_stream(file_path):
-    """Get an input stream from a file path or stdin.
-
-    Context manager that opens a file for reading or yields stdin if
-    the file path is None or '-'.
-
-    Args:
-        file_path: Path to file to read, or None/'-' for stdin.
-
-    Yields:
-        A file-like object for reading.
     """
-    if file_path and file_path != "-":
+    Yield a readable file-like object.
+
+    - If file_path is None or '-', yield sys.stdin.
+    - Otherwise open the given path for reading.
+    """
+    if file_path is not None and file_path != "-":
+        f = open(file_path, "r")
         try:
-            f = open(file_path, "r")
             yield f
         finally:
             f.close()
@@ -53,91 +58,104 @@ def get_input_stream(file_path):
         yield sys.stdin
 
 
-def read_jsonl(input_stream):
-    """Read JSONL data from a file-like object.
-
-    Parses each line as JSON and returns a list of the parsed objects.
-
-    Args:
-        input_stream: A file-like object containing JSONL data.
-
-    Returns:
-        A list of parsed JSON objects.
-
-    Raises:
-        json.JSONDecodeError: If any line contains invalid JSON.
-    """
+def read_jsonl(input_stream) -> List[Dict[str, Any]]:
+    """Read JSONL data from a file-like object."""
     return [json.loads(line) for line in input_stream]
 
 
-def write_jsonl(rows):
-    """Write a collection of objects as JSONL to stdout.
-
-    Each object is serialized as JSON and written as a separate line.
-
-    Args:
-        rows: An iterable of objects to serialize as JSONL.
-    """
+def write_jsonl(rows: List[Dict[str, Any]]) -> None:
+    """Write a collection of objects as JSONL to stdout."""
     for row in rows:
         print(json.dumps(row))
 
 
-def write_json_object(obj):
-    """Write a single object as pretty-printed JSON to stdout.
-
-    Args:
-        obj: The object to serialize and print.
-    """
+def write_json_object(obj: Any) -> None:
+    """Write a single object as pretty-printed JSON to stdout."""
     print(json.dumps(obj, indent=2))
+
+
+def json_error(error_type: str, message: str, details: Dict[str, Any] = None) -> None:
+    """Print a JSON error message to stderr and exit."""
+    error_info = {
+        "error": {
+            "type": error_type,
+            "message": message,
+        }
+    }
+    if details:
+        error_info["error"]["details"] = details
+    print(json.dumps(error_info), file=sys.stderr)
+    sys.exit(1)
 
 
 # Command handlers
 def handle_select(args):
+    """Handle select command."""
     with get_input_stream(args.file) as f:
         data = read_jsonl(f)
+
+    use_jmespath = hasattr(args, "jmespath") and args.jmespath
+
     try:
-        # JMESPath expects a query that filters a list (the relation).
-        # A simple way to adapt row-by-row logic is to use a filter expression.
-        # The expression in `args.expr` should be a valid JMESPath expression.
-        expression = jmespath.compile(f"[?{args.expr}]")
-        write_jsonl(select(data, expression))
+        result = select(data, args.expr, use_jmespath=use_jmespath)
+        write_jsonl(result)
     except jmespath.exceptions.ParseError as e:
-        print(f"Invalid JMESPath expression: {e}", file=sys.stderr)
-        sys.exit(1)
-    except Exception as e:
-        print(f"An unexpected error occurred during select: {e}", file=sys.stderr)
-        sys.exit(1)
+        json_error(
+            "JMESPathParseError",
+            f"Invalid JMESPath expression: {e}",
+            {"expression": args.expr},
+        )
 
 
 def handle_project(args):
+    """Handle project command."""
     with get_input_stream(args.file) as f:
         data = read_jsonl(f)
-    cols = [col.strip() for col in args.columns.split(",")]
-    write_jsonl(project(data, cols))
+
+    use_jmespath = hasattr(args, "jmespath") and args.jmespath
+
+    try:
+        result = project(data, args.expr, use_jmespath=use_jmespath)
+        write_jsonl(result)
+    except jmespath.exceptions.ParseError as e:
+        json_error(
+            "JMESPathParseError",
+            f"Invalid JMESPath expression: {e}",
+            {"expression": args.expr},
+        )
 
 
 def handle_join(args):
+    """Handle join command."""
     with get_input_stream(args.left) as f:
         left = read_jsonl(f)
     with get_input_stream(args.right) as f:
         right = read_jsonl(f)
+
     lcol_str, rcol_str = args.on.split("=", 1)
     lcol = lcol_str.strip()
     rcol = rcol_str.strip()
-    write_jsonl(join(left, right, [(lcol, rcol)]))
+
+    result = join(left, right, [(lcol, rcol)])
+    write_jsonl(result)
 
 
 def handle_product(args):
+    """Handle product command."""
     with get_input_stream(args.left) as f:
-        a = read_jsonl(f)
+        left_data = read_jsonl(f)
     with get_input_stream(args.right) as f:
-        b = read_jsonl(f)
-    write_jsonl(product(a, b))
+        right_data = read_jsonl(f)
+
+    result = product(left_data, right_data)
+    write_jsonl(result)
 
 
 def handle_rename(args):
+    """Handle rename command."""
     with get_input_stream(args.file) as f:
         data = read_jsonl(f)
+
     mapping_pairs = args.mapping.split(",")
     mapping = {}
     for pair_str in mapping_pairs:
@@ -146,84 +164,124 @@ def handle_rename(args):
             old_name, new_name = parts
             mapping[old_name.strip()] = new_name.strip()
         else:
-            # Optionally, handle malformed pairs, e.g., by printing a warning or raising an error
             print(
                 f"Warning: Malformed rename pair '{pair_str.strip()}' ignored.",
                 file=sys.stderr,
             )
-    write_jsonl(rename(data, mapping))
+
+    result = rename(data, mapping)
+    write_jsonl(result)
 
 
 def handle_union(args):
+    """Handle union command."""
     with get_input_stream(args.left) as f:
-        a = read_jsonl(f)
+        left_data = read_jsonl(f)
     with get_input_stream(args.right) as f:
-        b = read_jsonl(f)
-    write_jsonl(union(a, b))
+        right_data = read_jsonl(f)
+
+    result = union(left_data, right_data)
+    write_jsonl(result)
 
 
 def handle_intersection(args):
+    """Handle intersection command."""
     with get_input_stream(args.left) as f:
-        a = read_jsonl(f)
+        left_data = read_jsonl(f)
     with get_input_stream(args.right) as f:
-        b = read_jsonl(f)
-    write_jsonl(intersection(a, b))
+        right_data = read_jsonl(f)
+
+    result = intersection(left_data, right_data)
+    write_jsonl(result)
 
 
 def handle_difference(args):
+    """Handle difference command."""
     with get_input_stream(args.left) as f:
-        a = read_jsonl(f)
+        left_data = read_jsonl(f)
     with get_input_stream(args.right) as f:
-        b = read_jsonl(f)
-    write_jsonl(difference(a, b))
+        right_data = read_jsonl(f)
+
+    result = difference(left_data, right_data)
+    write_jsonl(result)
 
 
 def handle_distinct(args):
+    """Handle distinct command."""
     with get_input_stream(args.file) as f:
         data = read_jsonl(f)
-    write_jsonl(distinct(data))
+
+    result = distinct(data)
+    write_jsonl(result)
 
 
 def handle_sort(args):
+    """Handle sort command."""
     with get_input_stream(args.file) as f:
         data = read_jsonl(f)
-    keys = [key.strip() for key in args.keys.split(",")]
-    write_jsonl(sort_by(data, keys, reverse=args.desc))
+
+    result = sort_by(data, args.keys, descending=args.desc)
+    write_jsonl(result)
 
 
 def handle_groupby(args):
+    """Handle groupby command."""
     with get_input_stream(args.file) as f:
         data = read_jsonl(f)
-    group_by_key_cleaned = args.key.strip()  # Clean the group_by key
 
-    aggs = []
-    for part_str in args.agg.split(","):
-        stripped_part = part_str.strip()  # Strip the whole "func:field" or "func" part
-        if ":" in stripped_part:
-            func, field = stripped_part.split(":", 1)
-            aggs.append((func.strip(), field.strip()))
+    if hasattr(args, "agg") and args.agg:
+        # Traditional groupby with aggregation
+        result = groupby_agg(data, args.key, args.agg)
+    else:
+        # Check if input is already grouped - look for new format
+        if data and "_groups" in data[0]:
+            # This is a chained groupby
+            result = groupby_chained(data, args.key)
         else:
-            # This is for aggregations like 'count' that don't take a field
-            aggs.append((stripped_part.strip(), ""))
-    write_jsonl(groupby_agg(data, group_by_key_cleaned, aggs))
+            # First groupby
+            result = groupby_with_metadata(data, args.key)
+
+    write_jsonl(result)
+
+
+def handle_agg(args):
+    """Handle agg command."""
+    with get_input_stream(args.file) as f:
+        data = read_jsonl(f)
+
+    if not data:
+        write_jsonl([])
+        return
+
+    # Check if input has group metadata - use new format
+    if "_groups" in data[0]:
+        # Process grouped data
+        result = aggregate_grouped_data(data, args.agg)
+    else:
+        # Process ungrouped data
+        result = [aggregate_single_group(data, args.agg)]
+
+    write_jsonl(result)
 
 
 def handle_schema_infer(args):
+    """Handle schema infer command."""
     with get_input_stream(args.file) as f:
         data = read_jsonl(f)
+
     schema = infer_schema(data)
     write_json_object(schema)
 
 
 def handle_to_array(args):
-    """Converts JSONL input to a single JSON array string."""
+    """Handle to-array command."""
     with get_input_stream(args.file) as input_stream:
         array_string = jsonl_to_json_array_string(input_stream)
         print(array_string)
 
 
 def handle_to_jsonl(args):
-    """Converts a JSON array input to JSONL lines."""
+    """Handle to-jsonl command."""
     with get_input_stream(args.file) as input_stream:
         try:
             for line in json_array_to_jsonl_lines(input_stream):
@@ -234,13 +292,11 @@ def handle_to_jsonl(args):
 
 
 def handle_explode(args):
-    """Exports JSONL lines to individual JSON files in a directory."""
+    """Handle explode command."""
     input_filename_stem = "jsonl_output"  # Default stem
     if args.file and args.file != "-":
         input_filename_stem = Path(args.file).stem
 
-    # If output_dir is not specified, use the input filename stem as the directory name in the CWD.
-    # If output_dir IS specified, it's the target directory.
     output_directory = args.output_dir if args.output_dir else input_filename_stem
 
     with get_input_stream(args.file) as input_stream:
@@ -252,7 +308,7 @@ def handle_explode(args):
 
 
 def handle_implode(args):
-    """Converts JSON files in a directory to JSONL lines."""
+    """Handle implode command."""
     try:
         for line in dir_to_jsonl_lines(
             args.input_dir, args.add_filename_key, args.recursive
@@ -267,11 +323,9 @@ def handle_implode(args):
 
 
 def handle_import_csv(args):
-    """Imports a CSV file and converts it to JSONL."""
+    """Handle import-csv command."""
     with get_input_stream(args.file) as input_stream:
         try:
-            # The --no-header flag in argparse sets has_header to False if present.
-            # If the flag is not present, args.has_header will be True by default.
             for line in csv_to_jsonl_lines(
                 input_stream, has_header=args.has_header, infer_types=args.infer_types
             ):
@@ -284,7 +338,7 @@ def handle_import_csv(args):
 
 
 def handle_to_csv(args):
-    """Converts a JSONL input to CSV format."""
+    """Handle to-csv command."""
     column_functions = {}
     if args.apply:
         for col, expr_str in args.apply:
@@ -305,8 +359,6 @@ def handle_to_csv(args):
 
     with get_input_stream(args.file) as input_stream:
         try:
-            # The output stream for the CSV writer must be a text stream.
-            # sys.stdout is a text stream, so it's suitable.
             jsonl_to_csv_stream(
                 input_stream,
                 sys.stdout,
@@ -315,7 +367,6 @@ def handle_to_csv(args):
                 column_functions=column_functions,
             )
         except Exception as e:
-            # Use stderr for error messages to not corrupt stdout if it's being piped
             print(
                 f"An unexpected error occurred during CSV export: {e}", file=sys.stderr
             )
@@ -323,6 +374,7 @@ def handle_to_csv(args):
 
 
 def handle_schema_validate(args):
+    """Handle schema validate command."""
     try:
         import jsonschema
     except ImportError:

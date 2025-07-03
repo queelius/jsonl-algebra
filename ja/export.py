@@ -1,8 +1,9 @@
-"""Export and format conversion utilities for JSONL data.
+"""Utilities for exporting JSONL data to other formats.
 
-This module provides functions for converting between JSONL and JSON array formats,
-as well as utilities for exploding JSONL to directory structures and other
-format conversions.
+This module provides a collection of functions for converting JSONL data into
+various other formats. It powers the `ja export` command group, enabling
+transformations like converting JSONL to a standard JSON array or "exploding"
+a JSONL file into a directory of individual JSON files.
 """
 
 import json

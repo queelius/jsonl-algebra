@@ -1,8 +1,12 @@
-"""Export utilities for converting JSONL data to other formats.
+"""Export your JSONL data to other popular formats like CSV.
 
-This module provides functions for exporting JSONL data to CSV format,
-with support for flattening nested structures and applying transformation
-functions to columns.
+This module is your gateway to the wider data ecosystem. It provides powerful
+and flexible tools to convert your JSONL data into formats that are easy to
+use with spreadsheets, traditional databases, or other data analysis tools.
+
+The key feature is its intelligent handling of nested JSON, which can be
+"flattened" into separate columns, making complex data accessible in a simple
+CSV format.
 """
 
 import csv
@@ -11,15 +15,18 @@ import sys
 
 
 def _flatten_dict(d, parent_key="", sep="."):
-    """Flatten a nested dictionary using dot notation.
+    """Recursively flatten a nested dictionary using dot notation.
+
+    This helper function turns a nested structure like `{"user": {"id": 1}}`
+    into a flat dictionary `{"user.id": 1}`.
 
     Args:
-        d: Dictionary to flatten.
-        parent_key: Prefix for keys (used in recursion).
-        sep: Separator for nested keys.
+        d (dict): The dictionary to flatten.
+        parent_key (str): The prefix to use for the keys (used in recursion).
+        sep (str): The separator to use between nested keys.
 
     Returns:
-        A flattened dictionary with dot-separated keys.
+        A new, flattened dictionary with dot-separated keys.
     """
     items = []
     for k, v in d.items():
@@ -42,17 +49,28 @@ def jsonl_to_csv_stream(
     flatten_sep: str = ".",
     column_functions: dict = None,
 ):
-    """Convert a JSONL stream to a CSV stream with smart flattening.
+    """Convert a stream of JSONL data into a CSV stream.
 
-    Reads JSONL data and converts it to CSV format, optionally flattening
-    nested structures and applying transformation functions to columns.
+    This is a highly flexible function for exporting your data. It reads JSONL
+    records, intelligently discovers all possible headers (even if they vary
+    between lines), and writes to a CSV format.
+
+    It shines when dealing with nested data. By default, it will flatten
+    structures like `{"user": {"name": "X"}}` into a `user.name` column.
+    You can also provide custom functions to transform data on the fly.
 
     Args:
-        jsonl_stream: Input stream containing JSONL data.
-        output_stream: Output stream for CSV data.
-        flatten: Whether to flatten nested dictionaries.
-        flatten_sep: Separator for flattened nested keys.
-        column_functions: Dictionary mapping column names to transformation functions.
+        jsonl_stream: An input stream (like a file handle) yielding JSONL strings.
+        output_stream: An output stream (like `sys.stdout` or a file handle)
+                       where the CSV data will be written.
+        flatten (bool): If `True`, nested dictionaries are flattened into columns
+                        with dot-separated keys. Defaults to `True`.
+        flatten_sep (str): The separator to use when flattening keys.
+                           Defaults to ".".
+        column_functions (dict): A dictionary mapping column names to functions
+                                 that will be applied to that column's data
+                                 before writing to CSV. For example,
+                                 `{"price": float}`.
     """
     if column_functions is None:
         column_functions = {}

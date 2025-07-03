@@ -1,302 +1,186 @@
-# ja - JSONL Algebra
+# `ja`: The JSONL Algebra Toolkit 🚀
 
-**ja** is a powerful command-line tool and Python library for performing relational algebra operations on JSONL (JSON Lines) data. It's designed to be a robust, feature-rich alternative for data manipulation tasks, inspired by tools like `jq` and traditional SQL.
+**Your friendly, powerful command-line tool for wrangling JSONL data.**
 
-## Features
+[![CI](https://github.com/your-repo/ja/actions/workflows/ci.yml/badge.svg)](https://github.com/your-repo/ja/actions/workflows/ci.yml)
+[![PyPI version](https://badge.fury.io/py/jsonl-algebra.svg)](https://badge.fury.io/py/jsonl-algebra)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-* **Relational Operations**: Perform common relational algebra operations: select, project, join, union, intersection, difference, distinct, sort, product, and group by with aggregations.
+Tired of wrestling with complex JSON in the command line? **`ja`** is here to help. It brings the power of relational algebra to your terminal, making it effortless to slice, dice, and transform streams of JSONL data. Think of it as `sed`, `awk`, and `SQL` rolled into one, but designed specifically for the structure and complexity of modern JSON.
 
-* **Advanced Filtering**: Uses JMESPath expressions for safe and expressive row filtering (instead of eval).
+## Key Features
 
-* **Schema Management**: 
-  * `schema infer`: Automatically infer JSON Schema from JSONL data
-  * `schema validate`: Validate JSONL data against JSON Schema files
+* **Intuitive Relational Operations**: All the classics are here: `select`, `project`, `join`, `union`, `difference`, `distinct`, and more.
+* **Seamless Nested Data Support**: Access and manipulate nested fields using simple, intuitive **dot notation** (e.g., `user.address.city`). This is a core design principle.
+* **Powerful Aggregations**: Group your data with `groupby` and calculate `sum`, `avg`, `min`, `max`, `count`, or see all values in a `list`.
+* **Interactive REPL**: Jump into an interactive session with `ja repl` to build and test complex pipelines step-by-step.
+* **Schema Inference & Validation**: Automatically discover the schema of your data with `schema infer` and validate it against a known structure.
+* **Format Conversion**: Easily convert data to and from CSV, including intelligent flattening of nested structures.
+* **Built for Pipes**: `ja` is a good Unix citizen. It reads from `stdin`, writes to `stdout`, and is designed to be a component in larger shell pipelines.
 
-* **Interactive REPL**: Build and test data pipelines interactively with auto-completion and pipeline compilation.
+## Getting Started: A 5-Minute Tour
 
-* **Import/Export**: Comprehensive data format conversion capabilities:
-  * CSV import/export with type inference and flattening
-  * JSON array conversion
-  * Directory explode/implode for individual JSON files
-  * Custom column transformations for CSV export
+Let's see how `ja` can solve a real-world problem. Imagine you have two data files: `users.jsonl` and `orders.jsonl`.
 
-* **Aggregations**: Powerful `groupby` feature with built-in aggregations:
-  * `sum`, `avg`, `min`, `max`, `count`, `list`, `first`, `last`
-  * Extensible aggregation system for custom functions
+**`users.jsonl`**
 
-* **Fully Pipeable**: Consistent support for stdin/stdout with `-` notation for maximum composability.
+```json
+{"user": {"id": 1, "name": "Alice"}}
+{"user": {"id": 2, "name": "Bob"}}
+```
 
-* **Type-Safe**: Optional type inference for CSV imports and robust schema validation.
+**`orders.jsonl`**
+
+```json
+{"order_id": 101, "customer_id": 1, "amount": 50}
+{"order_id": 102, "customer_id": 1, "amount": 75}
+{"order_id": 103, "customer_id": 2, "amount": 120}
+```
+
+**Goal**: Find the total amount spent by each user.
+
+### Step 1: Join the Datasets
+
+First, we'll join the two files. Notice how we can reach into the nested `user` object with `user.id` to connect it to the `customer_id` in the orders file.
+
+```bash
+ja join users.jsonl orders.jsonl --on user.id=customer_id
+```
+
+This command produces a stream of the combined data:
+
+```json
+{"user": {"id": 1, "name": "Alice"}, "order_id": 101, "customer_id": 1, "amount": 50}
+{"user": {"id": 1, "name": "Alice"}, "order_id": 102, "customer_id": 1, "amount": 75}
+{"user": {"id": 2, "name": "Bob"}, "order_id": 103, "customer_id": 2, "amount": 120}
+```
+
+### Step 2: Group and Sum
+
+Now, we can pipe (`|`) the result of our join directly into the `groupby` command. We'll group by the user's name and ask for the `sum` of the `amount` field.
+
+```bash
+ja join users.jsonl orders.jsonl --on user.id=customer_id \
+  | ja groupby user.name --agg sum:amount
+```
+
+**Final Result:**
+
+```json
+{"user.name": "Alice", "sum_amount": 125}
+{"user.name": "Bob", "sum_amount": 120}
+```
+
+And there you have it! A sophisticated data transformation performed with a clear, readable command-line pipeline.
 
 ## Installation
 
-### Dependencies
-
-`ja` now includes optional dependencies for enhanced functionality:
-
-- **jmespath**: For safe and expressive filtering (replaces eval)
-- **jsonschema**: For schema validation features
-- All other features work without external dependencies
-
-### For users (from PyPI)
-
-You can install the package directly from PyPI (Python Package Index) using pip.
+Installing `ja` is as simple as a single `pip` command.
 
 ```bash
 pip install jsonl-algebra
 ```
 
-This will automatically install the required dependencies (`jmespath` and `jsonschema`).
+This gives you the `ja` command-line tool and the Python library.
 
-### For developers (from local repository)
+## Core Concepts
 
-If you have cloned this repository and want to install it for development or from local sources:
+### Dot Notation for Nested Data
 
-```bash
-pip install .
-```
+You can access nested values in any command by separating keys with a dot.
 
-To install in editable mode for development:
+> **`project`**: `ja project user.name,user.address.city ...`
+>
+> **`select`**: `ja select 'user.age > 30' ...`
+>
+> **`join`**: `ja join ... --on user.id=order.user_id`
+>
+> **`groupby`**: `ja groupby user.location ...`
 
-```bash
-pip install -e .
-```
+### Streaming and Piping
 
-## CLI Usage
-
-The `ja` command-line tool provides several subcommands for different operations.
-
-**General Syntax:**
-`ja <command> [options] [file(s)]`
-
-If `file` is omitted for commands that expect a single input, `ja` reads from stdin.
-
-### Examples
-
-**Select rows where 'amount' is greater than 100 (using JMESPath):**
+Every `ja` command that processes a single stream of data can read from `stdin` and writes to `stdout`. This lets you build powerful workflows by chaining commands together with the standard Unix pipe (`|`).
 
 ```bash
-cat data.jsonl | ja select 'amount > `100`'
-ja select 'amount > `100`' data.jsonl
+cat data.jsonl | ja select ... | ja groupby ... | ja sort ...
 ```
 
-**Project 'id' and 'name' columns:**
+## CLI Command Examples
+
+Here are a few quick examples of common commands.
+
+### **Filtering Data**
 
 ```bash
-cat data.jsonl | ja project id,name
+# Select rows where the 'status' field is 'active'
+ja select 'status == `"active"`' data.jsonl
+
+# Select rows where a nested 'age' is over 30
+ja select 'user.age > 30' data.jsonl
 ```
 
-**Join two files on a common key:**
+### **Reshaping Data**
 
 ```bash
-ja join users.jsonl orders.jsonl --on user_id=customer_id
+# Pick only the 'id' and 'name' fields
+ja project id,name data.jsonl
+
+# Rename 'id' to 'user_id' and a nested 'loc' to 'location'
+ja rename id=user_id,user.loc=user.location data.jsonl
 ```
 
-**Group by 'category' and count items:**
+### **Grouping and Aggregating**
 
 ```bash
-cat products.jsonl | ja groupby category --agg count
+# Group by category and get the count for each
+ja groupby category --agg count data.jsonl
+
+# Group by location and find the average score
+ja groupby location --agg avg:score data.jsonl
 ```
 
-**Sort data by 'timestamp' in descending order:**
+### **Working with Schemas**
 
 ```bash
-cat logs.jsonl | ja sort timestamp --desc
+# Automatically infer a JSON Schema from your data
+ja schema infer my_data.jsonl > my_schema.json
+
+# Validate that a file conforms to a schema
+ja schema validate my_schema.json my_data.jsonl
 ```
-
-**Schema Operations:**
-
-```bash
-# Infer schema from JSONL data
-ja schema infer data.jsonl
-
-# Validate JSONL data against a schema
-ja schema validate schema.json data.jsonl
-
-# Pipeline: infer schema from filtered data, then validate original file
-ja select 'active == `true`' users.jsonl | ja schema infer | ja schema validate - users.jsonl
-```
-
-**Interactive REPL session:**
-
-```bash
-ja repl
-```
-
-Inside the REPL:
-
-```text
-ja> from data.jsonl
-ja> select 'age > `30`'
-ja> project name,email
-ja> execute --lines=5 
-ja> compile
-```
-
-**Export/Import Operations:**
-
-```bash
-# Convert JSONL to JSON array
-ja export array data.jsonl > data.json
-
-# Convert JSON array back to JSONL
-ja export jsonl data.json > data.jsonl
-
-# Explode JSONL into individual JSON files
-ja export explode data.jsonl -o data_exploded
-
-# Implode directory back to JSONL
-ja import implode data_exploded --add-filename-key source_file > combined.jsonl
-
-# Export to CSV with flattening and custom transformations
-ja export csv data.jsonl --apply timestamp "lambda t: t.split('T')[0]" > data.csv
-
-# Import CSV with type inference
-ja import csv data.csv --infer-types > data.jsonl
-```
-
-### Available Commands
-
-**Core Operations:**
-* `select`: Filter rows using JMESPath expressions (safe alternative to eval)
-* `project`: Select specific columns
-* `join`: Join two relations on specified keys
-* `rename`: Rename columns
-* `union`: Combine two relations (all rows)
-* `difference`: Rows in the first relation but not the second
-* `distinct`: Remove duplicate rows
-* `intersection`: Rows common to both relations
-* `sort`: Sort a relation by specified keys (supports `--desc` for descending order)
-* `product`: Cartesian product of two relations
-* `groupby`: Group rows by a key and perform aggregations
-
-**Schema Operations:**
-* `schema infer`: Infer and display JSON Schema from JSONL data
-* `schema validate`: Validate JSONL data against a JSON Schema file (supports piping schemas)
-
-**Interactive Tools:**
-* `repl`: Interactive REPL for building and testing data pipelines
-
-**Export Operations:**
-* `export array`: Convert JSONL to a single JSON array
-* `export jsonl`: Convert a JSON array to JSONL
-* `export explode`: Export each JSONL line to a separate JSON file in a directory
-* `export csv`: Convert JSONL to CSV with automatic flattening and custom transformations
-
-**Import Operations:**
-* `import csv`: Convert CSV to JSONL with optional type inference
-* `import implode`: Combine JSON files from a directory into JSONL
-
-**Pipeline-Friendly Design:**
-All commands support stdin/stdout and the `-` notation for maximum composability in shell pipelines.
-
-Use `ja <command> --help` or `ja export <subcommand> --help` for more details on specific commands.
 
 ## Programmatic API Usage
 
-You can also use `ja` as a Python library:
+You can also use `ja` as a Python library to bring its power into your scripts.
 
 ```python
-import ja
-import jmespath
-from ja import Row, Relation # For type hinting if needed
+from ja.core import read_jsonl, join, groupby_agg
+from ja.schema import infer_schema
 
 # Load data from JSONL files
-# users_data = ja.read_jsonl("users.jsonl")
-# orders_data = ja.read_jsonl("orders.jsonl")
+users = read_jsonl("users.jsonl")
+orders = read_jsonl("orders.jsonl")
 
-# Example data (replace with ja.read_jsonl for actual files)
-users_data: Relation = [
-    {"user_id": 1, "name": "Alice", "status": "active", "email": "alice@example.com"},
-    {"user_id": 2, "name": "Bob", "status": "inactive", "email": "bob@example.com"},
-    {"user_id": 1, "name": "Alice", "status": "active", "email": "alice@example.com"} # Duplicate for distinct example
-]
-orders_data: Relation = [
-    {"order_id": 101, "customer_id": 1, "item": "Book", "quantity": 1},
-    {"order_id": 102, "customer_id": 2, "item": "Pen", "quantity": 5},
-    {"order_id": 103, "customer_id": 1, "item": "Notebook", "quantity": 2},
-    {"order_id": 104, "customer_id": 1, "item": "Book", "quantity": 3}
-]
+# Join the data on the user ID
+joined_data = join(users, orders, on=[("user.id", "customer_id")])
 
-# Example: Select active users using JMESPath
-expression = jmespath.compile("[?status == 'active']")
-active_users = ja.select(users_data, expression)
-# active_users will be:
-# [{'user_id': 1, 'name': 'Alice', 'status': 'active', 'email': 'alice@example.com'},
-#  {'user_id': 1, 'name': 'Alice', 'status': 'active', 'email': 'alice@example.com'}]
-
-# Example: Project name and email from distinct active users
-distinct_active_users = ja.distinct(active_users)
-user_info = ja.project(distinct_active_users, ["name", "email"])
-# user_info will be:
-# [{'name': 'Alice', 'email': 'alice@example.com'}]
-
-# Example: Schema inference
-from ja.schema import infer_schema
-schema = infer_schema(users_data)
-# Returns a valid JSON Schema with inferred types and required fields
-
-# Example: Join distinct active users with their orders
-active_users_with_id = ja.project(distinct_active_users, ["user_id", "name", "email"])
-joined_data = ja.join(active_users_with_id, orders_data, on=[("user_id", "customer_id")])
-
-# Example: Group joined data by user and sum quantities, list items
-grouped_orders = ja.groupby_agg(
+# Group by user name and sum the order amounts
+# The result is an iterator, so we wrap it in list() to print.
+result = groupby_agg(
     joined_data,
-    group_by_key="user_id",
-    aggregations=[
-        ("sum", "quantity"),
-        ("list", "item"),
-        ("count", "") # Count groups
-    ]
+    group_by_key="user.name",
+    aggregations=[("sum", "amount")]
 )
 
-# Available functions mirror the CLI commands:
-# ja.select, ja.project, ja.join, ja.rename, ja.union,
-# ja.difference, ja.distinct, ja.intersection, ja.sort_by,
-# ja.product, ja.groupby_agg
+print(list(result))
+# Output:
+# [{'user.name': 'Alice', 'sum_amount': 125},
+#  {'user.name': 'Bob', 'sum_amount': 120}]
+
+# You can also infer a schema directly
+users_schema = infer_schema(users)
+print(users_schema)
 ```
-
-## Extending Group By Aggregations
-
-By default, `ja` supports several built-in aggregation functions for the `groupby_agg` operation. These include: `count`, `sum`, `avg`, `min`, `max`, `list`, `first`, and `last`. Syntax for aggregations: `agg_name` (for count) or `agg_name:column_name` (e.g., `sum:price`, `list:product_id`).
-
-The `groupby_agg` functionality is designed to be extensible. The core logic resides in the `ja.groupby` module, which uses a dispatcher pattern.
-
-### Define an aggregation helper function
-
-This function will take the collected data for a group (typically a list of values, or a single value for aggregations like `first`/`last`) and return the aggregated result.
-
-For instance, if you want to add a custom aggregation function for calculating the median, you would define a function that takes a list of values and returns the median.
-
-```python
-def _my_custom_median_agg(collected_values: list) -> float | None:
-    numeric_vals = sorted([v for v in collected_values if isinstance(v, (int, float))])
-    if not numeric_vals:
-        return None
-    n = len(numeric_vals)
-    mid = n // 2
-    if n % 2 == 0:
-        return (numeric_vals[mid - 1] + numeric_vals[mid]) / 2
-    else:
-        return numeric_vals[mid]
-```
-
-Now, register it (if modifying `ja` directly or for illustration):
-  
-```python
-# In ja/groupby.py
-AGGREGATION_DISPATCHER = {
-    # ...
-    "median": _my_custom_median_agg,
-}
-```
-
-For programmatic use with your own `ja` instance or a forked version, you could potentially expose a way to register custom aggregators or pass them directly if the API supported it.
-
-If your aggregation requires a specific way of collecting data during the first pass of `groupby_agg` (different from how `list`, `first`, or `last` collect data), you would need to modify the data collection logic in `ja.groupby.groupby_agg`.
-
-This structure allows for significant flexibility. For instance, one could implement a general `reduce` aggregation that takes Python expressions for an initial value and a step function, operating on the list of values collected for a group.
 
 ## Contributing
 

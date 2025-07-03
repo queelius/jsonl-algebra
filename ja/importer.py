@@ -1,7 +1,9 @@
-"""Import utilities for converting various formats to JSONL data.
+"""Import data from other formats like CSV into the world of JSONL.
 
-This module provides functions for importing data from CSV files and directory
-structures, converting them to JSONL format with type inference capabilities.
+This module is the bridge that brings your existing data into the JSONL Algebra
+ecosystem. It provides a collection of powerful functions for converting various
+data formats—such as CSV or directories of individual JSON files—into the clean,
+line-oriented JSONL format that `ja` is built to handle.
 """
 
 import csv
@@ -11,16 +13,18 @@ import sys
 
 
 def _infer_value(value: str):
-    """Infer the appropriate Python type for a string value.
+    """Intelligently guess the data type of a string value.
 
-    Attempts to convert string values to more appropriate types:
-    integers, floats, booleans, or None for empty strings.
+    When importing from formats like CSV, everything starts as a string.
+    This function is a smart helper that attempts to convert those strings
+    into more useful Python types like integers, floats, booleans, or `None`.
 
     Args:
-        value: String value to convert.
+        value: The string value to analyze and convert.
 
     Returns:
-        The value converted to the most appropriate type.
+        The value converted to a more specific type, or the original string
+        if no other type is a good fit.
     """
     if not isinstance(value, str):
         return value
@@ -54,10 +58,21 @@ def _infer_value(value: str):
 
 
 def dir_to_jsonl_lines(dir_path):
-    """
-    Reads all .json and .jsonl files in a directory, yielding each as a JSONL line.
-    - For .json files, the entire file is treated as a single JSON object.
-    - For .jsonl files, each line is treated as a separate JSON object.
+    """Stream a directory of .json or .jsonl files as a single JSONL stream.
+
+    A handy utility for consolidating data. It reads all files ending in `.json`
+    or `.jsonl` from a specified directory and yields each JSON object as a
+    separate line. This is perfect for preparing a dataset that has been
+    stored as many small files.
+
+    - For `.json` files, the entire file is treated as a single JSON object.
+    - For `.jsonl` files, each line is treated as a separate JSON object.
+
+    Args:
+        dir_path (str): The path to the directory to read.
+
+    Yields:
+        A string for each JSON object found, ready for processing.
     """
     for filename in sorted(os.listdir(dir_path)):
         file_path = os.path.join(dir_path, filename)
@@ -77,18 +92,22 @@ def dir_to_jsonl_lines(dir_path):
 
 
 def csv_to_jsonl_lines(csv_input_stream, has_header: bool, infer_types: bool = False):
-    """Convert a CSV stream to JSONL lines.
+    """Convert a stream of CSV data into a stream of JSONL lines.
 
-    Reads CSV data and yields JSON lines, with optional type inference
-    and header handling.
+    This function reads CSV data and transforms each row into a JSON object.
+    It can automatically handle headers to use as keys and can even infer the
+    data types of your values, converting them from strings to numbers or
+    booleans where appropriate.
 
     Args:
-        csv_input_stream: Input stream containing CSV data.
-        has_header: Whether the first row contains column headers.
-        infer_types: Whether to infer types for values (int, float, bool, None).
+        csv_input_stream: An input stream (like a file handle) containing CSV data.
+        has_header (bool): Set to `True` if the first row of the CSV is a header
+                           that should be used for JSON keys.
+        infer_types (bool): If `True`, automatically convert values to `int`,
+                            `float`, `bool`, or `None`. Defaults to `False`.
 
     Yields:
-        JSON strings representing each row.
+        A JSON-formatted string for each row in the CSV data.
     """
 
     def process_row(row):

@@ -1,13 +1,18 @@
-"""Core relational algebra operations for JSONL data manipulation.
+"""Core relational operations for the JSONL algebra system.
 
-This module provides fundamental relational algebra operations like select, project,
-join, union, intersection, difference, and various utility functions for working
-with relations (lists of dictionaries).
+This module implements the fundamental set and relational operations that form
+the algebra for manipulating collections of JSON objects. All operations are
+designed to work with lists of dictionaries, making them suitable for processing
+JSONL data.
 """
 
-from typing import Any, Callable, Dict, List, Tuple
+from collections import defaultdict
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+import re
 
 import jmespath
+
+from .expr import ExprEval
 
 Row = Dict[str, any]
 Relation = List[Row]
@@ -18,6 +23,7 @@ def _row_to_hashable_key(row: Row) -> tuple:
 
     Creates a tuple of (key, value) pairs, sorted by key, that can be used
     as a dictionary key or added to a set for operations like distinct.
+    Handles nested dictionaries and lists by converting them to hashable tuples.
 
     Args:
         row: A dictionary representing a row of data.
@@ -26,296 +32,303 @@ def _row_to_hashable_key(row: Row) -> tuple:
         A tuple of sorted (key, value) pairs.
 
     Raises:
-        TypeError: If any value in the row is not hashable (e.g., contains lists or dicts).
+        TypeError: If any value in the row contains an unhashable type like a set.
     """
-    # Check for unhashable values first to provide a more specific error.
-    # The resulting tuple from sorted(row.items()) would be unhashable if it contained
-    # an unhashable value (like a list), and the error would occur upon hashing (e.g., adding to a set).
-    problematic_items_details = []
-    for k, v in row.items():
-        try:
-            hash(v)
-        except TypeError:
-            problematic_items_details.append(
-                f"key '{k}' with value '{v}' (type: {type(v).__name__})"
-            )
 
-    if problematic_items_details:
-        raise TypeError(
-            f"Row cannot be converted to a hashable key because it contains unhashable values: "
-            f"{'; '.join(problematic_items_details)}. Full row: {row}. "
-            "All cell values must be hashable (e.g., strings, numbers, booleans, or tuples of hashables)."
-        )
-    return tuple(sorted(row.items()))
+    def to_hashable(obj: Any) -> Any:
+        if isinstance(obj, dict):
+            return tuple(sorted((k, to_hashable(v)) for k, v in obj.items()))
+        if isinstance(obj, list):
+            return tuple(to_hashable(v) for v in obj)
+        # Let it fail for unhashable types like sets
+        hash(obj)
+        return obj
+
+    try:
+        # We are converting the whole row dict into a hashable tuple of items.
+        return to_hashable(row)
+    except TypeError as e:
+        # Find the problematic item to create a better error message
+        for k, v in row.items():
+            try:
+                to_hashable(v)
+            except TypeError:
+                raise TypeError(
+                    f"Row cannot be converted to a hashable key because it contains an unhashable value. "
+                    f"Problem at key '{k}' with value '{v}' (type: {type(v).__name__}). "
+                    f"Full row: {row}. All cell values must be hashable or be dicts/lists of hashable values."
+                ) from e
+        # Should not be reached if the row has an unhashable value
+        raise e
 
 
-def select(relation: Relation, expression) -> Relation:
-    """Filter rows from a relation based on a JMESPath expression.
-
-    Uses JMESPath to filter the relation, keeping only rows that match
-    the given expression criteria.
+def select(
+    data: Relation, expr: str, use_jmespath: bool = False
+) -> Relation:
+    """Filter rows based on an expression.
 
     Args:
-        relation: The input relation (list of dictionaries).
-        expression: A JMESPath expression string or compiled JMESPath expression.
+        data: List of dictionaries to filter
+        expr: Expression to evaluate (simple expression or JMESPath)
+        use_jmespath: If True, use JMESPath evaluation
 
     Returns:
-        A new relation containing only the rows that match the expression.
-
-    Example:
-        >>> data = [{"name": "Alice", "age": 30}, {"name": "Bob", "age": 25}]
-        >>> select(data, "age > `27`")
-        [{"name": "Alice", "age": 30}]
+        List of rows where the expression evaluates to true
     """
-    if isinstance(expression, str):
-        expression = jmespath.compile(f"[?{expression}]")
+    if use_jmespath:
+        compiled_expr = jmespath.compile(expr)
+        return [row for row in data if compiled_expr.search(row)]
 
-    # JMESPath works on the entire relation (JSON document)
-    return expression.search(relation)
-
-
-def project(relation: Relation, columns: List[str]) -> Relation:
-    """Select specific columns from a relation.
-
-    Creates a new relation containing only the specified columns from each row.
-    If a row doesn't contain a specified column, it's omitted for that row.
-
-    Args:
-        relation: The input relation (list of dictionaries).
-        columns: A list of column names to include in the result.
-
-    Returns:
-        A new relation containing only the specified columns for each row.
-
-    Example:
-        >>> data = [{"name": "Alice", "age": 30, "city": "NYC"}]
-        >>> project(data, ["name", "age"])
-        [{"name": "Alice", "age": 30}]
-    """
-    return [{col: row[col] for col in columns if col in row} for row in relation]
-
-
-def join(left: Relation, right: Relation, on: List[Tuple[str, str]]) -> Relation:
-    """Combine rows from two relations based on specified join conditions.
-
-    Performs an inner join between two relations, matching rows where the
-    specified columns have equal values.
-
-    Args:
-        left: The left relation (list of dictionaries).
-        right: The right relation (list of dictionaries).
-        on: A list of tuples, where each tuple (left_col, right_col)
-            specifies the columns to join on.
-
-    Returns:
-        A new relation containing the merged rows that satisfy the join conditions.
-        The resulting rows contain all columns from the left row, plus columns
-        from the matching right row (excluding right columns used in join conditions).
-
-    Example:
-        >>> left = [{"id": 1, "name": "Alice"}]
-        >>> right = [{"user_id": 1, "score": 95}]
-        >>> join(left, right, [("id", "user_id")])
-        [{"id": 1, "name": "Alice", "score": 95}]
-    """
-    right_index = {}
-    for r_row_build_idx in right:
-        key_tuple = tuple(r_row_build_idx[r_col] for _, r_col in on)
-        right_index.setdefault(key_tuple, []).append(r_row_build_idx)
-
+    # Use simple expression parser
+    parser = ExprEval()
     result = []
-    # Pre-calculate the set of right column names that are part of the join condition
-    right_join_key_names = {r_col for _, r_col in on}
 
-    for l_row in left:
-        key_tuple = tuple(l_row[l_col] for l_col, _ in on)
-        for r_row in right_index.get(key_tuple, []):
-            merged_row = dict(l_row)  # Start with a copy of the left row
+    # Handle 'and' at the command level for simplicity
+    if " and " in expr:
+        # Multiple conditions with 'and'
+        conditions = expr.split(" and ")
+        for row in data:
+            if all(parser.evaluate(cond.strip(), row) for cond in conditions):
+                result.append(row)
+    elif " or " in expr:
+        # Multiple conditions with 'or'
+        conditions = expr.split(" or ")
+        for row in data:
+            if any(parser.evaluate(cond.strip(), row) for cond in conditions):
+                result.append(row)
+    else:
+        # Single condition
+        for row in data:
+            if parser.evaluate(expr, row):
+                result.append(row)
 
-            # Add columns from the right row if they don't collide with left row's columns
-            # and are not themselves right-side join keys.
-            for r_key, r_val in r_row.items():
-                if r_key not in merged_row and r_key not in right_join_key_names:
-                    merged_row[r_key] = r_val
-            result.append(merged_row)
     return result
 
 
-def rename(relation: Relation, renames: Dict[str, str]) -> Relation:
-    """Rename columns in a relation.
-
-    Creates a new relation with specified columns renamed according to
-    the provided mapping.
+def project(
+    data: Relation, fields: List[str] | str, use_jmespath: bool = False
+) -> Relation:
+    """Project specific fields from each row.
 
     Args:
-        relation: The input relation (list of dictionaries).
-        renames: A dictionary mapping old column names to new column names.
+        data: List of dictionaries to project
+        fields: Comma-separated field names or expressions
+        use_jmespath: If True, use JMESPath for projection
 
     Returns:
-        A new relation with specified columns renamed.
-
-    Example:
-        >>> data = [{"old_name": "Alice", "age": 30}]
-        >>> rename(data, {"old_name": "name"})
-        [{"name": "Alice", "age": 30}]
+        List of dictionaries with only the specified fields
     """
-    return [{renames.get(k, k): v for k, v in row.items()} for row in relation]
+
+    if use_jmespath:
+        compiled_expr = jmespath.compile(fields)
+        return [compiled_expr.search(row) for row in data]
+
+    # Parse field specifications
+    result = []
+    parser = ExprEval()
+    field_specs = fields if isinstance(fields, list) else fields.split(",")
+
+    for row in data:
+        new_row = {}
+
+        for spec in field_specs:
+            if "=" in spec:
+                # Computed field: "total=amount*1.1" or "is_adult=age>=18"
+                name, expr = spec.split("=", 1)
+                name = name.strip()
+                expr = expr.strip()
+
+                # Check if it's an arithmetic expression
+                arith_result = parser.evaluate_arithmetic(expr, row)
+                if arith_result is not None:
+                    new_row[name] = arith_result
+                else:
+                    # Try as boolean expression
+                    new_row[name] = parser.evaluate(expr, row)
+            else:
+                # Simple field projection
+                value = parser.get_field_value(row, spec)
+                if value is not None:
+                    # Build nested structure
+                    parser.set_field_value(new_row, spec, value)
+
+        result.append(new_row)
+
+    return result
 
 
-def union(a: Relation, b: Relation) -> Relation:
-    """Return all rows from two relations.
+# --- join --------------------------------------------------------------------
+def join(left: Relation,
+         right: Relation,
+         on: List[Tuple[str, str]]) -> Relation:
+    """Inner join with nested-key support."""
+    parser = ExprEval()
 
-    Concatenates two relations, preserving all rows including duplicates.
-    For distinct union, pipe the result through `distinct`.
+    # index right side
+    right_index: Dict[Tuple[Any, ...], List[Row]] = defaultdict(list)
+    for r in right:
+        key = tuple(parser.get_field_value(r, rk) for _, rk in on)
+        if all(v is not None for v in key):
+            right_index[key].append(r)
+
+    # roots of every RHS join path (e.g. 'user.id' → 'user')
+    rhs_roots = {re.split(r"[.\[]", rk, 1)[0] for _, rk in on}
+
+    joined: Relation = []
+    for l in left:
+        l_key = tuple(parser.get_field_value(l, lk) for lk, _ in on)
+        if not all(v is not None for v in l_key):
+            continue
+        for r in right_index.get(l_key, []):
+            merged = r.copy()
+            merged.update(l)          # left wins
+            # drop right-side join columns
+            for root in rhs_roots:
+                merged.pop(root, None)
+            joined.append(merged)
+    return joined
+
+
+# --- product -----------------------------------------------------------------
+def product(left: Relation, right: Relation) -> Relation:
+    """Cartesian product; colliding keys from *right* are prefixed with ``b_``."""
+    result: Relation = []
+    for l in left:
+        for r in right:
+            merged = l.copy()
+            for k, v in r.items():
+                if k in merged:
+                    merged[f"b_{k}"] = v
+                else:
+                    merged[k] = v
+            result.append(merged)
+    return result
+
+
+def rename(data: Relation, mapping: Dict[str, str]) -> Relation:
+    """Rename fields in each row.
 
     Args:
-        a: The first relation (list of dictionaries).
-        b: The second relation (list of dictionaries).
+        data: List of dictionaries
+        mapping: Dictionary mapping old names to new names
 
     Returns:
-        A new relation containing all rows from both input relations.
-
-    Example:
-        >>> a = [{"name": "Alice"}]
-        >>> b = [{"name": "Bob"}]
-        >>> union(a, b)
-        [{"name": "Alice"}, {"name": "Bob"}]
+        List with renamed fields
     """
-    return a + b
+    result = []
+    for row in data:
+        new_row = {}
+        for key, value in row.items():
+            new_key = mapping.get(key, key)
+            new_row[new_key] = value
+        result.append(new_row)
+    return result
 
 
-def difference(a: Relation, b: Relation) -> Relation:
-    """Return rows present in the first relation but not in the second.
-
-    Performs set difference operation, removing from the first relation
-    any rows that also appear in the second relation.
+def union(
+    left: Relation, right: Relation
+) -> Relation:
+    """Compute the union of two collections.
 
     Args:
-        a: The first relation (list of dictionaries).
-        b: The second relation (list of dictionaries), whose rows will be excluded from 'a'.
+        left: First collection
+        right: Second collection
 
     Returns:
-        A new relation containing rows from 'a' that are not in 'b'.
-
-    Example:
-        >>> a = [{"name": "Alice"}, {"name": "Bob"}]
-        >>> b = [{"name": "Alice"}]
-        >>> difference(a, b)
-        [{"name": "Bob"}]
+        Union of the two collections
     """
-    b_set = {_row_to_hashable_key(r) for r in b}
-    return [r for r in a if _row_to_hashable_key(r) not in b_set]
+    return left + right
 
 
-def distinct(relation: Relation) -> Relation:
-    """Remove duplicate rows from a relation.
-
-    Creates a new relation with duplicate rows removed, preserving the
-    first occurrence of each unique row.
+def intersection(
+    left: Relation, right: Relation
+) -> Relation:
+    """Compute the intersection of two collections.
 
     Args:
-        relation: The input relation (list of dictionaries).
+        left: First collection
+        right: Second collection
 
     Returns:
-        A new relation with duplicate rows removed.
+        Intersection of the two collections
+    """
+    # Convert right to a set of tuples for efficient lookup
+    right_set = {tuple(sorted(row.items())) for row in right}
 
-    Example:
-        >>> data = [{"name": "Alice"}, {"name": "Alice"}, {"name": "Bob"}]
-        >>> distinct(data)
-        [{"name": "Alice"}, {"name": "Bob"}]
+    result = []
+    for row in left:
+        if tuple(sorted(row.items())) in right_set:
+            result.append(row)
+
+    return result
+
+
+def difference(
+    left: Relation, right: Relation
+) -> Relation:
+    """Compute the difference of two collections.
+
+    Args:
+        left: First collection
+        right: Second collection
+
+    Returns:
+        Elements in left but not in right
+    """
+    # Convert right to a set of tuples for efficient lookup
+    right_set = {tuple(sorted(row.items())) for row in right}
+
+    result = []
+    for row in left:
+        if tuple(sorted(row.items())) not in right_set:
+            result.append(row)
+
+    return result
+
+
+def distinct(data: Relation) -> Relation:
+    """Remove duplicate rows from a collection.
+
+    Args:
+        data: List of dictionaries
+
+    Returns:
+        List with duplicates removed
     """
     seen = set()
-    out = []
-    for row in relation:
-        key = _row_to_hashable_key(row)
-        if key not in seen:
-            seen.add(key)
-            out.append(row)
-    return out
+    result = []
+
+    for row in data:
+        # Convert to tuple for hashability
+        row_tuple = tuple(sorted(row.items()))
+        if row_tuple not in seen:
+            seen.add(row_tuple)
+            result.append(row)
+
+    return result
 
 
-def intersection(a: Relation, b: Relation) -> Relation:
-    """Return rows common to both relations.
+# --- sort_by -----------------------------------------------------------------
+def sort_by(data: Relation,
+            keys: Union[str, List[str]],
+            *,
+            descending: bool = False) -> Relation:
 
-    Creates a new relation containing only rows that are present in both
-    input relations.
+    key_list = keys.split(",") if isinstance(keys, str) else keys
+    key_list = [k.strip() for k in key_list]
 
-    Args:
-        a: The first relation (list of dictionaries).
-        b: The second relation (list of dictionaries).
+    parser = ExprEval()
 
-    Returns:
-        A new relation containing only rows that are present in both 'a' and 'b'.
+    def sort_val(row: Row, key: str):
+        arith = parser.evaluate_arithmetic(key, row)
+        if arith is not None:
+            return (False, arith)
+        val = parser.get_field_value(row, key)
+        # None values sort first
+        return (val is not None, str(val) if val is not None else "")
 
-    Example:
-        >>> a = [{"name": "Alice"}, {"name": "Bob"}]
-        >>> b = [{"name": "Alice"}, {"name": "Carol"}]
-        >>> intersection(a, b)
-        [{"name": "Alice"}]
-    """
-    b_set = {_row_to_hashable_key(r) for r in b}
-    return [r for r in a if _row_to_hashable_key(r) in b_set]
-
-
-def sort_by(relation: Relation, keys: List[str], reverse: bool = False) -> Relation:
-    """Sort a relation by specified keys.
-
-    Sorts the relation by the specified column names in order. Missing values
-    (None) are sorted before non-None values.
-
-    Args:
-        relation: The input relation (list of dictionaries).
-        keys: A list of column names to sort by. The sort is performed in
-              the order of the columns specified.
-        reverse: If True, sort in descending order.
-
-    Returns:
-        A new relation sorted by the specified keys.
-
-    Example:
-        >>> data = [{"name": "Bob", "age": 30}, {"name": "Alice", "age": 25}]
-        >>> sort_by(data, ["name"])
-        [{"name": "Alice", "age": 25}, {"name": "Bob", "age": 30}]
-    """
-
-    def sort_key_func(row: Row) -> tuple:
-        key_parts = []
-        for k in keys:
-            value = row.get(k)
-            if value is None:
-                # Sort None values first by using a lower first element in the tuple part
-                key_parts.append((0, None))
-            else:
-                key_parts.append((1, value))
-        return tuple(key_parts)
-
-    return sorted(relation, key=sort_key_func, reverse=reverse)
-
-
-def product(a: Relation, b: Relation) -> Relation:
-    """Compute the Cartesian product of two relations.
-
-    Creates all possible combinations of rows from the two input relations.
-
-    Args:
-        a: The first relation (list of dictionaries).
-        b: The second relation (list of dictionaries).
-
-    Returns:
-        A new relation containing all combinations of rows from 'a' and 'b'.
-
-    Example:
-        >>> a = [{"x": 1}]
-        >>> b = [{"y": 2}, {"y": 3}]
-        >>> product(a, b)
-        [{"x": 1, "y": 2}, {"x": 1, "y": 3}]
-    """
-    out = []
-    for r1 in a:
-        for r2 in b:
-            merged = dict(r1)
-            for k, v in r2.items():
-                # avoid key collision by prefixing
-                merged[f"b_{k}" if k in r1 else k] = v
-            out.append(merged)
-    return out
+    return sorted(
+        data,
+        key=lambda r: tuple(sort_val(r, k) for k in key_list),
+        reverse=descending,
+    )
