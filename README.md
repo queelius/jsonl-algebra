@@ -4,14 +4,14 @@
 
 ## Features
 
-* Perform common relational algebra operations: select, project, join, union, intersection, difference, distinct, sort, product, and group by with aggregations.
+- Perform common relational algebra operations: select, project, join, union, intersection, difference, distinct, sort, product, and group by with aggregations.
 
-* `groupby`: A powerful feature that allows you to group data by one or more keys and perform various aggregations on the grouped data.
-  * By default, includes `sum`, `avg`, `min`, `max`, `count`, `list` (collect all values), `first` (first value in group), `last` (last value in group) aggregations.
-  * Can be extended with custom aggregation functions. See "Extending Group By Aggregations" section.
-* Works with JSONL files or piped data from stdin/stdout.
-* Can be used as a CLI tool or as a Python library.
-* No external dependencies.
+- `groupby`: A powerful feature that allows you to group data by one or more keys and perform various aggregations on the grouped data.
+  - By default, includes `sum`, `avg`, `min`, `max`, `count`, `list` (collect all values), `first` (first value in group), `last` (last value in group) aggregations.
+  - Can be extended with custom aggregation functions. See "Extending Group By Aggregations" section.
+- Works with JSONL files or piped data from stdin/stdout.
+- Can be used as a CLI tool or as a Python library.
+- No external dependencies.
 
 ## Installation
 
@@ -25,7 +25,7 @@ You can install the package directly from PyPI (Python Package Index) using pip.
 pip install jsonl-algebra
 ```
 
-### For developers (from local repository):**
+### For developers (from local repository):
 
 If you have cloned this repository and want to install it for development or from local sources:
 
@@ -50,7 +50,7 @@ If `file` is omitted for commands that expect a single input, `ja` reads from st
 
 ### Examples
 
-* **Select rows where 'amount' is greater than 100:**
+- **Select rows where 'amount' is greater than 100:**
 
     ```bash
     cat data.jsonl | ja select 'amount > 100'
@@ -60,39 +60,39 @@ If `file` is omitted for commands that expect a single input, `ja` reads from st
     ja select 'amount > 100' data.jsonl
     ```
 
-* **Project 'id' and 'name' columns:**
+- **Project 'id' and 'name' columns:**
 
     ```bash
     cat data.jsonl | ja project id,name
     ```
 
-* **Join two files on a common key:**
+- **Join two files on a common key:**
 
     ```bash
     ja join users.jsonl orders.jsonl --on user_id=customer_id
     ```
 
-* **Group by 'category' and count items:**
+- **Group by 'category' and count items:**
 
     ```bash
     cat products.jsonl | ja groupby category --agg count
     ```
 
-* **Group by 'category', count items, and list all product names:**
+- **Group by 'category', count items, and list all product names:**
 
     ```bash
-    cat products.jsonl | ja groupby category --agg count --agg list:name\
+    cat products.jsonl | ja groupby category --agg count --agg list:name
     ```
 
     This will produce output like: `{"category": "electronics", "count": 5, "list_name": ["laptop", "mouse", ...]}`
 
-* **Group by 'user_id' and get the first action:**
+- **Group by 'user_id' and get the first action:**
 
     ```bash
     cat user_actions.jsonl | ja groupby user_id --agg first:action
     ```
 
-* **Sort data by 'timestamp':**
+- **Sort data by 'timestamp':**
 
     ```bash
     cat logs.jsonl | ja sort timestamp
@@ -100,17 +100,17 @@ If `file` is omitted for commands that expect a single input, `ja` reads from st
 
 ### Available Commands
 
-* `select`: Filter rows based on a Python expression.
-* `project`: Select specific columns.
-* `join`: Join two relations on specified keys.
-* `rename`: Rename columns.
-* `union`: Combine two relations (all rows).
-* `difference`: Rows in the first relation but not the second.
-* `distinct`: Remove duplicate rows.
-* `intersection`: Rows common to both relations.
-* `sort` (maps to `sort_by`): Sort a relation by specified keys.
-* `product`: Cartesian product of two relations.
-* `groupby` (maps to `groupby_agg`): Group rows by a key and perform aggregations.
+- `select`: Filter rows based on a Python expression.
+- `project`: Select specific columns.
+- `join`: Join two relations on specified keys.
+- `rename`: Rename columns.
+- `union`: Combine two relations (all rows).
+- `difference`: Rows in the first relation but not the second.
+- `distinct`: Remove duplicate rows.
+- `intersection`: Rows common to both relations.
+- `sort` (maps to `sort_by`): Sort a relation by specified keys.
+- `product`: Cartesian product of two relations.
+- `groupby` (maps to `groupby_agg`): Group rows by a key and perform aggregations.
 
 Use `ja <command> --help` for more details on specific commands.
 
@@ -225,6 +225,113 @@ For programmatic use with your own `ja` instance or a forked version, you could 
 If your aggregation requires a specific way of collecting data during the first pass of `groupby_agg` (different from how `list`, `first`, or `last` collect data), you would need to modify the data collection logic in `ja.groupby.groupby_agg`.
 
 This structure allows for significant flexibility. For instance, one could implement a general `reduce` aggregation that takes Python expressions for an initial value and a step function, operating on the list of values collected for a group.
+
+## Memory-Efficient Processing
+
+**ja** automatically uses streaming mode for memory-efficient processing of large JSONL files. Operations that can be streamed process data line-by-line without loading entire datasets into memory.
+
+### Automatic Streaming
+
+Most operations stream by default - no flags needed:
+
+```bash
+# These automatically stream for constant memory usage
+cat huge_logs.jsonl | ja select 'status == "error"'
+cat large_data.jsonl | ja select 'amount > 1000' | ja project id,amount,timestamp
+```
+
+### Operations That Stream Automatically
+
+These operations process data with O(1) memory usage:
+- `select` - Filter rows  
+- `project` - Select columns
+- `rename` - Rename columns
+- `union` - Combine datasets (preserves duplicates per relational algebra)
+- JSONPath operations: `select-path`, `select-any`, `select-all`, `select-none`, `project-template`
+
+**Note**: `distinct` streams input but requires O(unique_items) memory to track seen records for exact deduplication.
+
+### Memory-Intensive Operations (Relational Algebra)
+
+**Important**: The core relational/set operations require loading data into memory for correctness, but offer alternatives:
+
+- `join` - Requires indexing both tables for correct results
+- `sort` - Requires all data to sort correctly  
+- `groupby` - Requires accumulating all groups
+- `intersection` - Requires set operations on full datasets
+- `difference` - Requires set operations on full datasets
+
+**💡 Solution: Windowed Processing**
+
+For large datasets, use `--window-size N` to process data in chunks, providing approximate results with much lower memory usage:
+
+```bash
+# Sort in windows of 1000 records each (approximate global sort)
+cat large_data.jsonl | ja sort timestamp --window-size 1000
+
+# Group by category in windows of 500 records (approximate aggregation)
+cat large_data.jsonl | ja groupby category --agg sum:amount --window-size 500
+```
+
+**Note**: Windowed processing provides approximate results since operations are applied within each window independently. This is useful for analysis where perfect accuracy isn't required but memory efficiency is critical.
+
+**💡 Strategy: Filter First, Then Process**
+
+For best results with large datasets:
+
+```bash
+# Reduce data size first with streaming operations, then use memory-intensive operations
+cat huge_dataset.jsonl | ja select 'category == "important"' | ja sort timestamp
+cat huge_dataset.jsonl | ja project id,timestamp,value | ja groupby id --agg sum:value
+```
+
+### Performance Benefits
+
+**Memory Usage:**
+- **Standard operations**: O(n) memory usage (loads entire dataset) 
+- **Automatic streaming**: O(1) memory usage (constant memory, line-by-line)
+- **Windowed processing**: O(window_size) memory usage (approximate results)
+
+**When Each Mode is Used:**
+- **Streaming (automatic)**: `select`, `project`, `rename`, `union`, `distinct`, JSONPath operations
+- **Memory-intensive**: `join`, `sort`, `groupby`, `intersection`, `difference` 
+- **Windowed**: Any memory-intensive operation with `--window-size N`
+
+**Example Performance Comparison:**
+
+```bash
+# These are equivalent and both automatically stream:
+cat logs_1gb.jsonl | ja select 'severity == "ERROR"' | ja project timestamp,message
+
+# Memory-intensive operation (will warn for large files):
+cat logs_1gb.jsonl | ja sort timestamp
+
+# Memory-efficient approximation:
+cat logs_1gb.jsonl | ja sort timestamp --window-size 10000
+```
+
+### Smart Warnings
+
+**ja** will automatically inform you about memory usage and provide helpful suggestions:
+
+```bash
+# Memory-intensive operations will suggest alternatives for large datasets:
+cat large_data.jsonl | ja join other_data.jsonl --on id=user_id
+# Warning: Operation 'join' requires loading data into memory for optimal results. 
+# For large datasets, consider using --window-size N for memory-efficient approximate processing, 
+# or use streaming operations (select, project, rename) to reduce data size first.
+
+# Windowed processing will warn about approximate results:
+cat data.jsonl | ja sort value --window-size 100
+### Processing Modes Summary
+
+| Mode | Memory Usage | Accuracy | When Used |
+|------|-------------|----------|----------|
+| **Auto-Streaming** | O(1) | Perfect | `select`, `project`, `rename`, `union`, `distinct`, JSONPath ops |
+| **Memory-Intensive** | O(dataset_size) | Perfect | `join`, `sort`, `groupby`, `intersection`, `difference` |
+| **Windowed** | O(window_size) | Approximate | Any memory-intensive operation + `--window-size N` |
+
+**Recommendation**: Use streaming operations to filter/reduce data size, then apply memory-intensive operations to smaller datasets.
 
 ## Contributing
 

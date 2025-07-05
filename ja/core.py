@@ -1,7 +1,19 @@
 from typing import List, Dict, Callable, Tuple, Any
 
+# JSONPath extensions - integrated into core
+from ja.jsonpath import (
+    JSONPath,
+    PathQuantifier,
+    select_path as _select_path,
+    select_any as _select_any,
+    select_all as _select_all,
+    select_none as _select_none,
+    project_template as _project_template,
+)
+
 Row = Dict[str, any]
 Relation = List[Row]
+
 
 def _row_to_hashable_key(row: Row) -> tuple:
     """
@@ -19,7 +31,9 @@ def _row_to_hashable_key(row: Row) -> tuple:
         try:
             hash(v)
         except TypeError:
-            problematic_items_details.append(f"key '{k}' with value '{v}' (type: {type(v).__name__})")
+            problematic_items_details.append(
+                f"key '{k}' with value '{v}' (type: {type(v).__name__})"
+            )
 
     if problematic_items_details:
         raise TypeError(
@@ -28,6 +42,7 @@ def _row_to_hashable_key(row: Row) -> tuple:
             "All cell values must be hashable (e.g., strings, numbers, booleans, or tuples of hashables)."
         )
     return tuple(sorted(row.items()))
+
 
 def select(relation: Relation, predicate: Callable[[Row], bool]) -> Relation:
     """
@@ -43,6 +58,7 @@ def select(relation: Relation, predicate: Callable[[Row], bool]) -> Relation:
     """
     return [row for row in relation if predicate(row)]
 
+
 def project(relation: Relation, columns: List[str]) -> Relation:
     """
     Selects specific columns from a relation.
@@ -56,6 +72,7 @@ def project(relation: Relation, columns: List[str]) -> Relation:
         If a row does not contain a specified column, it's omitted for that row.
     """
     return [{col: row[col] for col in columns if col in row} for row in relation]
+
 
 def join(left: Relation, right: Relation, on: List[Tuple[str, str]]) -> Relation:
     """
@@ -88,7 +105,7 @@ def join(left: Relation, right: Relation, on: List[Tuple[str, str]]) -> Relation
         key_tuple = tuple(l_row[l_col] for l_col, _ in on)
         for r_row in right_index.get(key_tuple, []):
             merged_row = dict(l_row)  # Start with a copy of the left row
-            
+
             # Add columns from the right row if they don't collide with left row's columns
             # and are not themselves right-side join keys.
             for r_key, r_val in r_row.items():
@@ -96,6 +113,7 @@ def join(left: Relation, right: Relation, on: List[Tuple[str, str]]) -> Relation
                     merged_row[r_key] = r_val
             result.append(merged_row)
     return result
+
 
 def rename(relation: Relation, renames: Dict[str, str]) -> Relation:
     """
@@ -109,6 +127,7 @@ def rename(relation: Relation, renames: Dict[str, str]) -> Relation:
         A new relation with specified columns renamed.
     """
     return [{renames.get(k, k): v for k, v in row.items()} for row in relation]
+
 
 def union(a: Relation, b: Relation) -> Relation:
     """
@@ -125,6 +144,7 @@ def union(a: Relation, b: Relation) -> Relation:
     """
     return a + b
 
+
 def difference(a: Relation, b: Relation) -> Relation:
     """
     Returns rows present in the first relation but not in the second.
@@ -139,6 +159,7 @@ def difference(a: Relation, b: Relation) -> Relation:
     """
     b_set = {_row_to_hashable_key(r) for r in b}
     return [r for r in a if _row_to_hashable_key(r) not in b_set]
+
 
 def distinct(relation: Relation) -> Relation:
     """
@@ -161,6 +182,7 @@ def distinct(relation: Relation) -> Relation:
             out.append(row)
     return out
 
+
 def intersection(a: Relation, b: Relation) -> Relation:
     """
     Returns rows common to both relations.
@@ -176,6 +198,7 @@ def intersection(a: Relation, b: Relation) -> Relation:
     b_set = {_row_to_hashable_key(r) for r in b}
     return [r for r in a if _row_to_hashable_key(r) in b_set]
 
+
 def sort_by(relation: Relation, keys: List[str]) -> Relation:
     """
     Sorts a relation by specified keys.
@@ -189,18 +212,20 @@ def sort_by(relation: Relation, keys: List[str]) -> Relation:
     Returns:
         A new relation sorted by the specified keys.
     """
+
     def sort_key_func(row: Row) -> tuple:
         key_parts = []
         for k in keys:
             value = row.get(k)
             if value is None:
                 # Sort None values first by using a lower first element in the tuple part
-                key_parts.append((0, None)) 
+                key_parts.append((0, None))
             else:
                 key_parts.append((1, value))
         return tuple(key_parts)
 
     return sorted(relation, key=sort_key_func)
+
 
 def product(a: Relation, b: Relation) -> Relation:
     """
@@ -223,3 +248,125 @@ def product(a: Relation, b: Relation) -> Relation:
             out.append(merged)
     return out
 
+
+# ==========================================
+# JSONPath Extensions
+# ==========================================
+
+
+def select_path(
+    relation: Relation,
+    path_expr: str,
+    predicate: Callable[[Any], bool] = None,
+    quantifier: str = "any",
+) -> Relation:
+    """
+    Select rows using JSONPath expressions with quantifiers.
+
+    Args:
+        relation: List of dictionaries to filter
+        path_expr: JSONPath expression (e.g., "$.orders[*].amount")
+        predicate: Optional predicate function to apply to path values
+        quantifier: "any" (default), "all", or "none"
+
+    Returns:
+        Filtered list of dictionaries
+
+    Examples:
+        # Users with any expensive order
+        select_path(users, "$.orders[*].amount", lambda x: x > 100)
+
+        # Users where all scores are high
+        select_path(users, "$.scores[*]", lambda x: x > 80, "all")
+
+        # Users with no cancelled orders
+        select_path(users, "$.orders[*].status", lambda x: x == "cancelled", "none")
+    """
+    quantifier_map = {
+        "any": PathQuantifier.ANY,
+        "all": PathQuantifier.ALL,
+        "none": PathQuantifier.NONE,
+    }
+
+    if quantifier not in quantifier_map:
+        raise ValueError(
+            f"Invalid quantifier: {quantifier}. Use 'any', 'all', or 'none'."
+        )
+
+    return _select_path(relation, path_expr, predicate, quantifier_map[quantifier])
+
+
+def select_any(
+    relation: Relation, path_expr: str, predicate: Callable[[Any], bool] = None
+) -> Relation:
+    """
+    Select rows where ANY element in the path matches the predicate.
+
+    This is equivalent to select_path() with quantifier="any" (the default).
+
+    Args:
+        relation: List of dictionaries to filter
+        path_expr: JSONPath expression
+        predicate: Predicate function to apply to path values
+
+    Returns:
+        Rows where any path values satisfy the predicate
+    """
+    return _select_any(relation, path_expr, predicate)
+
+
+def select_all(
+    relation: Relation, path_expr: str, predicate: Callable[[Any], bool] = None
+) -> Relation:
+    """
+    Select rows where ALL elements in the path match the predicate.
+
+    Args:
+        relation: List of dictionaries to filter
+        path_expr: JSONPath expression
+        predicate: Predicate function to apply to path values
+
+    Returns:
+        Rows where all path values satisfy the predicate
+    """
+    return _select_all(relation, path_expr, predicate)
+
+
+def select_none(
+    relation: Relation, path_expr: str, predicate: Callable[[Any], bool] = None
+) -> Relation:
+    """
+    Select rows where NO elements in the path match the predicate.
+
+    Args:
+        relation: List of dictionaries to filter
+        path_expr: JSONPath expression
+        predicate: Predicate function to apply to path values
+
+    Returns:
+        Rows where no path values satisfy the predicate
+    """
+    return _select_none(relation, path_expr, predicate)
+
+
+def project_template(relation: Relation, template: Dict[str, str]) -> Relation:
+    """
+    Project using template expressions that can include JSONPath and aggregations.
+
+    Args:
+        relation: List of dictionaries to project
+        template: Dictionary mapping output field names to template expressions
+
+    Returns:
+        List of dictionaries with projected fields
+
+    Examples:
+        # Project with aggregations
+        project_template(orders, {
+            "customer": "$.customer.name",
+            "total_spent": "sum($.items[*].price)",
+            "item_count": "count($.items[*])",
+            "has_orders": "exists($.items[*])"
+        })
+    """
+    return _project_template(relation, template)

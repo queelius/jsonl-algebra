@@ -16,10 +16,12 @@ Core Components:
 - `groupby_agg`: The main public function that performs the group-by and
   aggregation operations.
 """
+
 from typing import List, Dict, Callable, Tuple, Any
 from .core import Row, Relation
 
 # --- Aggregation Helper Functions ---
+
 
 def _agg_numeric_values(values_to_agg: List[Any]) -> List[float]:
     """
@@ -43,6 +45,7 @@ def _agg_numeric_values(values_to_agg: List[Any]) -> List[float]:
         numeric_values.append(float(v_val))
     return numeric_values
 
+
 def _agg_sum_func(collected_values: List[Any]) -> float:
     """
     Calculates the sum of numeric values in a list.
@@ -55,9 +58,10 @@ def _agg_sum_func(collected_values: List[Any]) -> float:
         The sum of the numeric values. Returns 0.0 if no numeric values are found.
     """
     numeric_vals = _agg_numeric_values(collected_values)
-    return sum(numeric_vals) # sum of empty list is 0
+    return sum(numeric_vals)  # sum of empty list is 0
 
-def _agg_avg_func(collected_values: List[Any]) -> Any: # Can be float or None
+
+def _agg_avg_func(collected_values: List[Any]) -> Any:  # Can be float or None
     """
     Calculates the average of numeric values in a list.
     Non-numeric values and Nones are handled by `_agg_numeric_values`.
@@ -72,7 +76,8 @@ def _agg_avg_func(collected_values: List[Any]) -> Any: # Can be float or None
     numeric_vals = _agg_numeric_values(collected_values)
     return sum(numeric_vals) / len(numeric_vals) if numeric_vals else None
 
-def _agg_min_func(collected_values: List[Any]) -> Any: # Can be float/int or None
+
+def _agg_min_func(collected_values: List[Any]) -> Any:  # Can be float/int or None
     """
     Finds the minimum of numeric values in a list.
     Non-numeric values and Nones are handled by `_agg_numeric_values`.
@@ -86,7 +91,8 @@ def _agg_min_func(collected_values: List[Any]) -> Any: # Can be float/int or Non
     numeric_vals = _agg_numeric_values(collected_values)
     return min(numeric_vals) if numeric_vals else None
 
-def _agg_max_func(collected_values: List[Any]) -> Any: # Can be float/int or None
+
+def _agg_max_func(collected_values: List[Any]) -> Any:  # Can be float/int or None
     """
     Finds the maximum of numeric values in a list.
     Non-numeric values and Nones are handled by `_agg_numeric_values`.
@@ -100,6 +106,7 @@ def _agg_max_func(collected_values: List[Any]) -> Any: # Can be float/int or Non
     numeric_vals = _agg_numeric_values(collected_values)
     return max(numeric_vals) if numeric_vals else None
 
+
 def _agg_list_func(collected_values: List[Any]) -> List[Any]:
     """
     Returns the list of collected values as is.
@@ -111,6 +118,7 @@ def _agg_list_func(collected_values: List[Any]) -> List[Any]:
         The input list of values.
     """
     return collected_values
+
 
 def _agg_first_func(first_value: Any) -> Any:
     """
@@ -124,6 +132,7 @@ def _agg_first_func(first_value: Any) -> Any:
     """
     return first_value
 
+
 def _agg_last_func(last_value: Any) -> Any:
     """
     Returns the last encountered value for a group.
@@ -135,6 +144,7 @@ def _agg_last_func(last_value: Any) -> Any:
         The `last_value`.
     """
     return last_value
+
 
 # --- Aggregation Dispatcher ---
 # This dictionary maps aggregation function names (strings) to their
@@ -157,7 +167,10 @@ AGGREGATION_DISPATCHER: Dict[str, Callable[[Any], Any]] = {
     # as it doesn't operate on a collected list/value in the same way.
 }
 
-def groupby_agg(relation: Relation, group_by_key: str, aggregations: List[Tuple[str, ...]]) -> Relation:
+
+def groupby_agg(
+    relation: Relation, group_by_key: str, aggregations: List[Tuple[str, ...]]
+) -> Relation:
     """
     Groups rows by a key and performs specified aggregations on other columns.
 
@@ -212,8 +225,8 @@ def groupby_agg(relation: Relation, group_by_key: str, aggregations: List[Tuple[
         key_value = row.get(group_by_key)
         group = grouped_data.setdefault(key_value, {group_by_key: key_value})
         # _values stores the raw data needed for each aggregation within the group
-        group_values = group.setdefault("_values", {}) 
-        
+        group_values = group.setdefault("_values", {})
+
         # Always maintain a count for the group
         group_values.setdefault("_count", 0)
         group_values["_count"] += 1
@@ -221,14 +234,14 @@ def groupby_agg(relation: Relation, group_by_key: str, aggregations: List[Tuple[
         for agg_spec in aggregations:
             agg_func = agg_spec[0]
             # Ensure agg_col is present, default to empty string if not (e.g. for count)
-            agg_col = agg_spec[1] if len(agg_spec) > 1 else "" 
+            agg_col = agg_spec[1] if len(agg_spec) > 1 else ""
 
-            if agg_func == "count": 
-                continue # Count is handled by _count increment above
+            if agg_func == "count":
+                continue  # Count is handled by _count increment above
 
             val = row.get(agg_col)
             # storage_key_for_agg is used to store the collected data for a specific (agg_func, agg_col) pair
-            storage_key_for_agg = f"{agg_func}_{agg_col}" 
+            storage_key_for_agg = f"{agg_func}_{agg_col}"
 
             if agg_func in ["sum", "avg", "min", "max", "list"]:
                 # These aggregations collect all values from agg_col into a list
@@ -240,8 +253,12 @@ def groupby_agg(relation: Relation, group_by_key: str, aggregations: List[Tuple[
             elif agg_func == "last":
                 # Always store/overwrite with the latest value for this agg_col in the group
                 group_values[storage_key_for_agg] = val
-            elif agg_func not in AGGREGATION_DISPATCHER: # Check for unknown agg functions early
-                 raise ValueError(f"Unsupported aggregation function during collection: {agg_func}")
+            elif (
+                agg_func not in AGGREGATION_DISPATCHER
+            ):  # Check for unknown agg functions early
+                raise ValueError(
+                    f"Unsupported aggregation function during collection: {agg_func}"
+                )
             # Else: If agg_func is in dispatcher but not explicitly handled above,
             # it implies it doesn't need special data collection beyond what other
             # similar functions might do, or it's an error in dispatcher setup.
@@ -257,22 +274,28 @@ def groupby_agg(relation: Relation, group_by_key: str, aggregations: List[Tuple[
             agg_col_name = agg_spec[1] if len(agg_spec) > 1 else ""
             # extra_args = agg_spec[2:] # For future use, e.g., a general reduce
 
-            output_col_name = f"{agg_func_name}_{agg_col_name}" if agg_col_name else agg_func_name
-            
+            output_col_name = (
+                f"{agg_func_name}_{agg_col_name}" if agg_col_name else agg_func_name
+            )
+
             if agg_func_name == "count":
                 processed_row[output_col_name] = collected_group_values.get("_count", 0)
             elif agg_func_name in AGGREGATION_DISPATCHER:
                 aggregator_func = AGGREGATION_DISPATCHER[agg_func_name]
                 # Key used to retrieve the raw data collected in Pass 1
                 raw_data_storage_key = f"{agg_func_name}_{agg_col_name}"
-                
+
                 if agg_func_name in ["first", "last"]:
                     # For 'first'/'last', the stored data is the single value itself
-                    data_to_aggregate = collected_group_values.get(raw_data_storage_key) # Defaults to None
-                else: 
+                    data_to_aggregate = collected_group_values.get(
+                        raw_data_storage_key
+                    )  # Defaults to None
+                else:
                     # For list-based aggregations ('sum', 'avg', 'min', 'max', 'list')
-                    data_to_aggregate = collected_group_values.get(raw_data_storage_key, [])
-                
+                    data_to_aggregate = collected_group_values.get(
+                        raw_data_storage_key, []
+                    )
+
                 # If aggregator_func needed extra_args (e.g. for a future 'reduce'),
                 # they would be passed here:
                 # processed_row[output_col_name] = aggregator_func(data_to_aggregate, *extra_args)
@@ -280,8 +303,10 @@ def groupby_agg(relation: Relation, group_by_key: str, aggregations: List[Tuple[
             else:
                 # This case should ideally not be reached if the collection phase
                 # and dispatcher are correctly set up.
-                raise ValueError(f"Unsupported aggregation function during processing: {agg_func_name}")
-        
+                raise ValueError(
+                    f"Unsupported aggregation function during processing: {agg_func_name}"
+                )
+
         result_relation.append(processed_row)
-        
+
     return result_relation

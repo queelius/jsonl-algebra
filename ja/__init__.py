@@ -4,6 +4,7 @@ ja (JSONL Algebra)
 A Python package for performing relational algebra operations on lists of
 JSON objects (JSONL data).
 """
+
 from .core import (
     Row,
     Relation,
@@ -16,7 +17,13 @@ from .core import (
     distinct,
     intersection,
     sort_by,
-    product
+    product,
+    # JSONPath extensions
+    select_path,
+    select_any,
+    select_all,
+    select_none,
+    project_template,
 )
 
 from .groupby import groupby_agg
@@ -38,6 +45,12 @@ __all__ = [
     "product",
     "groupby_agg",
     "read_jsonl",
+    # JSONPath extensions
+    "select_path",
+    "select_any",
+    "select_all",
+    "select_none",
+    "project_template",
 ]
 
 __version__ = "0.1.0"

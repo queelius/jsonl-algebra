@@ -1,6 +1,32 @@
 site_name: JSONL Algebra
+site_description: A lightweight relational algebra CLI over JSONL with JSONPath extensions
+site_url: https://queelius.github.io/jsonl-algebra/
+repo_url: https://github.com/queelius/jsonl-algebra
+repo_name: queelius/jsonl-algebra
+
 theme:
   name: material
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.highlight
+    - search.share
+    - content.code.copy
+  palette:
+    - scheme: default
+      primary: blue
+      accent: blue
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: blue
+      accent: blue
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
 
 plugins:
   - search
@@ -8,8 +34,26 @@ plugins:
       handlers:
         python:
           paths: ["."]
+          options:
+            docstring_style: google
+            show_source: true
+            show_root_heading: true
+            show_category_heading: true
 
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.tabbed:
+      alternate_style: true
+  - attr_list
+  - md_in_html
 
 nav:
   - Home: index.md
-  - Reference: reference.md
+  - API Reference: reference.md
+  - JSONPath Design: jsonpath-design.md

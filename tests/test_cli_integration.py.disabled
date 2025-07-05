@@ -1,0 +1,337 @@
+import unittest
+import tempfile
+import subprocess
+import json
+import os
+from pathlib import Path
+
+class TestCLIIntegration(unittest.TestCase):
+    """Integration tests for the CLI interface."""
+
+    def setUp(self):
+        """Create temporary test data files."""
+        self.temp_dir = tempfile.mkdtemp()
+        
+        # Create test data files
+        self.users_data = [
+            {"user_id": 1, "name": "Alice", "age": 30, "status": "active"},
+            {"user_id": 2, "name": "Bob", "age": 25, "status": "inactive"},
+            {"user_id": 3, "name": "Charlie", "age": 35, "status": "active"}
+        ]
+        
+        self.orders_data = [
+            {"order_id": 101, "customer_id": 1, "item": "Book", "amount": 15.99},
+            {"order_id": 102, "customer_id": 2, "item": "Pen", "amount": 2.50},
+            {"order_id": 103, "customer_id": 1, "item": "Notebook", "amount": 8.75},
+            {"order_id": 104, "customer_id": 3, "item": "Pencil", "amount": 1.25}
+        ]
+        
+        self.users_file = os.path.join(self.temp_dir, "users.jsonl")
+        self.orders_file = os.path.join(self.temp_dir, "orders.jsonl")
+        
+        # Write test data to files
+        with open(self.users_file, 'w') as f:
+            for row in self.users_data:
+                f.write(json.dumps(row) + '\n')
+        
+        with open(self.orders_file, 'w') as f:
+            for row in self.orders_data:
+                f.write(json.dumps(row) + '\n')
+
+    def tearDown(self):
+        """Clean up temporary files."""
+        import shutil
+        shutil.rmtree(self.temp_dir)
+
+    def run_ja_command(self, args, input_data=None):
+        """Helper to run ja command and return output."""
+        import sys
+        import os
+        
+        # Use the Python executable from the virtual environment
+        python_exe = "/home/spinoza/github/workspace/jsonl-algebra/.venv/bin/python"
+        cmd = [python_exe, "-m", "ja.cli"] + args
+        
+        # Set up the environment to include the workspace in Python path
+        env = os.environ.copy()
+        env["PYTHONPATH"] = "/home/spinoza/github/workspace/jsonl-algebra"
+        
+        result = subprocess.run(
+            cmd,
+            input=input_data,
+            capture_output=True,
+            text=True,
+            env=env,
+            cwd="/home/spinoza/github/workspace/jsonl-algebra"
+        )
+        return result
+
+    def test_cli_select(self):
+        """Test CLI select command."""
+        result = self.run_ja_command(["select", "age > 25", self.users_file])
+        self.assertEqual(result.returncode, 0)
+        
+        lines = result.stdout.strip().split('\n')
+        self.assertEqual(len(lines), 2)  # Alice and Charlie
+        
+        data = [json.loads(line) for line in lines]
+        ages = [row["age"] for row in data]
+        self.assertTrue(all(age > 25 for age in ages))
+
+    def test_cli_select_with_stdin(self):
+        """Test CLI select command with stdin input."""
+        input_data = '\n'.join(json.dumps(row) for row in self.users_data)
+        result = self.run_ja_command(["select", "status == 'active'"], input_data)
+        self.assertEqual(result.returncode, 0)
+        
+        lines = result.stdout.strip().split('\n')
+        self.assertEqual(len(lines), 2)  # Alice and Charlie
+
+    def test_cli_project(self):
+        """Test CLI project command."""
+        result = self.run_ja_command(["project", "name,age", self.users_file])
+        self.assertEqual(result.returncode, 0)
+        
+        lines = result.stdout.strip().split('\n')
+        self.assertEqual(len(lines), 3)
+        
+        data = [json.loads(line) for line in lines]
+        for row in data:
+            self.assertEqual(set(row.keys()), {"name", "age"})
+
+    def test_cli_join(self):
+        """Test CLI join command."""
+        result = self.run_ja_command([
+            "join", self.users_file, self.orders_file, 
+            "--on", "user_id=customer_id"
+        ])
+        self.assertEqual(result.returncode, 0)
+        
+        lines = result.stdout.strip().split('\n')
+        self.assertEqual(len(lines), 4)  # 4 orders total
+        
+        data = [json.loads(line) for line in lines]
+        for row in data:
+            self.assertIn("name", row)  # From users
+            self.assertIn("item", row)  # From orders
+
+    def test_cli_join_with_stdin(self):
+        """Test CLI join command with stdin for left relation."""
+        users_input = '\n'.join(json.dumps(row) for row in self.users_data)
+        result = self.run_ja_command([
+            "join", "-", self.orders_file,
+            "--on", "user_id=customer_id"
+        ], users_input)
+        self.assertEqual(result.returncode, 0)
+        
+        lines = result.stdout.strip().split('\n')
+        self.assertEqual(len(lines), 4)
+
+    def test_cli_sort(self):
+        """Test CLI sort command."""
+        result = self.run_ja_command(["sort", "age,name", self.users_file])
+        self.assertEqual(result.returncode, 0)
+        
+        lines = result.stdout.strip().split('\n')
+        data = [json.loads(line) for line in lines]
+        
+        # Should be sorted by age, then name
+        ages = [row["age"] for row in data]
+        self.assertEqual(ages, [25, 30, 35])  # Bob, Alice, Charlie
+
+    def test_cli_groupby(self):
+        """Test CLI groupby command."""
+        result = self.run_ja_command([
+            "groupby", "status", 
+            "--agg", "count,avg:age", 
+            self.users_file
+        ])
+        self.assertEqual(result.returncode, 0)
+        
+        lines = result.stdout.strip().split('\n')
+        self.assertEqual(len(lines), 2)  # active and inactive
+        
+        data = [json.loads(line) for line in lines]
+        data_by_status = {row["status"]: row for row in data}
+        
+        self.assertEqual(data_by_status["active"]["count"], 2)
+        self.assertEqual(data_by_status["inactive"]["count"], 1)
+
+    def test_cli_distinct(self):
+        """Test CLI distinct command."""
+        # Create file with duplicates
+        duplicate_file = os.path.join(self.temp_dir, "duplicates.jsonl")
+        duplicate_data = [
+            {"id": 1, "name": "Alice"},
+            {"id": 2, "name": "Bob"},
+            {"id": 1, "name": "Alice"}  # duplicate
+        ]
+        
+        with open(duplicate_file, 'w') as f:
+            for row in duplicate_data:
+                f.write(json.dumps(row) + '\n')
+        
+        result = self.run_ja_command(["distinct", duplicate_file])
+        self.assertEqual(result.returncode, 0)
+        
+        lines = result.stdout.strip().split('\n')
+        self.assertEqual(len(lines), 2)  # Should remove one duplicate
+
+    def test_cli_union(self):
+        """Test CLI union command."""
+        result = self.run_ja_command(["union", self.users_file, self.orders_file])
+        self.assertEqual(result.returncode, 0)
+        
+        lines = result.stdout.strip().split('\n')
+        self.assertEqual(len(lines), 7)  # 3 users + 4 orders
+
+    def test_cli_intersection(self):
+        """Test CLI intersection command."""
+        # Create a file with some common data
+        common_file = os.path.join(self.temp_dir, "common.jsonl")
+        common_data = [{"user_id": 1, "name": "Alice", "age": 30, "status": "active"}]
+        
+        with open(common_file, 'w') as f:
+            for row in common_data:
+                f.write(json.dumps(row) + '\n')
+        
+        result = self.run_ja_command(["intersection", self.users_file, common_file])
+        self.assertEqual(result.returncode, 0)
+        
+        lines = result.stdout.strip().split('\n')
+        self.assertEqual(len(lines), 1)  # One common row
+
+    def test_cli_difference(self):
+        """Test CLI difference command."""
+        # Create a subset file
+        subset_file = os.path.join(self.temp_dir, "subset.jsonl")
+        subset_data = [{"user_id": 1, "name": "Alice", "age": 30, "status": "active"}]
+        
+        with open(subset_file, 'w') as f:
+            for row in subset_data:
+                f.write(json.dumps(row) + '\n')
+        
+        result = self.run_ja_command(["difference", self.users_file, subset_file])
+        self.assertEqual(result.returncode, 0)
+        
+        lines = result.stdout.strip().split('\n')
+        self.assertEqual(len(lines), 2)  # Bob and Charlie should remain
+
+    def test_cli_product(self):
+        """Test CLI product command."""
+        # Create smaller files for product test
+        small_file1 = os.path.join(self.temp_dir, "small1.jsonl")
+        small_file2 = os.path.join(self.temp_dir, "small2.jsonl")
+        
+        data1 = [{"a": 1}, {"a": 2}]
+        data2 = [{"b": "x"}, {"b": "y"}]
+        
+        with open(small_file1, 'w') as f:
+            for row in data1:
+                f.write(json.dumps(row) + '\n')
+        
+        with open(small_file2, 'w') as f:
+            for row in data2:
+                f.write(json.dumps(row) + '\n')
+        
+        result = self.run_ja_command(["product", small_file1, small_file2])
+        self.assertEqual(result.returncode, 0)
+        
+        lines = result.stdout.strip().split('\n')
+        self.assertEqual(len(lines), 4)  # 2 × 2 = 4
+
+    def test_cli_rename(self):
+        """Test CLI rename command."""
+        result = self.run_ja_command([
+            "rename", "user_id=id,name=full_name", 
+            self.users_file
+        ])
+        self.assertEqual(result.returncode, 0)
+        
+        lines = result.stdout.strip().split('\n')
+        data = [json.loads(line) for line in lines]
+        
+        for row in data:
+            self.assertIn("id", row)
+            self.assertIn("full_name", row)
+            self.assertNotIn("user_id", row)
+            self.assertNotIn("name", row)
+
+    def test_cli_invalid_expression(self):
+        """Test CLI with invalid expression."""
+        result = self.run_ja_command(["select", "invalid syntax !!!", self.users_file])
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("Invalid expression", result.stderr)
+
+    def test_cli_help_commands(self):
+        """Test CLI help for various commands."""
+        commands = ["select", "project", "join", "sort", "groupby", "distinct", 
+                   "union", "intersection", "difference", "product", "rename"]
+        
+        for cmd in commands:
+            result = self.run_ja_command([cmd, "--help"])
+            self.assertEqual(result.returncode, 0)
+            self.assertIn("help", result.stdout.lower())
+
+    def test_cli_complex_pipeline_equivalent(self):
+        """Test a complex operation that would be done with pipes in shell."""
+        # This simulates: cat users.jsonl | ja select "age > 25" | ja project "name,age"
+        
+        # Step 1: Select users with age > 25
+        result1 = self.run_ja_command(["select", "age > 25", self.users_file])
+        self.assertEqual(result1.returncode, 0)
+        
+        # Step 2: Project name and age from the result
+        result2 = self.run_ja_command(["project", "name,age"], input_data=result1.stdout)
+        self.assertEqual(result2.returncode, 0)
+        
+        lines = result2.stdout.strip().split('\n')
+        data = [json.loads(line) for line in lines]
+        
+        self.assertEqual(len(data), 2)
+        for row in data:
+            self.assertEqual(set(row.keys()), {"name", "age"})
+            self.assertGreater(row["age"], 25)
+
+    def test_cli_groupby_multiple_aggregations(self):
+        """Test CLI groupby with multiple aggregations."""
+        result = self.run_ja_command([
+            "groupby", "customer_id",
+            "--agg", "count,sum:amount,avg:amount,min:amount,max:amount",
+            self.orders_file
+        ])
+        self.assertEqual(result.returncode, 0)
+        
+        lines = result.stdout.strip().split('\n')
+        data = [json.loads(line) for line in lines]
+        
+        # Check that all aggregation columns are present
+        for row in data:
+            expected_cols = ["customer_id", "count", "sum_amount", "avg_amount", "min_amount", "max_amount"]
+            for col in expected_cols:
+                self.assertIn(col, row)
+
+    def test_cli_groupby_list_and_first_last(self):
+        """Test CLI groupby with list, first, and last aggregations."""
+        result = self.run_ja_command([
+            "groupby", "customer_id",
+            "--agg", "list:item,first:item,last:item",
+            self.orders_file
+        ])
+        self.assertEqual(result.returncode, 0)
+        
+        lines = result.stdout.strip().split('\n')
+        data = [json.loads(line) for line in lines]
+        
+        for row in data:
+            self.assertIn("list_item", row)
+            self.assertIn("first_item", row)
+            self.assertIn("last_item", row)
+            
+            # For single-item groups, first and last should be the same
+            if len(row["list_item"]) == 1:
+                self.assertEqual(row["first_item"], row["last_item"])
+
+
+if __name__ == '__main__':
+    unittest.main()
