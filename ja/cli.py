@@ -1,35 +1,23 @@
 #!/usr/bin/env python3
 import sys, argparse, json
 from .commands import (
-    handle_select,
-    handle_project,
-    handle_join,
-    handle_product,
-    handle_rename,
-    handle_union,
-    handle_intersection,
     handle_difference,
     handle_distinct,
-    handle_sort,
     handle_groupby,
-    # JSONPath handlers
+    handle_intersection,
+    handle_join,
+    handle_product,
+    handle_project,
+    handle_rename,
+    handle_select,
+    handle_sort,
+    handle_union,
     handle_select_path,
     handle_select_any,
     handle_select_all,
     handle_select_none,
     handle_project_template,
 )
-
-
-def add_window_argument(parser):
-    """Add --window-size argument to parser for operations that support windowed processing."""
-    parser.add_argument(
-        "--window-size",
-        type=int,
-        default=None,
-        help="Process data in windows of specified size for memory efficiency (approximate results)",
-    )
-
 
 def add_window_argument(parser):
     """Add --window-size argument to parser for operations that support windowed processing."""
@@ -183,13 +171,10 @@ def main():
         "select-none": handle_select_none,
         "project-template": handle_project_template,
     }
-
     handler = command_handlers.get(args.cmd)
     if handler:
         handler(args)
     else:
-        # This case should ideally not be reached if subparsers are 'required=True'
-        # and all commands are mapped.
         print(f"Unknown command: {args.cmd}", file=sys.stderr)
         sys.exit(1)
 
