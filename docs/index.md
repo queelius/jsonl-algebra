@@ -1,132 +1,209 @@
-# Welcome to ja - Your Friendly JSONL Toolkit
+# ja: JSONL Algebra
 
-Tired of wrestling with complex JSON data in the command line? **ja** (JSONL Algebra) is a powerful and user-friendly command-line tool for slicing, dicing, and transforming JSONL data. Think of it as `SQL` or `pandas` for JSON, but living right in your shell.
+> **Relational algebra meets JSON streaming.** Transform your data with the power of mathematical principles and the simplicity of Unix pipes.
 
-It provides a suite of relational algebra operations (`join`, `select`, `project`, etc.), powerful `groupby` aggregations, and seamless support for nested data structures using simple dot notation.
+## What is ja?
 
-## Getting Started: A 5-Minute Tour
-
-Let's say you have two files: `users.jsonl` and `orders.jsonl`.
-
-**`users.jsonl`**:
-
-```json
-{"user": {"id": 1, "name": "Alice"}}
-{"user": {"id": 2, "name": "Bob"}}
-```
-
-**`orders.jsonl`**:
-
-```json
-{"order_id": 101, "customer_id": 1, "amount": 50}
-{"order_id": 102, "customer_id": 1, "amount": 75}
-{"order_id": 103, "customer_id": 2, "amount": 120}
-```
-
-Our goal is to find the total amount spent by each user.
-
-### Step 1: Join the files
-
-We can join these two files on the user ID. Notice how `ja` can access the nested `user.id` field directly with dot notation.
+`ja` (JSONL Algebra) is a command-line tool that brings the elegance of relational algebra to JSON data processing. It treats JSONL files as relations (tables) and provides operations that can be composed into powerful data pipelines.
 
 ```bash
-ja join users.jsonl orders.jsonl --on user.id=customer_id
+# A taste of ja
+cat orders.jsonl \
+  | ja select 'status == "shipped"' \
+  | ja join customers.jsonl --on customer_id=id \
+  | ja groupby region \
+  | ja agg revenue=sum(amount),orders=count
 ```
 
-This gives us:
+## Why ja?
 
-```json
-{"user": {"id": 1, "name": "Alice"}, "order_id": 101, "amount": 50}
-{"user": {"id": 1, "name": "Alice"}, "order_id": 102, "amount": 75}
-{"user": {"id": 2, "name": "Bob"}, "order_id": 103, "amount": 120}
+- **🧮 Algebraic Foundation**: Based on mathematical principles that guarantee composability
+- **🔗 Unix Philosophy**: Small, focused tools that do one thing well
+- **📊 Streaming Architecture**: Process gigabytes without loading into memory
+- **🎯 Nested Data Support**: First-class support for real-world JSON structures
+- **⚡ Zero Dependencies**: Pure Python implementation (with optional enhancements)
+
+## Quick Links
+
+- [**Quickstart →**](quickstart.md) Get running in 5 minutes
+- [**Concepts →**](concepts/jsonl-algebra.md) Understand the theory
+- [**Operations →**](operations/overview.md) Learn each operation
+- [**Cookbook →**](cookbook/log-analysis.md) Real-world examples
+
+## At a Glance
+
+### The Operations
+
+| Operation | Symbol | Purpose | Example |
+|-----------|---------|---------|---------|
+| **select** | σ | Filter rows | `ja select 'age > 30'` |
+| **project** | π | Select columns | `ja project name,email` |
+| **join** | ⋈ | Combine relations | `ja join users.jsonl orders.jsonl --on id=user_id` |
+| **groupby** | γ | Group rows | `ja groupby department` |
+| **union** | ∪ | Combine all rows | `ja union file1.jsonl file2.jsonl` |
+| **distinct** | δ | Remove duplicates | `ja distinct` |
+
+### The Philosophy
+
+```
+┌─────────┐     ┌─────────┐     ┌─────────┐     ┌────────┐
+│  Data   │ --> │ Filter  │ --> │  Join   │ --> │ Result │
+│ (JSONL) │     │(select) │     │ (join)  │     │(JSONL) │
+└─────────┘     └─────────┘     └─────────┘     └────────┘
+     ↓               ↓               ↓               ↓
+  Relation  -->  Relation  -->  Relation  -->  Relation
 ```
 
-### Step 2: Group and Sum
-
-Now, we can pipe this result into `groupby` to sum the amounts for each user name.
-
-```bash
-ja join users.jsonl orders.jsonl --on user.id=customer_id \
-  | ja groupby user.name --agg "total=sum(amount)"
-```
-
-**Result:**
-
-```json
-{"user.name": "Alice", "total": 125}
-{"user.name": "Bob", "total": 120}
-```
-
-And just like that, you've performed a complex data analysis task directly in your terminal!
-
-## Key Features
-
-* **Relational Operations**: `select`, `project`, `join`, `union`, `intersection`, `difference`, `distinct`, and more.
-* **Seamless Nested Data Support**: Access and manipulate nested fields using intuitive **dot notation** everywhere.
-* **Powerful Aggregations**: A `groupby` command with `sum`, `avg`, `min`, `max`, `count`, `list`, and custom aggregations.
-* **Safe Filtering**: Uses JMESPath for expressive and safe filtering, no more risky `eval()`.
-* **Schema Management**: Infer and validate data schemas with `schema infer` and `schema validate`.
-* **Interactive REPL**: An interactive shell (`ja repl`) for building data pipelines step-by-step.
-* **Broad Format Support**: Convert to/from CSV, JSON arrays, and directories of JSON files.
-* **Fully Pipeable**: Designed from the ground up to work with standard Unix pipes (`|`).
-
-## Working with Nested Data
-
-`ja` makes working with nested JSON objects feel effortless.
-
-**Projecting Nested Fields:**
-
-```bash
-# Given: {"user": {"id": 1, "name": "Alice"}, "status": "active"}
-ja project user.name,status data.jsonl
-# Output: {"user": {"name": "Alice"}, "status": "active"}
-```
-
-You can also flatten the result:
-
-```bash
-ja project user.name,status --flatten data.jsonl
-# Output: {"user.name": "Alice", "status": "active"}
-```
-
-**Renaming Nested Fields:**
-
-```bash
-# Given: {"person": {"name": "Alice"}}
-ja rename person.name=person.fullName data.jsonl
-# Output: {"person": {"fullName": "Alice"}}
-```
+Every operation takes relations and produces relations. This closure property enables infinite composability.
 
 ## Installation
-
-### Dependencies
-
-`ja` now includes optional dependencies for enhanced functionality:
-
-* **jmespath**: For safe and expressive filtering (replaces eval)
-* **jsonschema**: For schema validation features
-* All other features work without external dependencies
-
-### For users (from PyPI)
-
-You can install the package directly from PyPI (Python Package Index) using pip.
 
 ```bash
 pip install jsonl-algebra
 ```
 
-This will automatically install the required dependencies (`jmespath` and `jsonschema`).
+That's it! You now have the `ja` command available.
+
+## Your First Pipeline
+
+Let's analyze some order data. Create `orders.jsonl`:
+
+```json
+{"order_id": 1, "customer": "Alice", "amount": 99.99, "status": "shipped"}
+{"order_id": 2, "customer": "Bob", "amount": 149.99, "status": "pending"}
+{"order_id": 3, "customer": "Alice", "amount": 79.99, "status": "shipped"}
+{"order_id": 4, "customer": "Charlie", "amount": 199.99, "status": "shipped"}
+{"order_id": 5, "customer": "Bob", "amount": 59.99, "status": "cancelled"}
+```
+
+### 1. Filter Orders
+
+Get only shipped orders:
+
+```bash
+ja select 'status == "shipped"' orders.jsonl
+```
+
+### 2. Calculate Totals
+
+Total revenue from shipped orders:
+
+```bash
+ja select 'status == "shipped"' orders.jsonl | ja agg total=sum(amount)
+```
+
+Output:
+```json
+{"total": 379.97}
+```
+
+### 3. Group by Customer
+
+Revenue per customer (shipped only):
+
+```bash
+ja select 'status == "shipped"' orders.jsonl \
+  | ja groupby customer \
+  | ja agg revenue=sum(amount),orders=count
+```
+
+Output:
+```json
+{"customer": "Alice", "revenue": 179.98, "orders": 2}
+{"customer": "Charlie", "revenue": 199.99, "orders": 1}
+```
+
+### 4. Multi-Level Grouping
+
+Our innovative chained groupby enables complex analytics:
+
+```bash
+cat sales.jsonl \
+  | ja groupby region \      # First level grouping
+  | ja groupby product \     # Second level grouping  
+  | ja agg total=sum(amount) # Final aggregation
+```
+
+This produces results like:
+```json
+{"region": "North", "product": "Widget", "total": 1250}
+{"region": "North", "product": "Gadget", "total": 850}
+{"region": "South", "product": "Widget", "total": 900}
+```
+
+## Key Features
+
+- **Relational Operations**: select, project, join, union, intersection, difference, distinct, and more
+- **Chained Grouping**: Multi-level grouping that preserves composability
+- **Nested Data Support**: Access and manipulate nested fields using intuitive dot notation
+- **Streaming Architecture**: Process large datasets without loading into memory
+- **Expression Language**: Safe and expressive filtering with ExprEval
+- **Interactive REPL**: Build data pipelines step-by-step interactively
+- **Format Conversion**: Import/export CSV, JSON arrays, and directory structures
+- **Unix Philosophy**: Designed for pipes and command composition
+
+## Working with Nested Data
+
+`ja` makes working with nested JSON objects effortless:
+
+```bash
+# Project nested fields
+ja project user.name,user.email,order.total data.jsonl
+
+# Group by nested values
+ja groupby user.region orders.jsonl | ja agg revenue=sum(amount)
+
+# Filter on nested conditions
+ja select 'user.age > 30 and order.status == "shipped"' data.jsonl
+```
+
+## Interactive Mode
+
+Want to explore? Try the REPL:
+
+```bash
+ja repl
+
+ja> from orders.jsonl
+ja> select amount > 100
+ja> groupby customer
+ja> agg total=sum(amount)
+ja> execute
+```
+
+## Next Steps
+
+1. **[Read the Quickstart](quickstart.md)** - Get hands-on in 5 minutes
+2. **[Explore the Concepts](concepts/jsonl-algebra.md)** - Understand the theory
+3. **[Browse the Cookbook](cookbook/log-analysis.md)** - See real examples
+4. **[Join the Community](https://github.com/queelius/jsonl-algebra)** - Contribute and get help
+
+## Dependencies and Setup
+
+`ja` includes optional dependencies for enhanced functionality:
+
+- **jmespath**: For safe and expressive filtering (replaces eval)
+- **jsonschema**: For schema validation features
+- All other features work without external dependencies
+
+### For users (from PyPI)
+
+```bash
+pip install jsonl-algebra
+```
+
+This automatically installs the required dependencies.
 
 ### For developers (from local repository)
 
-If you have cloned this repository and want to install it for development or from local sources:
-
 ```bash
+# Standard installation
 pip install .
-```
 
-To install in editable mode for development:
-
-```bash
+# Editable mode for development
 pip install -e .
 ```
+
+---
+
+**Ready to transform your JSON data?** Start with the [quickstart guide](quickstart.md) or dive into the [concepts](concepts/jsonl-algebra.md) to understand the theory behind the tool.

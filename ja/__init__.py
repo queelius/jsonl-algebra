@@ -35,6 +35,7 @@ from .commands import read_jsonl
 from .core import (
     Relation,
     Row,
+    collect,
     difference,
     distinct,
     intersection,
@@ -63,6 +64,7 @@ __all__ = [
     "intersection",
     "sort_by",
     "product",
+    "collect",
     "groupby_agg",
     "groupby_with_metadata",
     "groupby_chained",

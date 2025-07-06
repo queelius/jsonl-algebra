@@ -14,6 +14,7 @@ from typing import Any, Dict, List
 import jmespath.exceptions
 
 from .core import (
+    collect,
     difference,
     distinct,
     intersection,
@@ -23,7 +24,7 @@ from .core import (
     rename,
     select,
     sort_by,
-    union
+    union,
 )
 from .group import (
     groupby_agg,
@@ -420,3 +421,35 @@ def handle_schema_validate(args):
 
     if validation_failed:
         sys.exit(1)
+
+
+def handle_collect(args):
+    """Handle collect command."""
+    with get_input_stream(args.file) as f:
+        data = read_jsonl(f)
+
+    if not data:
+        write_jsonl([])
+        return
+
+    # Check for streaming flag
+    if hasattr(args, "streaming") and args.streaming:
+        json_error(
+            "StreamingError",
+            "Collect operation requires seeing all data and cannot be performed in streaming mode. "
+            "Remove --streaming flag or use window-based processing with --window-size",
+        )
+        return
+
+    # Handle window-based collection
+    if hasattr(args, "window_size") and args.window_size:
+        # Process data in windows
+        window_size = args.window_size
+        for i in range(0, len(data), window_size):
+            window = data[i : i + window_size]
+            result = collect(window)
+            write_jsonl(result)
+    else:
+        # Collect all data at once
+        result = collect(data)
+        write_jsonl(result)

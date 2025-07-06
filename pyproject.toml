@@ -44,12 +44,16 @@ dev = [
     "mkdocs-material>=8.0",
     "mkdocstrings[python]>=0.18",
 ]
+dataset = [
+    "faker>=15.0",
+]
 
 [project.scripts]
 ja = "ja.cli:main"
+ja-generate-dataset = "scripts.generate_dataset:main"
 
 [tool.setuptools]
-packages = ["ja"]
+packages = ["ja", "scripts"]
 # No need for license-files here if specified under [project]
 
 [project.urls]

@@ -332,3 +332,67 @@ def sort_by(data: Relation,
         key=lambda r: tuple(sort_val(r, k) for k in key_list),
         reverse=descending,
     )
+
+
+def collect(data: Relation) -> Relation:
+    """Collect metadata-grouped rows into actual groups.
+    
+    This function takes rows with _groups metadata (from groupby operations)
+    and collects them into explicit groups. Each output row represents one
+    group with all its members in a _rows array.
+    
+    Args:
+        data: List of dictionaries with _groups metadata
+        
+    Returns:
+        List where each dict represents a group with _rows array
+        
+    Example:
+        Input:
+        [
+            {"id": 1, "region": "North", "_groups": [{"field": "region", "value": "North"}]},
+            {"id": 2, "region": "North", "_groups": [{"field": "region", "value": "North"}]},
+            {"id": 3, "region": "South", "_groups": [{"field": "region", "value": "South"}]}
+        ]
+        
+        Output:
+        [
+            {"region": "North", "_rows": [{"id": 1, "region": "North"}, {"id": 2, "region": "North"}]},
+            {"region": "South", "_rows": [{"id": 3, "region": "South"}]}
+        ]
+    """
+    if not data:
+        return []
+    
+    # Check if data has grouping metadata
+    if "_groups" not in data[0]:
+        # No grouping metadata - treat entire dataset as one group
+        return [{"_rows": data}]
+    
+    # Collect rows by their group keys
+    groups = defaultdict(list)
+    
+    for row in data:
+        # Build group key from metadata
+        group_key = tuple((g["field"], g["value"]) for g in row["_groups"])
+        
+        # Create clean row without metadata
+        clean_row = {k: v for k, v in row.items() if not k.startswith("_")}
+        
+        groups[group_key].append(clean_row)
+    
+    # Build output with one row per group
+    result = []
+    for group_key, rows in groups.items():
+        group_dict = {}
+        
+        # Add group fields to output
+        for field, value in group_key:
+            group_dict[field] = value
+        
+        # Add collected rows
+        group_dict["_rows"] = rows
+        
+        result.append(group_dict)
+    
+    return result

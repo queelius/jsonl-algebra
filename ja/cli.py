@@ -25,6 +25,7 @@ from .commands import (
     handle_join,
     handle_product,
     handle_project,
+    handle_collect,
     handle_rename,
     handle_schema_infer,
     handle_schema_validate,
@@ -36,6 +37,29 @@ from .commands import (
     handle_union,
 )
 from .repl import repl
+
+
+# Help string for the groupby command, describing its two modes and usage examples.
+GROUPBY_HELP = """Group rows by a key with two modes of operation:
+            
+1. With --agg: Perform immediate aggregation (efficient for single-level grouping)
+2. Without --agg: Add grouping metadata for chaining or later aggregation
+   
+The metadata mode adds special fields (_group, _group_field, etc.) that allow:
+- Chaining multiple groupby operations
+- Filtering or transforming between groupings  
+- Deferring aggregation until the end of a pipeline
+- Inspecting intermediate grouped data
+
+Examples:
+  # Direct aggregation
+  ja groupby region --agg "total=sum(amount)" data.jsonl
+  
+  # Chained grouping
+  cat data.jsonl | ja groupby region | ja groupby product | ja agg "total=sum(amount)"
+  
+  # Filter between groups
+  cat data.jsonl | ja groupby user | ja select '_group_size > 5' | ja agg count"""
 
 
 def json_error(error_type, message, details=None, exit_code=1):
@@ -224,26 +248,7 @@ def main():
         sp_groupby = subparsers.add_parser(
             "groupby", 
             help="Group rows by a key",
-            description="""Group rows by a key with two modes of operation:
-            
-1. With --agg: Perform immediate aggregation (efficient for single-level grouping)
-2. Without --agg: Add grouping metadata for chaining or later aggregation
-   
-The metadata mode adds special fields (_group, _group_field, etc.) that allow:
-- Chaining multiple groupby operations
-- Filtering or transforming between groupings  
-- Deferring aggregation until the end of a pipeline
-- Inspecting intermediate grouped data
-
-Examples:
-  # Direct aggregation
-  ja groupby region --agg "total=sum(amount)" data.jsonl
-  
-  # Chained grouping
-  cat data.jsonl | ja groupby region | ja groupby product | ja agg "total=sum(amount)"
-  
-  # Filter between groups
-  cat data.jsonl | ja groupby user | ja select '_group_size > 5' | ja agg count""",
+            description=GROUPBY_HELP,
             formatter_class=argparse.RawTextHelpFormatter
         )
         sp_groupby.add_argument(
@@ -421,7 +426,29 @@ Available functions: count, sum, avg, min, max, list, first, last.""",
         )
         agg_parser.set_defaults(func=handle_agg)
 
+        # Collect command
+        parser_collect = subparsers.add_parser(
+            "collect",
+            help="Collect grouped rows into explicit groups",
+            description="Transforms metadata-grouped rows (from groupby) into explicit groups with _rows arrays",
+        )
+        parser_collect.add_argument(
+            "file", nargs="?", help="Input JSONL file (default: stdin)"
+        )
+        parser_collect.add_argument(
+            "--window-size",
+            type=int,
+            help="Process data in windows of specified size (enables partial streaming)",
+        )
+        parser_collect.add_argument(
+            "--streaming",
+            action="store_true",
+            help="Enforce streaming mode (will error for non-streaming operations)",
+        )
+        parser_collect.set_defaults(func=handle_collect)
+
         args = parser.parse_args()
+
 
         # Handle cases where a command is not provided
         if args.cmd is None:
@@ -444,6 +471,7 @@ Available functions: count, sum, avg, min, max, list, first, last.""",
             "project": handle_project,
             "join": handle_join,
             "product": handle_product,
+            "collect": handle_collect,
             "rename": handle_rename,
             "union": handle_union,
             "intersection": handle_intersection,
