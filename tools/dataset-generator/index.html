@@ -1,0 +1,820 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A powerful relational algebra CLI and library for JSONL data manipulation">
+      
+      
+        <meta name="author" content="Alex Towell">
+      
+      
+        <link rel="canonical" href="https://queelius.github.io/jsonl-algebra/tools/dataset-generator/">
+      
+      
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.17">
+    
+    
+      
+        <title>Dataset Generator - JSONL Algebra</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.7e37652d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="blue">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#dataset-generator" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="JSONL Algebra" class="md-header__button md-logo" aria-label="JSONL Algebra" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            JSONL Algebra
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Dataset Generator
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="blue"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="blue" data-md-color-accent="blue"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/queelius/jsonl-algebra" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    queelius/jsonl-algebra
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../reference/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Reference
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="JSONL Algebra" class="md-nav__button md-logo" aria-label="JSONL Algebra" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    JSONL Algebra
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/queelius/jsonl-algebra" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    queelius/jsonl-algebra
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Reference
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#quick-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      Quick Start
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#generated-data-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      Generated Data Structure
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Generated Data Structure">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#companies-companiesjsonl" class="md-nav__link">
+    <span class="md-ellipsis">
+      Companies (companies.jsonl)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#people-peoplejsonl" class="md-nav__link">
+    <span class="md-ellipsis">
+      People (people.jsonl)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#command-line-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      Command Line Options
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example-workflows" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example Workflows
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Example Workflows">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-exploration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Basic Exploration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nested-data-operations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Nested Data Operations
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#relational-operations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Relational Operations
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#aggregation-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      Aggregation Examples
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#testing-and-development" class="md-nav__link">
+    <span class="md-ellipsis">
+      Testing and Development
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Testing and Development">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#deterministic-mode-default" class="md-nav__link">
+    <span class="md-ellipsis">
+      Deterministic Mode (Default)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#random-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      Random Mode
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#usage-in-tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      Usage in Tests
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#data-relationships" class="md-nav__link">
+    <span class="md-ellipsis">
+      Data Relationships
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dependencies" class="md-nav__link">
+    <span class="md-ellipsis">
+      Dependencies
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tips" class="md-nav__link">
+    <span class="md-ellipsis">
+      Tips
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="dataset-generator">Dataset Generator</h1>
+<p>The <code>ja-generate-dataset</code> command creates synthetic datasets specifically designed to showcase jsonl-algebra's capabilities. It generates two related JSONL files with realistic nested structures and relationships.</p>
+<h2 id="quick-start">Quick Start</h2>
+<pre><code class="language-bash"># Install with dataset support
+pip install &quot;jsonl-algebra[dataset]&quot;
+
+# Generate default dataset (20 companies, 100 people)
+ja-generate-dataset
+
+# Generate larger dataset
+ja-generate-dataset --num-companies 50 --num-people 1000
+
+# Generate to specific directory
+ja-generate-dataset --output-dir examples/
+</code></pre>
+<h2 id="generated-data-structure">Generated Data Structure</h2>
+<h3 id="companies-companiesjsonl">Companies (<code>companies.jsonl</code>)</h3>
+<p>Each company record contains:</p>
+<pre><code class="language-json">{
+  &quot;id&quot;: &quot;uuid-string&quot;,
+  &quot;name&quot;: &quot;Company Name Inc&quot;,
+  &quot;industry&quot;: &quot;Technology&quot;,
+  &quot;headquarters&quot;: {
+    &quot;city&quot;: &quot;San Francisco&quot;,
+    &quot;state&quot;: &quot;CA&quot;, 
+    &quot;country&quot;: &quot;USA&quot;
+  },
+  &quot;size&quot;: 1500,
+  &quot;founded&quot;: 2010
+}
+</code></pre>
+<p><strong>Industries</strong>: Technology, Healthcare, Finance, Education, Retail, Manufacturing, Consulting, Entertainment, Transportation, Real Estate, Construction, Agriculture, Energy, Media</p>
+<h3 id="people-peoplejsonl">People (<code>people.jsonl</code>)</h3>
+<p>Each person record contains:</p>
+<pre><code class="language-json">{
+  &quot;id&quot;: &quot;uuid-string&quot;,
+  &quot;created_at&quot;: &quot;2023-05-15T10:30:00Z&quot;,
+  &quot;status&quot;: &quot;active&quot;,
+  &quot;household_id&quot;: &quot;shared-uuid-for-family&quot;,
+  &quot;person&quot;: {
+    &quot;name&quot;: {
+      &quot;first&quot;: &quot;Sarah&quot;,
+      &quot;last&quot;: &quot;Johnson&quot;
+    },
+    &quot;age&quot;: 32,
+    &quot;gender&quot;: &quot;female&quot;,
+    &quot;email&quot;: &quot;sarah.johnson@gmail.com&quot;,
+    &quot;phone&quot;: &quot;555-123-4567&quot;,
+    &quot;location&quot;: {
+      &quot;city&quot;: &quot;San Francisco&quot;,
+      &quot;state&quot;: &quot;CA&quot;,
+      &quot;country&quot;: &quot;USA&quot;
+    },
+    &quot;interests&quot;: [&quot;hiking&quot;, &quot;photography&quot;, &quot;cooking&quot;],
+    &quot;job&quot;: {
+      &quot;title&quot;: &quot;Software Engineer&quot;, 
+      &quot;company_name&quot;: &quot;Tech Solutions Inc&quot;,
+      &quot;salary&quot;: 95000.0
+    }
+  }
+}
+</code></pre>
+<p><strong>Key Features</strong>:</p>
+<ul>
+<li><strong>Household relationships</strong>: People sharing <code>household_id</code> have the same last name and location</li>
+<li><strong>Employment relationships</strong>: <code>person.job.company_name</code> links to company <code>name</code> field</li>
+<li><strong>Nested structures</strong>: Rich nested JSON perfect for testing ja's navigation capabilities</li>
+<li><strong>Realistic distributions</strong>: Age, gender, salary, and location follow realistic patterns</li>
+</ul>
+<h2 id="command-line-options">Command Line Options</h2>
+<pre><code class="language-bash">ja-generate-dataset [OPTIONS]
+
+Data Generation:
+  --num-companies N        Number of companies (default: 20)
+  --num-people N          Number of people (default: 100)  
+  --max-household-size N  Max people per household (default: 5)
+
+Randomness Control:
+  --deterministic         Use fixed seed for reproducible data (default)
+  --random               Use random seed for varied output
+  --seed N               Custom seed for deterministic mode (default: 42)
+
+Output Control:
+  --output-dir PATH       Output directory (default: current directory)
+  --companies-file PATH   Custom companies file path
+  --people-file PATH      Custom people file path
+</code></pre>
+<h2 id="example-workflows">Example Workflows</h2>
+<h3 id="basic-exploration">Basic Exploration</h3>
+<pre><code class="language-bash"># Generate sample data
+ja-generate-dataset --num-companies 10 --num-people 50
+
+# Explore the data
+ja people.jsonl --head 3 --pretty
+ja companies.jsonl --select name,industry,size --head 5
+
+# Count people by company
+ja people.jsonl --group-by person.job.company_name --count
+</code></pre>
+<h3 id="nested-data-operations">Nested Data Operations</h3>
+<pre><code class="language-bash"># Extract names and ages
+ja people.jsonl --select person.name,person.age
+
+# Filter by age and location  
+ja people.jsonl --where 'person.age &gt; 30' --select person.name,person.location.state
+
+# Group by nested fields
+ja people.jsonl --group-by person.location.state,person.gender --count
+</code></pre>
+<h3 id="relational-operations">Relational Operations</h3>
+<pre><code class="language-bash"># Join people with their companies
+ja people.jsonl --join companies.jsonl --on 'person.job.company_name = name' \\
+  --select person.name,name,industry,person.job.salary
+
+# Find high earners in tech companies
+ja people.jsonl --join companies.jsonl --on 'person.job.company_name = name' \\
+  --where 'industry = &quot;Technology&quot; and person.job.salary &gt; 100000' \\
+  --select person.name,name,person.job.salary
+</code></pre>
+<h3 id="aggregation-examples">Aggregation Examples</h3>
+<pre><code class="language-bash"># Average salary by industry
+ja people.jsonl --join companies.jsonl --on 'person.job.company_name = name' \\
+  --group-by industry --agg 'avg(person.job.salary)'
+
+# Company size distribution
+ja companies.jsonl --group-by industry --agg 'avg(size),count(*)'
+
+# Household statistics
+ja people.jsonl --group-by household_id --agg 'count(*),avg(person.age)' \\
+  --select '*,_count as household_size,_avg_person_age as avg_age'
+</code></pre>
+<h2 id="testing-and-development">Testing and Development</h2>
+<p>The dataset generator is designed for both documentation examples and unit testing:</p>
+<h3 id="deterministic-mode-default">Deterministic Mode (Default)</h3>
+<ul>
+<li>Always produces the same output for given parameters</li>
+<li>Perfect for examples, documentation, and reproducible tests</li>
+<li>Uses seed 42 by default</li>
+</ul>
+<h3 id="random-mode">Random Mode</h3>
+<ul>
+<li>Generates varied data for stress testing</li>
+<li>Useful for property-based testing</li>
+<li>Each run produces different realistic data</li>
+</ul>
+<h3 id="usage-in-tests">Usage in Tests</h3>
+<pre><code class="language-python"># In test files
+import subprocess
+import tempfile
+import os
+
+def setup_test_data():
+    \&quot;\&quot;\&quot;Generate deterministic test data.\&quot;\&quot;\&quot;
+    with tempfile.TemporaryDirectory() as tmpdir:
+        subprocess.run([
+            &quot;python&quot;, &quot;scripts/generate_dataset.py&quot;,
+            &quot;--deterministic&quot;, &quot;--seed&quot;, &quot;123&quot;,
+            &quot;--num-companies&quot;, &quot;5&quot;, &quot;--num-people&quot;, &quot;25&quot;, 
+            &quot;--output-dir&quot;, tmpdir
+        ])
+        return os.path.join(tmpdir, &quot;people.jsonl&quot;), os.path.join(tmpdir, &quot;companies.jsonl&quot;)
+</code></pre>
+<h2 id="data-relationships">Data Relationships</h2>
+<p>The generated datasets are designed to demonstrate common data patterns:</p>
+<pre><code class="language-text">Companies (1) → (N) People
+  company.name = person.job.company_name
+
+Households (1) → (N) People  
+  household_id groups people with shared:
+  - person.name.last (family name)
+  - person.location (shared address)
+
+Geographic Hierarchy:
+  Country → State → City
+  All records use USA with realistic state/city combinations
+</code></pre>
+<h2 id="dependencies">Dependencies</h2>
+<ul>
+<li><strong>Core</strong>: Works with Python standard library only</li>
+<li><strong>Enhanced</strong>: Install <code>faker</code> for richer company names and data variety</li>
+</ul>
+<p><code>bash
+  pip install "jsonl-algebra[dataset]"  # Includes faker</code></p>
+<p>Without faker, the generator uses built-in data pools that still produce realistic, varied output.</p>
+<h2 id="tips">Tips</h2>
+<ol>
+<li><strong>Start small</strong>: Use <code>--num-people 20 --num-companies 5</code> for initial exploration</li>
+<li><strong>Use deterministic mode</strong>: For examples and tests where consistency matters  </li>
+<li><strong>Scale gradually</strong>: Large datasets (10K+ records) are great for performance testing</li>
+<li><strong>Combine with ja</strong>: The suggested commands in the output are a great starting point</li>
+<li><strong>Explore relationships</strong>: Use joins to see how nested structures connect across files</li>
+</ol>
+<p>The generated data is specifically crafted to showcase ja's strengths in handling real-world nested JSON data patterns.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.highlight", "search.share"], "search": "../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.92b07e13.min.js"></script>
+      
+    
+  </body>
+</html>

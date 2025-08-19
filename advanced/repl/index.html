@@ -1,0 +1,1269 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A powerful relational algebra CLI and library for JSONL data manipulation">
+      
+      
+        <meta name="author" content="Alex Towell">
+      
+      
+        <link rel="canonical" href="https://queelius.github.io/jsonl-algebra/advanced/repl/">
+      
+      
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.17">
+    
+    
+      
+        <title>Interactive REPL Guide - JSONL Algebra</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.7e37652d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="blue">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#interactive-repl-guide" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="JSONL Algebra" class="md-header__button md-logo" aria-label="JSONL Algebra" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            JSONL Algebra
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Interactive REPL Guide
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="blue"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="blue" data-md-color-accent="blue"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/queelius/jsonl-algebra" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    queelius/jsonl-algebra
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../reference/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Reference
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="JSONL Algebra" class="md-nav__button md-logo" aria-label="JSONL Algebra" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    JSONL Algebra
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/queelius/jsonl-algebra" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    queelius/jsonl-algebra
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Reference
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#getting-started" class="md-nav__link">
+    <span class="md-ellipsis">
+      Getting Started
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#basic-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      Basic Commands
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Basic Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#setting-data-source" class="md-nav__link">
+    <span class="md-ellipsis">
+      Setting Data Source
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#building-a-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      Building a Pipeline
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#viewing-the-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      Viewing the Pipeline
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#executing-the-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      Executing the Pipeline
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced-features" class="md-nav__link">
+    <span class="md-ellipsis">
+      Advanced Features
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Advanced Features">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#no-quotes-required" class="md-nav__link">
+    <span class="md-ellipsis">
+      No Quotes Required
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#limited-output" class="md-nav__link">
+    <span class="md-ellipsis">
+      Limited Output
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#generate-scripts" class="md-nav__link">
+    <span class="md-ellipsis">
+      Generate Scripts
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reset-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      Reset Pipeline
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#data-exploration-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      Data Exploration Workflow
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Data Exploration Workflow">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-start-with-data-inspection" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Start with Data Inspection
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-build-filters-incrementally" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Build Filters Incrementally
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-add-transformations" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Add Transformations
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-group-and-aggregate" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. Group and Aggregate
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#complex-query-building" class="md-nav__link">
+    <span class="md-ellipsis">
+      Complex Query Building
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Complex Query Building">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#multi-join-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      Multi-Join Analysis
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#time-series-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      Time Series Analysis
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#debugging-and-troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Debugging and Troubleshooting
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Debugging and Troubleshooting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#check-each-step" class="md-nav__link">
+    <span class="md-ellipsis">
+      Check Each Step
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inspect-intermediate-results" class="md-nav__link">
+    <span class="md-ellipsis">
+      Inspect Intermediate Results
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      Common Issues
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#repl-specific-features" class="md-nav__link">
+    <span class="md-ellipsis">
+      REPL-Specific Features
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="REPL-Specific Features">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#smart-expression-parsing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Smart Expression Parsing
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#command-history" class="md-nav__link">
+    <span class="md-ellipsis">
+      Command History
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#auto-completion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Auto-completion
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scripting-from-repl" class="md-nav__link">
+    <span class="md-ellipsis">
+      Scripting from REPL
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Scripting from REPL">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#save-pipelines" class="md-nav__link">
+    <span class="md-ellipsis">
+      Save Pipelines
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameterized-queries" class="md-nav__link">
+    <span class="md-ellipsis">
+      Parameterized Queries
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#best-practices" class="md-nav__link">
+    <span class="md-ellipsis">
+      Best Practices
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Best Practices">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-start-small" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Start Small
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-build-incrementally" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Build Incrementally
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-use-the-pipeline-view" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Use the Pipeline View
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-save-complex-queries" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. Save Complex Queries
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-explore-before-committing" class="md-nav__link">
+    <span class="md-ellipsis">
+      5. Explore Before Committing
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#integration-with-external-tools" class="md-nav__link">
+    <span class="md-ellipsis">
+      Integration with External Tools
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Integration with External Tools">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pipe-to-external-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pipe to External Commands
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#export-results" class="md-nav__link">
+    <span class="md-ellipsis">
+      Export Results
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#help-and-documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Help and Documentation
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Help and Documentation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#in-repl-help" class="md-nav__link">
+    <span class="md-ellipsis">
+      In-REPL Help
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#examples-and-tips" class="md-nav__link">
+    <span class="md-ellipsis">
+      Examples and Tips
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced-workflows" class="md-nav__link">
+    <span class="md-ellipsis">
+      Advanced Workflows
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Advanced Workflows">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#data-quality-exploration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Data Quality Exploration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#schema-discovery" class="md-nav__link">
+    <span class="md-ellipsis">
+      Schema Discovery
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#performance-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Performance Testing
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      Next Steps
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="interactive-repl-guide">Interactive REPL Guide</h1>
+<p>The <code>ja</code> REPL (Read-Eval-Print Loop) provides an interactive environment for building data pipelines step-by-step. It's perfect for data exploration, prototyping complex queries, and learning the tool.</p>
+<h2 id="getting-started">Getting Started</h2>
+<p>Launch the REPL:</p>
+<pre><code class="language-bash">ja repl
+</code></pre>
+<p>You'll see:</p>
+<pre><code>Welcome to ja REPL! 🚀 Type 'help' for commands, 'exit' to quit.
+ja&gt;
+</code></pre>
+<h2 id="basic-commands">Basic Commands</h2>
+<h3 id="setting-data-source">Setting Data Source</h3>
+<pre><code class="language-bash">ja&gt; from orders.jsonl
+Input source set to: orders.jsonl
+
+ja&gt; from stdin
+Input source set to: stdin
+</code></pre>
+<h3 id="building-a-pipeline">Building a Pipeline</h3>
+<pre><code class="language-bash">ja&gt; from orders.jsonl
+ja&gt; select status == &quot;shipped&quot;
+Added: select status == &quot;shipped&quot;
+ja&gt; groupby customer
+Added: groupby customer
+ja&gt; agg total=sum(amount)
+Added: agg total=sum(amount)
+</code></pre>
+<h3 id="viewing-the-pipeline">Viewing the Pipeline</h3>
+<pre><code class="language-bash">ja&gt; pipeline
+Current pipeline:
+  Input: orders.jsonl
+  1. select status == &quot;shipped&quot;
+  2. groupby customer
+  3. agg total=sum(amount)
+</code></pre>
+<h3 id="executing-the-pipeline">Executing the Pipeline</h3>
+<pre><code class="language-bash">ja&gt; execute
+Executing: ja select 'status == &quot;shipped&quot;' orders.jsonl | ja groupby customer - | ja agg total=sum(amount) -
+
+--- Output ---
+{&quot;customer&quot;: &quot;Alice&quot;, &quot;total&quot;: 179.98}
+{&quot;customer&quot;: &quot;Charlie&quot;, &quot;total&quot;: 199.99}
+--------------
+</code></pre>
+<h2 id="advanced-features">Advanced Features</h2>
+<h3 id="no-quotes-required">No Quotes Required</h3>
+<p>Unlike the command line, expressions don't need quotes in the REPL:</p>
+<pre><code class="language-bash"># Command line
+ja select 'age &gt; 30 and status == &quot;active&quot;' users.jsonl
+
+# REPL
+ja&gt; select age &gt; 30 and status == &quot;active&quot;
+</code></pre>
+<h3 id="limited-output">Limited Output</h3>
+<p>View just a few lines while building your pipeline:</p>
+<pre><code class="language-bash">ja&gt; execute --lines=5
+</code></pre>
+<h3 id="generate-scripts">Generate Scripts</h3>
+<p>See the equivalent bash script:</p>
+<pre><code class="language-bash">ja&gt; compile
+
+--- Compiled Bash Script ---
+#!/bin/bash
+# Generated by ja REPL
+ja select 'status == &quot;shipped&quot;' orders.jsonl | \
+  ja groupby customer - | \
+  ja agg 'total=sum(amount)' -
+--------------------------
+</code></pre>
+<h3 id="reset-pipeline">Reset Pipeline</h3>
+<p>Start over:</p>
+<pre><code class="language-bash">ja&gt; reset
+Pipeline reset.
+</code></pre>
+<h2 id="data-exploration-workflow">Data Exploration Workflow</h2>
+<h3 id="1-start-with-data-inspection">1. Start with Data Inspection</h3>
+<pre><code class="language-bash">ja&gt; from large_dataset.jsonl
+ja&gt; execute --lines=3
+# See the structure and sample data
+</code></pre>
+<h3 id="2-build-filters-incrementally">2. Build Filters Incrementally</h3>
+<pre><code class="language-bash">ja&gt; select timestamp &gt; &quot;2024-01-01&quot;
+ja&gt; execute --lines=5
+# Check the filtering is working
+
+ja&gt; select amount &gt; 100
+ja&gt; execute --lines=5
+# Add another filter and verify
+</code></pre>
+<h3 id="3-add-transformations">3. Add Transformations</h3>
+<pre><code class="language-bash">ja&gt; project customer,amount,month=timestamp[0:7]
+ja&gt; execute --lines=5
+# See the transformed data
+</code></pre>
+<h3 id="4-group-and-aggregate">4. Group and Aggregate</h3>
+<pre><code class="language-bash">ja&gt; groupby month
+ja&gt; execute --lines=10
+# Inspect the grouping
+
+ja&gt; groupby customer
+ja&gt; execute --lines=10
+# Add second level grouping
+
+ja&gt; agg revenue=sum(amount),orders=count
+ja&gt; execute
+# Final aggregation
+</code></pre>
+<h2 id="complex-query-building">Complex Query Building</h2>
+<h3 id="multi-join-analysis">Multi-Join Analysis</h3>
+<pre><code class="language-bash">ja&gt; from orders.jsonl
+ja&gt; join customers.jsonl --on customer_id=id
+ja&gt; execute --lines=3
+# Check the join worked
+
+ja&gt; join products.jsonl --on product_id=id  
+ja&gt; execute --lines=3
+# Add second join
+
+ja&gt; select order_date &gt; &quot;2024-01-01&quot;
+ja&gt; project customer.name,product.category,total=quantity*price
+ja&gt; groupby customer.tier
+ja&gt; groupby product.category
+ja&gt; agg revenue=sum(total),orders=count
+ja&gt; execute
+</code></pre>
+<h3 id="time-series-analysis">Time Series Analysis</h3>
+<pre><code class="language-bash">ja&gt; from events.jsonl
+ja&gt; project timestamp,user_id,event_type,date=timestamp[0:10]
+ja&gt; execute --lines=5
+
+ja&gt; groupby date
+ja&gt; execute --lines=10
+# Check daily grouping
+
+ja&gt; groupby event_type
+ja&gt; agg events=count,unique_users=count_distinct(user_id)
+ja&gt; sort date,event_type
+ja&gt; execute
+</code></pre>
+<h2 id="debugging-and-troubleshooting">Debugging and Troubleshooting</h2>
+<h3 id="check-each-step">Check Each Step</h3>
+<pre><code class="language-bash">ja&gt; from data.jsonl
+ja&gt; select complicated_condition
+ja&gt; execute --lines=1
+# Is anything matching?
+
+ja&gt; pipeline
+# Review the steps so far
+
+ja&gt; reset
+# Start over if needed
+</code></pre>
+<h3 id="inspect-intermediate-results">Inspect Intermediate Results</h3>
+<pre><code class="language-bash">ja&gt; groupby category
+ja&gt; execute --lines=5
+# See the grouping metadata
+
+ja&gt; select _group_size &gt; 10
+ja&gt; execute --lines=5
+# Filter based on group size
+</code></pre>
+<h3 id="common-issues">Common Issues</h3>
+<p><strong>No Output After Filtering</strong>:</p>
+<pre><code class="language-bash">ja&gt; from data.jsonl
+ja&gt; execute --lines=5
+# Check source data
+
+ja&gt; select some_condition
+ja&gt; execute --lines=5
+# See if filter is too restrictive
+</code></pre>
+<p><strong>Unexpected Grouping</strong>:</p>
+<pre><code class="language-bash">ja&gt; groupby field
+ja&gt; project field,_groups,_group_size
+ja&gt; execute --lines=10
+# Inspect the grouping structure
+</code></pre>
+<h2 id="repl-specific-features">REPL-Specific Features</h2>
+<h3 id="smart-expression-parsing">Smart Expression Parsing</h3>
+<p>The REPL intelligently parses expressions:</p>
+<pre><code class="language-bash"># These all work without quotes
+ja&gt; select age &gt; 30
+ja&gt; select status == &quot;active&quot; and score &gt;= 80
+ja&gt; project name,total=price*quantity
+ja&gt; agg revenue=sum(amount),count
+</code></pre>
+<h3 id="command-history">Command History</h3>
+<p>Use arrow keys to navigate command history:</p>
+<ul>
+<li>↑/↓: Previous/next command</li>
+<li>Ctrl+C: Interrupt current command (continues REPL)</li>
+<li>Ctrl+D or <code>exit</code>: Exit REPL</li>
+</ul>
+<h3 id="auto-completion">Auto-completion</h3>
+<p>The REPL provides context-aware suggestions for:</p>
+<ul>
+<li>Command names</li>
+<li>Field names (when available)</li>
+<li>Common aggregation functions</li>
+</ul>
+<h2 id="scripting-from-repl">Scripting from REPL</h2>
+<h3 id="save-pipelines">Save Pipelines</h3>
+<p>Generate scripts for reuse:</p>
+<pre><code class="language-bash">ja&gt; from orders.jsonl
+ja&gt; select status == &quot;shipped&quot;
+ja&gt; groupby customer
+ja&gt; agg total=sum(amount)
+ja&gt; compile &gt; analysis_script.sh
+</code></pre>
+<h3 id="parameterized-queries">Parameterized Queries</h3>
+<p>Build templates:</p>
+<pre><code class="language-bash"># In the REPL, build your pipeline
+ja&gt; from data.jsonl
+ja&gt; select 'date &gt;= &quot;$START_DATE&quot;'
+ja&gt; groupby category  
+ja&gt; agg total=sum(amount)
+ja&gt; compile
+
+# Then edit the generated script to use variables
+</code></pre>
+<h2 id="best-practices">Best Practices</h2>
+<h3 id="1-start-small">1. Start Small</h3>
+<pre><code class="language-bash">ja&gt; from large_file.jsonl
+ja&gt; execute --lines=5
+# Always check a sample first
+</code></pre>
+<h3 id="2-build-incrementally">2. Build Incrementally</h3>
+<pre><code class="language-bash"># Add operations one at a time
+ja&gt; select condition1
+ja&gt; execute --lines=5
+ja&gt; select condition2  
+ja&gt; execute --lines=5
+ja&gt; groupby field
+ja&gt; execute --lines=10
+</code></pre>
+<h3 id="3-use-the-pipeline-view">3. Use the Pipeline View</h3>
+<pre><code class="language-bash">ja&gt; pipeline
+# Regular check of what you've built
+</code></pre>
+<h3 id="4-save-complex-queries">4. Save Complex Queries</h3>
+<pre><code class="language-bash">ja&gt; compile &gt; my_analysis.sh
+# Don't lose complex work
+</code></pre>
+<h3 id="5-explore-before-committing">5. Explore Before Committing</h3>
+<pre><code class="language-bash"># Try different approaches
+ja&gt; groupby customer
+ja&gt; execute --lines=5
+ja&gt; reset
+ja&gt; groupby product  
+ja&gt; execute --lines=5
+# Compare different groupings
+</code></pre>
+<h2 id="integration-with-external-tools">Integration with External Tools</h2>
+<h3 id="pipe-to-external-commands">Pipe to External Commands</h3>
+<pre><code class="language-bash">ja&gt; execute | jq '.[] | select(.revenue &gt; 1000)'
+ja&gt; execute | head -20
+ja&gt; execute | sort -n
+</code></pre>
+<h3 id="export-results">Export Results</h3>
+<pre><code class="language-bash">ja&gt; execute &gt; results.jsonl
+ja&gt; compile &gt; analysis.sh
+</code></pre>
+<h2 id="help-and-documentation">Help and Documentation</h2>
+<h3 id="in-repl-help">In-REPL Help</h3>
+<pre><code class="language-bash">ja&gt; help
+# Comprehensive help with examples
+
+ja&gt; help select
+# Command-specific help (if available)
+</code></pre>
+<h3 id="examples-and-tips">Examples and Tips</h3>
+<p>The REPL help includes:</p>
+<ul>
+<li>Command examples</li>
+<li>Expression syntax</li>
+<li>Aggregation functions</li>
+<li>Common patterns</li>
+<li>Troubleshooting tips</li>
+</ul>
+<h2 id="advanced-workflows">Advanced Workflows</h2>
+<h3 id="data-quality-exploration">Data Quality Exploration</h3>
+<pre><code class="language-bash">ja&gt; from messy_data.jsonl
+ja&gt; project name,email,age
+ja&gt; execute --lines=10
+# See what fields look like
+
+ja&gt; agg count,nulls=count_if(email==null),invalids=count_if(!email.contains(&quot;@&quot;))
+ja&gt; execute
+# Check data quality
+
+ja&gt; select email != null and email.contains(&quot;@&quot;) and age &gt; 0
+ja&gt; execute --lines=5
+# Clean data step by step
+</code></pre>
+<h3 id="schema-discovery">Schema Discovery</h3>
+<pre><code class="language-bash">ja&gt; from unknown_data.jsonl
+ja&gt; execute --lines=1
+# See the structure
+
+ja&gt; project _keys=keys(.)
+ja&gt; execute --lines=10
+# See all field names
+
+ja&gt; groupby typeof(some_field)
+ja&gt; agg count
+ja&gt; execute
+# Check field types
+</code></pre>
+<h3 id="performance-testing">Performance Testing</h3>
+<pre><code class="language-bash">ja&gt; from huge_file.jsonl
+ja&gt; select simple_condition
+ja&gt; execute --lines=1000
+# Test filter performance
+
+ja&gt; project field1,field2,field3
+ja&gt; execute --lines=1000  
+# Test projection performance
+</code></pre>
+<h2 id="next-steps">Next Steps</h2>
+<ul>
+<li><a href="performance.md">Performance Optimization</a> - Make your queries faster</li>
+<li><a href="../concepts/expression-language.md">Complex Expressions</a> - Advanced filtering</li>
+<li><a href="../../cookbook/log-analysis/">Cookbook Examples</a> - Real-world patterns</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.highlight", "search.share"], "search": "../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.92b07e13.min.js"></script>
+      
+    
+  </body>
+</html>

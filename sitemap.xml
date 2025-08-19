@@ -2,10 +2,54 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://queelius.github.io/jsonl-algebra/</loc>
-         <lastmod>2025-06-25</lastmod>
+         <lastmod>2025-08-19</lastmod>
+    </url>
+    <url>
+         <loc>https://queelius.github.io/jsonl-algebra/chained-groups/</loc>
+         <lastmod>2025-08-19</lastmod>
+    </url>
+    <url>
+         <loc>https://queelius.github.io/jsonl-algebra/future-plans/</loc>
+         <lastmod>2025-08-19</lastmod>
+    </url>
+    <url>
+         <loc>https://queelius.github.io/jsonl-algebra/getting-started/</loc>
+         <lastmod>2025-08-19</lastmod>
+    </url>
+    <url>
+         <loc>https://queelius.github.io/jsonl-algebra/quickstart/</loc>
+         <lastmod>2025-08-19</lastmod>
     </url>
     <url>
          <loc>https://queelius.github.io/jsonl-algebra/reference/</loc>
-         <lastmod>2025-06-25</lastmod>
+         <lastmod>2025-08-19</lastmod>
+    </url>
+    <url>
+         <loc>https://queelius.github.io/jsonl-algebra/advanced/repl/</loc>
+         <lastmod>2025-08-19</lastmod>
+    </url>
+    <url>
+         <loc>https://queelius.github.io/jsonl-algebra/concepts/all-i-kept/</loc>
+         <lastmod>2025-08-19</lastmod>
+    </url>
+    <url>
+         <loc>https://queelius.github.io/jsonl-algebra/concepts/chained-groups/</loc>
+         <lastmod>2025-08-19</lastmod>
+    </url>
+    <url>
+         <loc>https://queelius.github.io/jsonl-algebra/concepts/jsonl-algebra/</loc>
+         <lastmod>2025-08-19</lastmod>
+    </url>
+    <url>
+         <loc>https://queelius.github.io/jsonl-algebra/cookbook/log-analysis/</loc>
+         <lastmod>2025-08-19</lastmod>
+    </url>
+    <url>
+         <loc>https://queelius.github.io/jsonl-algebra/operations/overview/</loc>
+         <lastmod>2025-08-19</lastmod>
+    </url>
+    <url>
+         <loc>https://queelius.github.io/jsonl-algebra/tools/dataset-generator/</loc>
+         <lastmod>2025-08-19</lastmod>
     </url>
 </urlset>

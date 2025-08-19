@@ -12,22 +12,24 @@
         <meta name="author" content="Alex Towell">
       
       
+        <link rel="canonical" href="https://queelius.github.io/jsonl-algebra/chained-groups/">
       
       
       
-      <link rel="icon" href="/jsonl-algebra/assets/images/favicon.png">
+      
+      <link rel="icon" href="../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.17">
     
     
       
-        <title>JSONL Algebra</title>
+        <title>Chained GroupBy Operations - JSONL Algebra</title>
       
     
     
-      <link rel="stylesheet" href="/jsonl-algebra/assets/stylesheets/main.7e37652d.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.7e37652d.min.css">
       
         
-        <link rel="stylesheet" href="/jsonl-algebra/assets/stylesheets/palette.06af60db.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
       
       
 
@@ -46,9 +48,9 @@
       
     
     
-      <link rel="stylesheet" href="/jsonl-algebra/assets/_mkdocstrings.css">
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
     
-    <script>__md_scope=new URL("/jsonl-algebra/",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -73,6 +75,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#chained-groupby-operations" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -83,7 +90,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="/jsonl-algebra/." title="JSONL Algebra" class="md-header__button md-logo" aria-label="JSONL Algebra" data-md-component="logo">
+    <a href=".." title="JSONL Algebra" class="md-header__button md-logo" aria-label="JSONL Algebra" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -103,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              
+              Chained GroupBy Operations
             
           </span>
         </div>
@@ -219,7 +226,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="/jsonl-algebra/." class="md-tabs__link">
+      <a href=".." class="md-tabs__link">
         
   
   
@@ -238,7 +245,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="/jsonl-algebra/reference/" class="md-tabs__link">
+      <a href="../reference/" class="md-tabs__link">
         
   
   
@@ -273,7 +280,7 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="/jsonl-algebra/." title="JSONL Algebra" class="md-nav__button md-logo" aria-label="JSONL Algebra" data-md-component="logo">
+    <a href=".." title="JSONL Algebra" class="md-nav__button md-logo" aria-label="JSONL Algebra" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -303,7 +310,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/jsonl-algebra/." class="md-nav__link">
+      <a href=".." class="md-nav__link">
         
   
   
@@ -325,7 +332,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/jsonl-algebra/reference/" class="md-nav__link">
+      <a href="../reference/" class="md-nav__link">
         
   
   
@@ -357,6 +364,136 @@
   
   
   
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#how-it-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      How It Works
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#basic-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Basic Example
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#representation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Representation
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Representation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#original-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      Original Data
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#after-first-groupby" class="md-nav__link">
+    <span class="md-ellipsis">
+      After First GroupBy
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#after-second-groupby" class="md-nav__link">
+    <span class="md-ellipsis">
+      After Second GroupBy
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#after-aggregation" class="md-nav__link">
+    <span class="md-ellipsis">
+      After Aggregation
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      Advanced Examples
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Advanced Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#three-level-grouping" class="md-nav__link">
+    <span class="md-ellipsis">
+      Three-Level Grouping
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filtering-between-groups" class="md-nav__link">
+    <span class="md-ellipsis">
+      Filtering Between Groups
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inspecting-intermediate-results" class="md-nav__link">
+    <span class="md-ellipsis">
+      Inspecting Intermediate Results
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#comparison-with-direct-aggregation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Comparison with Direct Aggregation
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
   
 </nav>
                   </div>
@@ -368,8 +505,99 @@
             <div class="md-content" data-md-component="content">
               <article class="md-content__inner md-typeset">
                 
-  <h1>404 - Not found</h1>
+                  
 
+
+  
+  
+
+
+<h1 id="chained-groupby-operations">Chained GroupBy Operations</h1>
+<p><code>ja</code> supports a powerful pattern of chaining multiple <code>groupby</code> operations, allowing you to create multi-level aggregations while maintaining the JSONL format throughout the pipeline.</p>
+<h2 id="how-it-works">How It Works</h2>
+<p>When you use <code>groupby</code> without the <code>--agg</code> flag, <code>ja</code> adds special metadata fields to each row:</p>
+<ul>
+<li><code>_group</code>: The value of the grouping key for this row</li>
+<li><code>_group_field</code>: The field name used for grouping</li>
+<li><code>_group_size</code>: Total number of rows in this group</li>
+<li><code>_group_index</code>: This row's index within its group</li>
+</ul>
+<p>These fields allow subsequent operations to understand the grouping structure while keeping the data in JSONL format.</p>
+<h2 id="basic-example">Basic Example</h2>
+<pre><code class="language-bash"># Group sales by region, then by product within each region
+cat sales.jsonl | ja groupby region | ja groupby product | ja agg &quot;total=sum(amount),count&quot;
+</code></pre>
+<h2 id="representation">Representation</h2>
+<h3 id="original-data">Original Data</h3>
+<pre><code class="language-json">{&quot;region&quot;: &quot;North&quot;, &quot;product&quot;: &quot;Widget&quot;, &quot;amount&quot;: 100}
+{&quot;region&quot;: &quot;North&quot;, &quot;product&quot;: &quot;Gadget&quot;, &quot;amount&quot;: 150}
+{&quot;region&quot;: &quot;North&quot;, &quot;product&quot;: &quot;Widget&quot;, &quot;amount&quot;: 200}
+{&quot;region&quot;: &quot;South&quot;, &quot;product&quot;: &quot;Widget&quot;, &quot;amount&quot;: 250}
+</code></pre>
+<h3 id="after-first-groupby">After First GroupBy</h3>
+<pre><code class="language-json">{&quot;region&quot;: &quot;North&quot;, &quot;product&quot;: &quot;Widget&quot;, &quot;amount&quot;: 100, &quot;_group&quot;: &quot;North&quot;, &quot;_group_field&quot;: &quot;region&quot;, &quot;_group_size&quot;: 3, &quot;_group_index&quot;: 0}
+{&quot;region&quot;: &quot;North&quot;, &quot;product&quot;: &quot;Gadget&quot;, &quot;amount&quot;: 150, &quot;_group&quot;: &quot;North&quot;, &quot;_group_field&quot;: &quot;region&quot;, &quot;_group_size&quot;: 3, &quot;_group_index&quot;: 1}
+{&quot;region&quot;: &quot;North&quot;, &quot;product&quot;: &quot;Widget&quot;, &quot;amount&quot;: 200, &quot;_group&quot;: &quot;North&quot;, &quot;_group_field&quot;: &quot;region&quot;, &quot;_group_size&quot;: 3, &quot;_group_index&quot;: 2}
+{&quot;region&quot;: &quot;South&quot;, &quot;product&quot;: &quot;Widget&quot;, &quot;amount&quot;: 250, &quot;_group&quot;: &quot;South&quot;, &quot;_group_field&quot;: &quot;region&quot;, &quot;_group_size&quot;: 1, &quot;_group_index&quot;: 0}
+</code></pre>
+<h3 id="after-second-groupby">After Second GroupBy</h3>
+<pre><code class="language-json">{&quot;region&quot;: &quot;North&quot;, &quot;product&quot;: &quot;Widget&quot;, &quot;amount&quot;: 100, &quot;_group&quot;: &quot;North.Widget&quot;, &quot;_group_field&quot;: &quot;product&quot;, &quot;_group_size&quot;: 2, &quot;_group_index&quot;: 0, &quot;_parent_group&quot;: &quot;North&quot;, &quot;_group_trail&quot;: [&quot;region&quot;, &quot;product&quot;]}
+{&quot;region&quot;: &quot;North&quot;, &quot;product&quot;: &quot;Widget&quot;, &quot;amount&quot;: 200, &quot;_group&quot;: &quot;North.Widget&quot;, &quot;_group_field&quot;: &quot;product&quot;, &quot;_group_size&quot;: 2, &quot;_group_index&quot;: 1, &quot;_parent_group&quot;: &quot;North&quot;, &quot;_group_trail&quot;: [&quot;region&quot;, &quot;product&quot;]}
+{&quot;region&quot;: &quot;North&quot;, &quot;product&quot;: &quot;Gadget&quot;, &quot;amount&quot;: 150, &quot;_group&quot;: &quot;North.Gadget&quot;, &quot;_group_field&quot;: &quot;product&quot;, &quot;_group_size&quot;: 1, &quot;_group_index&quot;: 0, &quot;_parent_group&quot;: &quot;North&quot;, &quot;_group_trail&quot;: [&quot;region&quot;, &quot;product&quot;]}
+{&quot;region&quot;: &quot;South&quot;, &quot;product&quot;: &quot;Widget&quot;, &quot;amount&quot;: 250, &quot;_group&quot;: &quot;South.Widget&quot;, &quot;_group_field&quot;: &quot;product&quot;, &quot;_group_size&quot;: 1, &quot;_group_index&quot;: 0, &quot;_parent_group&quot;: &quot;South&quot;, &quot;_group_trail&quot;: [&quot;region&quot;, &quot;product&quot;]}
+</code></pre>
+<h3 id="after-aggregation">After Aggregation</h3>
+<pre><code class="language-json">{&quot;region&quot;: &quot;North&quot;, &quot;product&quot;: &quot;Widget&quot;, &quot;total&quot;: 300, &quot;count&quot;: 2}
+{&quot;region&quot;: &quot;North&quot;, &quot;product&quot;: &quot;Gadget&quot;, &quot;total&quot;: 150, &quot;count&quot;: 1}
+{&quot;region&quot;: &quot;South&quot;, &quot;product&quot;: &quot;Widget&quot;, &quot;total&quot;: 250, &quot;count&quot;: 1}
+</code></pre>
+<h2 id="advanced-examples">Advanced Examples</h2>
+<h3 id="three-level-grouping">Three-Level Grouping</h3>
+<pre><code class="language-bash"># Group by year, then month, then category
+cat transactions.jsonl \
+  | ja groupby year \
+  | ja groupby month \
+  | ja groupby category \
+  | ja agg revenue=sum(amount),transactions=count,avg_transaction=avg(amount)
+</code></pre>
+<h3 id="filtering-between-groups">Filtering Between Groups</h3>
+<pre><code class="language-bash"># Group by user, filter to active users, then group by product
+cat purchases.jsonl \
+  | ja groupby user_id \
+  | ja select '_group_size &gt; 5' \
+  | ja groupby product_id \
+  | ja agg total=sum(price)
+</code></pre>
+<h3 id="inspecting-intermediate-results">Inspecting Intermediate Results</h3>
+<pre><code class="language-bash"># Use jq to examine the grouping structure
+cat data.jsonl | ja groupby category | jq '._group_field, ._group_size' | sort | uniq -c
+</code></pre>
+<h2 id="comparison-with-direct-aggregation">Comparison with Direct Aggregation</h2>
+<p>You can still use the <code>--agg</code> flag for more efficient single-level aggregations:</p>
+<pre><code class="language-bash"># Direct aggregation (more efficient for simple cases)
+ja groupby region --agg total=sum(amount),count sales.jsonl
+
+# Equivalent chained operation
+cat sales.jsonl | ja groupby region | ja agg total=sum(amount),count
+</code></pre>
+<p>The chained approach is more flexible but may be slightly less efficient for simple aggregations. Use it when you need:
+- Multi-level grouping
+- Intermediate filtering or transformation
+- Exploratory analysis with inspection of groups
+- Integration with other tools in a pipeline</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
               </article>
             </div>
           
@@ -411,10 +639,10 @@
     
     
       
-      <script id="__config" type="application/json">{"base": "/jsonl-algebra/", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.highlight", "search.share"], "search": "/jsonl-algebra/assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.highlight", "search.share"], "search": "../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="/jsonl-algebra/assets/javascripts/bundle.92b07e13.min.js"></script>
+      <script src="../assets/javascripts/bundle.92b07e13.min.js"></script>
       
     
   </body>

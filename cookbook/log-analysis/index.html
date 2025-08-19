@@ -1,0 +1,1167 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A powerful relational algebra CLI and library for JSONL data manipulation">
+      
+      
+        <meta name="author" content="Alex Towell">
+      
+      
+        <link rel="canonical" href="https://queelius.github.io/jsonl-algebra/cookbook/log-analysis/">
+      
+      
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.17">
+    
+    
+      
+        <title>Log Analysis with ja - JSONL Algebra</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.7e37652d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="blue">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#log-analysis-with-ja" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="JSONL Algebra" class="md-header__button md-logo" aria-label="JSONL Algebra" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            JSONL Algebra
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Log Analysis with ja
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="blue"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="blue" data-md-color-accent="blue"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/queelius/jsonl-algebra" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    queelius/jsonl-algebra
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../reference/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Reference
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="JSONL Algebra" class="md-nav__button md-logo" aria-label="JSONL Algebra" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    JSONL Algebra
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/queelius/jsonl-algebra" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    queelius/jsonl-algebra
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Reference
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#sample-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      Sample Data
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#basic-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      Basic Analysis
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Basic Analysis">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-response-status-distribution" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Response Status Distribution
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-average-response-time-by-status" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Average Response Time by Status
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-error-rate" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Error Rate
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#time-based-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      Time-Based Analysis
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Time-Based Analysis">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#4-extract-time-components" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. Extract Time Components
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-requests-per-hour" class="md-nav__link">
+    <span class="md-ellipsis">
+      5. Requests per Hour
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-peak-traffic-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      6. Peak Traffic Analysis
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#endpoint-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      Endpoint Analysis
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Endpoint Analysis">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#7-most-popular-endpoints" class="md-nav__link">
+    <span class="md-ellipsis">
+      7. Most Popular Endpoints
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#8-endpoint-performance" class="md-nav__link">
+    <span class="md-ellipsis">
+      8. Endpoint Performance
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#9-api-vs-health-checks" class="md-nav__link">
+    <span class="md-ellipsis">
+      9. API vs Health Checks
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#multi-dimensional-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      Multi-Dimensional Analysis
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Multi-Dimensional Analysis">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#10-method-and-status-cross-tabulation" class="md-nav__link">
+    <span class="md-ellipsis">
+      10. Method and Status Cross-Tabulation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#11-hourly-error-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      11. Hourly Error Analysis
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      Advanced Patterns
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Advanced Patterns">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#12-slow-requests-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      12. Slow Requests Analysis
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#13-user-agent-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      13. User Agent Analysis
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#14-ip-address-security-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      14. IP Address Security Analysis
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#real-world-scenarios" class="md-nav__link">
+    <span class="md-ellipsis">
+      Real-World Scenarios
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Real-World Scenarios">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#15-performance-monitoring-dashboard" class="md-nav__link">
+    <span class="md-ellipsis">
+      15. Performance Monitoring Dashboard
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#16-security-alert-detection" class="md-nav__link">
+    <span class="md-ellipsis">
+      16. Security Alert Detection
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#17-api-rate-limiting-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      17. API Rate Limiting Analysis
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#combining-multiple-log-sources" class="md-nav__link">
+    <span class="md-ellipsis">
+      Combining Multiple Log Sources
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Combining Multiple Log Sources">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#18-join-with-application-logs" class="md-nav__link">
+    <span class="md-ellipsis">
+      18. Join with Application Logs
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#19-error-correlation-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      19. Error Correlation Analysis
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#time-series-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      Time Series Analysis
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Time Series Analysis">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#20-request-volume-trends" class="md-nav__link">
+    <span class="md-ellipsis">
+      20. Request Volume Trends
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#21-anomaly-detection" class="md-nav__link">
+    <span class="md-ellipsis">
+      21. Anomaly Detection
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#export-for-visualization" class="md-nav__link">
+    <span class="md-ellipsis">
+      Export for Visualization
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Export for Visualization">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#22-prepare-data-for-grafanacharts" class="md-nav__link">
+    <span class="md-ellipsis">
+      22. Prepare Data for Grafana/Charts
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-create-status-code-distribution" class="md-nav__link">
+    <span class="md-ellipsis">
+      23. Create Status Code Distribution
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tips-for-production-use" class="md-nav__link">
+    <span class="md-ellipsis">
+      Tips for Production Use
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Tips for Production Use">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#performance-optimization" class="md-nav__link">
+    <span class="md-ellipsis">
+      Performance Optimization
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#automation-scripts" class="md-nav__link">
+    <span class="md-ellipsis">
+      Automation Scripts
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#integration-with-monitoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      Integration with Monitoring
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      Next Steps
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="log-analysis-with-ja">Log Analysis with ja</h1>
+<p>This cookbook shows how to analyze server logs using <code>ja</code>. We'll work with common log formats and build progressively more complex analyses.</p>
+<h2 id="sample-data">Sample Data</h2>
+<p>Let's start with web server access logs in JSONL format:</p>
+<p><strong><code>access.jsonl</code></strong>:</p>
+<pre><code class="language-json">{&quot;timestamp&quot;: &quot;2024-01-15T10:30:45Z&quot;, &quot;method&quot;: &quot;GET&quot;, &quot;path&quot;: &quot;/api/users&quot;, &quot;status&quot;: 200, &quot;response_time&quot;: 45, &quot;ip&quot;: &quot;192.168.1.100&quot;, &quot;user_agent&quot;: &quot;Mozilla/5.0&quot;}
+{&quot;timestamp&quot;: &quot;2024-01-15T10:31:12Z&quot;, &quot;method&quot;: &quot;POST&quot;, &quot;path&quot;: &quot;/api/login&quot;, &quot;status&quot;: 401, &quot;response_time&quot;: 120, &quot;ip&quot;: &quot;192.168.1.105&quot;, &quot;user_agent&quot;: &quot;curl/7.68.0&quot;}
+{&quot;timestamp&quot;: &quot;2024-01-15T10:31:45Z&quot;, &quot;method&quot;: &quot;GET&quot;, &quot;path&quot;: &quot;/api/users/123&quot;, &quot;status&quot;: 200, &quot;response_time&quot;: 67, &quot;ip&quot;: &quot;192.168.1.100&quot;, &quot;user_agent&quot;: &quot;Mozilla/5.0&quot;}
+{&quot;timestamp&quot;: &quot;2024-01-15T10:32:01Z&quot;, &quot;method&quot;: &quot;DELETE&quot;, &quot;path&quot;: &quot;/api/users/456&quot;, &quot;status&quot;: 403, &quot;response_time&quot;: 23, &quot;ip&quot;: &quot;192.168.1.107&quot;, &quot;user_agent&quot;: &quot;PostmanRuntime/7.28.4&quot;}
+{&quot;timestamp&quot;: &quot;2024-01-15T10:32:15Z&quot;, &quot;method&quot;: &quot;GET&quot;, &quot;path&quot;: &quot;/health&quot;, &quot;status&quot;: 200, &quot;response_time&quot;: 5, &quot;ip&quot;: &quot;10.0.0.1&quot;, &quot;user_agent&quot;: &quot;health-check&quot;}
+</code></pre>
+<h2 id="basic-analysis">Basic Analysis</h2>
+<h3 id="1-response-status-distribution">1. Response Status Distribution</h3>
+<pre><code class="language-bash">ja groupby status access.jsonl | ja agg count
+</code></pre>
+<p>Output:</p>
+<pre><code class="language-json">{&quot;status&quot;: 200, &quot;count&quot;: 3}
+{&quot;status&quot;: 401, &quot;count&quot;: 1}
+{&quot;status&quot;: 403, &quot;count&quot;: 1}
+</code></pre>
+<h3 id="2-average-response-time-by-status">2. Average Response Time by Status</h3>
+<pre><code class="language-bash">ja groupby status access.jsonl | ja agg avg_response_time=avg(response_time),count
+</code></pre>
+<p>Output:</p>
+<pre><code class="language-json">{&quot;status&quot;: 200, &quot;avg_response_time&quot;: 39.0, &quot;count&quot;: 3}
+{&quot;status&quot;: 401, &quot;avg_response_time&quot;: 120.0, &quot;count&quot;: 1}
+{&quot;status&quot;: 403, &quot;avg_response_time&quot;: 23.0, &quot;count&quot;: 1}
+</code></pre>
+<h3 id="3-error-rate">3. Error Rate</h3>
+<pre><code class="language-bash">ja agg \
+  total_requests=count, \
+  error_requests=count_if(status&gt;=400), \
+  error_rate=count_if(status&gt;=400)/count \
+  access.jsonl
+</code></pre>
+<p>Output:</p>
+<pre><code class="language-json">{&quot;total_requests&quot;: 5, &quot;error_requests&quot;: 2, &quot;error_rate&quot;: 0.4}
+</code></pre>
+<h2 id="time-based-analysis">Time-Based Analysis</h2>
+<h3 id="4-extract-time-components">4. Extract Time Components</h3>
+<pre><code class="language-bash">ja project \
+  timestamp, \
+  method, \
+  path, \
+  status, \
+  response_time, \
+  hour=timestamp[11:13], \
+  minute=timestamp[14:16] \
+  access.jsonl
+</code></pre>
+<h3 id="5-requests-per-hour">5. Requests per Hour</h3>
+<pre><code class="language-bash">ja project timestamp,hour=timestamp[11:13],method,path,status access.jsonl \
+  | ja groupby hour \
+  | ja agg requests=count,avg_response_time=avg(response_time)
+</code></pre>
+<h3 id="6-peak-traffic-analysis">6. Peak Traffic Analysis</h3>
+<pre><code class="language-bash">ja project timestamp,minute=timestamp[11:16],status,response_time access.jsonl \
+  | ja groupby minute \
+  | ja agg requests=count,errors=count_if(status&gt;=400) \
+  | ja sort requests --desc \
+  | head -10
+</code></pre>
+<h2 id="endpoint-analysis">Endpoint Analysis</h2>
+<h3 id="7-most-popular-endpoints">7. Most Popular Endpoints</h3>
+<pre><code class="language-bash">ja groupby path access.jsonl \
+  | ja agg requests=count \
+  | ja sort requests --desc
+</code></pre>
+<p>Output:</p>
+<pre><code class="language-json">{&quot;path&quot;: &quot;/api/users&quot;, &quot;requests&quot;: 1}
+{&quot;path&quot;: &quot;/api/users/123&quot;, &quot;requests&quot;: 1}
+{&quot;path&quot;: &quot;/api/login&quot;, &quot;requests&quot;: 1}
+{&quot;path&quot;: &quot;/api/users/456&quot;, &quot;requests&quot;: 1}
+{&quot;path&quot;: &quot;/health&quot;, &quot;requests&quot;: 1}
+</code></pre>
+<h3 id="8-endpoint-performance">8. Endpoint Performance</h3>
+<pre><code class="language-bash">ja groupby path access.jsonl \
+  | ja agg \
+    requests=count, \
+    avg_response_time=avg(response_time), \
+    max_response_time=max(response_time), \
+    error_rate=count_if(status&gt;=400)/count \
+  | ja sort avg_response_time --desc
+</code></pre>
+<h3 id="9-api-vs-health-checks">9. API vs Health Checks</h3>
+<pre><code class="language-bash">ja project path,status,response_time,is_api=path.startswith(&quot;/api&quot;) access.jsonl \
+  | ja groupby is_api \
+  | ja agg \
+    requests=count, \
+    avg_response_time=avg(response_time), \
+    error_rate=count_if(status&gt;=400)/count
+</code></pre>
+<h2 id="multi-dimensional-analysis">Multi-Dimensional Analysis</h2>
+<h3 id="10-method-and-status-cross-tabulation">10. Method and Status Cross-Tabulation</h3>
+<pre><code class="language-bash">ja groupby method access.jsonl \
+  | ja groupby status \
+  | ja agg count \
+  | ja sort method,status
+</code></pre>
+<p>Output:</p>
+<pre><code class="language-json">{&quot;method&quot;: &quot;DELETE&quot;, &quot;status&quot;: 403, &quot;count&quot;: 1}
+{&quot;method&quot;: &quot;GET&quot;, &quot;status&quot;: 200, &quot;count&quot;: 3}
+{&quot;method&quot;: &quot;POST&quot;, &quot;status&quot;: 401, &quot;count&quot;: 1}
+</code></pre>
+<h3 id="11-hourly-error-analysis">11. Hourly Error Analysis</h3>
+<pre><code class="language-bash">ja project \
+  timestamp, \
+  hour=timestamp[11:13], \
+  status, \
+  path, \
+  response_time \
+  access.jsonl \
+  | ja groupby hour \
+  | ja groupby 'status&gt;=400' \
+  | ja agg count,paths=list(path) \
+  | ja select 'status&gt;=400 == true'
+</code></pre>
+<h2 id="advanced-patterns">Advanced Patterns</h2>
+<h3 id="12-slow-requests-analysis">12. Slow Requests Analysis</h3>
+<pre><code class="language-bash"># Define slow requests as &gt; 50ms
+ja select 'response_time &gt; 50' access.jsonl \
+  | ja groupby path \
+  | ja agg \
+    slow_requests=count, \
+    avg_slow_time=avg(response_time), \
+    max_time=max(response_time)
+</code></pre>
+<h3 id="13-user-agent-analysis">13. User Agent Analysis</h3>
+<pre><code class="language-bash">ja project user_agent,status,path access.jsonl \
+  | ja groupby user_agent \
+  | ja agg \
+    requests=count, \
+    unique_paths=count_distinct(path), \
+    error_rate=count_if(status&gt;=400)/count \
+  | ja sort requests --desc
+</code></pre>
+<h3 id="14-ip-address-security-analysis">14. IP Address Security Analysis</h3>
+<pre><code class="language-bash"># Find IPs with high error rates
+ja groupby ip access.jsonl \
+  | ja agg \
+    requests=count, \
+    errors=count_if(status&gt;=400), \
+    error_rate=count_if(status&gt;=400)/count \
+  | ja select 'error_rate &gt; 0.5 and requests &gt; 1' \
+  | ja sort error_rate --desc
+</code></pre>
+<h2 id="real-world-scenarios">Real-World Scenarios</h2>
+<h3 id="15-performance-monitoring-dashboard">15. Performance Monitoring Dashboard</h3>
+<pre><code class="language-bash"># Generate performance summary
+ja project \
+  timestamp, \
+  hour=timestamp[11:13], \
+  status, \
+  response_time, \
+  is_error=status&gt;=400, \
+  is_slow=response_time&gt;100 \
+  access.jsonl \
+  | ja agg \
+    total_requests=count, \
+    avg_response_time=avg(response_time), \
+    p95_response_time=percentile(response_time,0.95), \
+    error_rate=sum(is_error)/count, \
+    slow_rate=sum(is_slow)/count
+</code></pre>
+<h3 id="16-security-alert-detection">16. Security Alert Detection</h3>
+<pre><code class="language-bash"># Find suspicious patterns
+ja select 'status == 401 or status == 403' access.jsonl \
+  | ja groupby ip \
+  | ja agg \
+    failed_attempts=count, \
+    unique_paths=count_distinct(path), \
+    time_span=max(timestamp)-min(timestamp) \
+  | ja select 'failed_attempts &gt;= 3' \
+  | ja sort failed_attempts --desc
+</code></pre>
+<h3 id="17-api-rate-limiting-analysis">17. API Rate Limiting Analysis</h3>
+<pre><code class="language-bash"># Analyze request patterns per IP
+ja project \
+  ip, \
+  timestamp, \
+  minute=timestamp[0:16], \
+  path \
+  access.jsonl \
+  | ja groupby ip \
+  | ja groupby minute \
+  | ja agg requests_per_minute=count \
+  | ja select 'requests_per_minute &gt; 10' \
+  | ja groupby ip \
+  | ja agg \
+    peak_minutes=count, \
+    max_rpm=max(requests_per_minute)
+</code></pre>
+<h2 id="combining-multiple-log-sources">Combining Multiple Log Sources</h2>
+<h3 id="18-join-with-application-logs">18. Join with Application Logs</h3>
+<p><strong><code>app.jsonl</code></strong>:</p>
+<pre><code class="language-json">{&quot;timestamp&quot;: &quot;2024-01-15T10:30:45Z&quot;, &quot;level&quot;: &quot;INFO&quot;, &quot;message&quot;: &quot;User authenticated&quot;, &quot;user_id&quot;: 123}
+{&quot;timestamp&quot;: &quot;2024-01-15T10:31:12Z&quot;, &quot;level&quot;: &quot;WARN&quot;, &quot;message&quot;: &quot;Invalid credentials&quot;, &quot;user_id&quot;: null}
+{&quot;timestamp&quot;: &quot;2024-01-15T10:31:45Z&quot;, &quot;level&quot;: &quot;INFO&quot;, &quot;message&quot;: &quot;User data retrieved&quot;, &quot;user_id&quot;: 123}
+</code></pre>
+<pre><code class="language-bash"># Correlate access logs with application logs
+ja join app.jsonl access.jsonl --on timestamp=timestamp \
+  | ja project timestamp,method,path,status,level,message,user_id \
+  | ja groupby level \
+  | ja agg count,avg_response_time=avg(response_time)
+</code></pre>
+<h3 id="19-error-correlation-analysis">19. Error Correlation Analysis</h3>
+<pre><code class="language-bash"># Find patterns between HTTP errors and application errors
+ja join app.jsonl access.jsonl --on timestamp=timestamp \
+  | ja select 'status &gt;= 400 or level == &quot;ERROR&quot;' \
+  | ja groupby path \
+  | ja agg \
+    http_errors=count_if(status&gt;=400), \
+    app_errors=count_if(level==&quot;ERROR&quot;), \
+    total_issues=count
+</code></pre>
+<h2 id="time-series-analysis">Time Series Analysis</h2>
+<h3 id="20-request-volume-trends">20. Request Volume Trends</h3>
+<pre><code class="language-bash"># Analyze request patterns over time
+ja project \
+  timestamp, \
+  minute_bucket=timestamp[0:16], \
+  status, \
+  response_time \
+  access.jsonl \
+  | ja groupby minute_bucket \
+  | ja agg \
+    requests=count, \
+    errors=count_if(status&gt;=400), \
+    avg_response_time=avg(response_time) \
+  | ja sort minute_bucket
+</code></pre>
+<h3 id="21-anomaly-detection">21. Anomaly Detection</h3>
+<pre><code class="language-bash"># Find time periods with unusual patterns
+ja project timestamp,minute=timestamp[0:16],status,response_time access.jsonl \
+  | ja groupby minute \
+  | ja agg \
+    requests=count, \
+    avg_response_time=avg(response_time), \
+    error_rate=count_if(status&gt;=400)/count \
+  | ja project \
+    minute, \
+    requests, \
+    avg_response_time, \
+    error_rate, \
+    is_anomaly='requests &gt; 100 or avg_response_time &gt; 200 or error_rate &gt; 0.1' \
+  | ja select 'is_anomaly == true'
+</code></pre>
+<h2 id="export-for-visualization">Export for Visualization</h2>
+<h3 id="22-prepare-data-for-grafanacharts">22. Prepare Data for Grafana/Charts</h3>
+<pre><code class="language-bash"># Export time series data
+ja project \
+  timestamp, \
+  hour=timestamp[11:13], \
+  status, \
+  response_time \
+  access.jsonl \
+  | ja groupby hour \
+  | ja agg \
+    requests=count, \
+    avg_response_time=avg(response_time), \
+    error_count=count_if(status&gt;=400) \
+  | ja export csv &gt; hourly_metrics.csv
+</code></pre>
+<h3 id="23-create-status-code-distribution">23. Create Status Code Distribution</h3>
+<pre><code class="language-bash"># Format for pie chart
+ja groupby status access.jsonl \
+  | ja agg count \
+  | ja project label=status,value=count \
+  | ja export json
+</code></pre>
+<h2 id="tips-for-production-use">Tips for Production Use</h2>
+<h3 id="performance-optimization">Performance Optimization</h3>
+<ol>
+<li><strong>Filter Early</strong>: Apply time range filters first</li>
+<li><strong>Sample Large Datasets</strong>: Use <code>head</code> for exploratory analysis</li>
+<li><strong>Index Common Fields</strong>: Consider pre-processing for frequently queried fields</li>
+</ol>
+<pre><code class="language-bash"># Efficient large log analysis
+cat large_access.log.jsonl \
+  | ja select 'timestamp &gt; &quot;2024-01-15T00:00:00Z&quot;' \
+  | ja select 'status &gt;= 400' \
+  | ja groupby path \
+  | ja agg error_count=count
+</code></pre>
+<h3 id="automation-scripts">Automation Scripts</h3>
+<p>Create reusable analysis scripts:</p>
+<pre><code class="language-bash">#!/bin/bash
+# error_summary.sh
+ja select 'status &gt;= 400' $1 \
+  | ja groupby status \
+  | ja groupby path \
+  | ja agg count \
+  | ja sort count --desc
+</code></pre>
+<h3 id="integration-with-monitoring">Integration with Monitoring</h3>
+<pre><code class="language-bash"># Real-time monitoring pipeline
+tail -f /var/log/access.log \
+  | ja select 'status &gt;= 500' \
+  | ja project timestamp,path,status,ip \
+  | while read line; do
+      echo &quot;CRITICAL ERROR: $line&quot; | send_alert
+    done
+</code></pre>
+<h2 id="next-steps">Next Steps</h2>
+<ul>
+<li><a href="../advanced/performance.md">Performance Optimization</a> - Handle large log files efficiently</li>
+<li><a href="../advanced/format-conversion.md">Format Conversion</a> - Work with different log formats</li>
+<li><a href="../cookbook/etl-pipelines.md">Real-time Processing</a> - Build live monitoring systems</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.highlight", "search.share"], "search": "../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.92b07e13.min.js"></script>
+      
+    
+  </body>
+</html>
