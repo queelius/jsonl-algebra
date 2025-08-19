@@ -22,7 +22,12 @@ Welcome to the complete API reference for JSONL Algebra. Every function and clas
       show_root_heading: true
       heading_level: 2
 
-::: ja.groupby
+::: ja.group
+    options:
+      show_root_heading: true
+      heading_level: 2
+
+::: ja.agg
     options:
       show_root_heading: true
       heading_level: 2
@@ -43,6 +48,11 @@ Welcome to the complete API reference for JSONL Algebra. Every function and clas
       heading_level: 2
 
 ::: ja.schema
+    options:
+      show_root_heading: true
+      heading_level: 2
+
+::: ja.expr
     options:
       show_root_heading: true
       heading_level: 2
