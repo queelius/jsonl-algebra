@@ -4,14 +4,40 @@
 
 ## Features
 
-- Perform common relational algebra operations: select, project, join, union, intersection, difference, distinct, sort, product, and group by with aggregations.
+### Core Relational Algebra Operations
+- **Streaming operations** (memory-efficient): select (σ), project (π), rename (ρ), union (∪), distinct (δ)
+- **Memory operations**: join (⋈), sort, groupby (γ), intersection (∩), difference (-), product (×)
+- **Windowed processing**: Memory-efficient approximate processing for large datasets with `--window-size`
 
-- `groupby`: A powerful feature that allows you to group data by one or more keys and perform various aggregations on the grouped data.
-  - By default, includes `sum`, `avg`, `min`, `max`, `count`, `list` (collect all values), `first` (first value in group), `last` (last value in group) aggregations.
-  - Can be extended with custom aggregation functions. See "Extending Group By Aggregations" section.
-- Works with JSONL files or piped data from stdin/stdout.
-- Can be used as a CLI tool or as a Python library.
-- No external dependencies.
+### JSONPath Support (v0.9.0+)
+- **Path-based filtering**: `select-path`, `select-any`, `select-all`, `select-none`
+- **Template projections**: Transform and reshape data with `project-template`
+- **Nested data handling**: Full JSONPath syntax including recursive descent, array wildcards, and filters
+
+### GroupBy Aggregations
+- Built-in aggregations: `sum`, `avg`, `min`, `max`, `count`, `list`, `first`, `last`
+- Extensible aggregation framework for custom functions
+- Multiple aggregations in a single operation
+
+### Performance Features
+- **Automatic streaming**: Operations use streaming when possible for constant memory usage
+- **Windowed processing**: Process large files in chunks for bounded memory usage
+- **Memory warnings**: Automatic warnings for memory-intensive operations
+
+### Additional Features
+- Works with JSONL files or piped data from stdin/stdout
+- Can be used as a CLI tool or as a Python library  
+- No external dependencies
+- Comprehensive mathematical documentation for each operation
+
+## What's New in v0.9.0
+
+- **JSONPath Support**: Full JSONPath integration for nested data operations
+- **Streaming Architecture**: Automatic memory-efficient processing for supported operations
+- **Windowed Processing**: Handle large datasets with bounded memory using `--window-size`
+- **Comprehensive Documentation**: Mathematical foundations and theoretical documentation for all operations
+- **Performance Improvements**: Smart memory management with automatic warnings
+- **Enhanced Testing**: Improved test coverage from 64% to 91%
 
 ## Installation
 

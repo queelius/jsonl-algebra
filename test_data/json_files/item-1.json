@@ -1,0 +1,14 @@
+{
+  "id": "f51c417a-0ec2-4188-95e5-d536269a39e0",
+  "name": "Charlie",
+  "type": "user",
+  "attributes": {
+    "age": 36,
+    "active": true,
+    "tags": [
+      "critical",
+      "staff",
+      "beta"
+    ]
+  }
+}

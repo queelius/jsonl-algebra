@@ -1,0 +1,16 @@
+{
+  "id": 2158,
+  "name": [
+    "Liam"
+  ],
+  "type": true,
+  "attributes": {
+    "age": "unknown",
+    "active": "yes",
+    "tags": "oops",
+    "metadata": {
+      "created": 123456,
+      "updated": {}
+    }
+  }
+}

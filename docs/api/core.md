@@ -1,0 +1,3 @@
+# Core Operations
+
+::: ja.core

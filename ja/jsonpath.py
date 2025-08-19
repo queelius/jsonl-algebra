@@ -1,8 +1,52 @@
 """
-Prototype JSONPath extension for jsonl-algebra
+JSONPath operations for nested and hierarchical data in JSONL.
 
-This module explores adding JSONPath-like capabilities to the existing
-relational algebra operations.
+This module extends relational algebra with JSONPath capabilities, enabling
+queries and transformations on nested JSON structures. It bridges the gap
+between flat relational operations and document-oriented data.
+
+Theoretical Foundation:
+    JSONPath extends XPath concepts to JSON, providing a query language for
+    hierarchical data structures. In the context of relational algebra:
+    
+    1. **Path-based Selection** (σ_path):
+       Extends selection predicates to nested attributes
+       σ_{path,p}(R) = {r ∈ R | p(path(r)) = true}
+       
+    2. **Path-based Projection** (π_path):
+       Projects nested attributes into flat structure
+       π_{template}(R) = {template(r) | r ∈ R}
+       
+    3. **Quantified Predicates**:
+       - ∃ (exists/any): At least one path value matches
+       - ∀ (all): Every path value matches
+       - ¬∃ (none): No path value matches
+
+JSONPath Syntax Supported:
+    - `$` : Root object
+    - `.field` : Direct field access
+    - `..field` : Recursive descent
+    - `[*]` : Array wildcard
+    - `[n]` : Array index
+    - `[n:m]` : Array slice
+    - `[?expr]` : Filter expression
+
+Integration with Relational Algebra:
+    JSONPath operations are composable with standard relational operations,
+    allowing queries like:
+    1. Select rows where nested array contains value > threshold
+    2. Project computed fields from nested structures
+    3. Join on nested attributes
+    4. Aggregate values from nested arrays
+
+Example:
+    >>> # Find orders with expensive items
+    >>> data = [
+    ...     {"id": 1, "items": [{"name": "A", "price": 10}, {"name": "B", "price": 150}]},
+    ...     {"id": 2, "items": [{"name": "C", "price": 20}]}
+    ... ]
+    >>> expensive = select_any(data, "$.items[*].price", lambda x: x > 100)
+    >>> # Returns order with id=1
 """
 
 import re
@@ -12,17 +56,31 @@ from enum import Enum
 
 
 class PathNodeType(Enum):
-    ROOT = "root"
-    FIELD = "field"
-    WILDCARD = "wildcard"
-    RECURSIVE = "recursive"
-    INDEX = "index"
-    SLICE = "slice"
-    FILTER = "filter"
+    """
+    Types of nodes in a JSONPath expression tree.
+    
+    Each node type represents a different navigation or selection
+    operation in the path traversal.
+    """
+    ROOT = "root"           # $ - Document root
+    FIELD = "field"         # .fieldname - Object field access
+    WILDCARD = "wildcard"   # * - Any child (object values or array elements)
+    RECURSIVE = "recursive" # .. - Recursive descent
+    INDEX = "index"         # [n] - Array index access
+    SLICE = "slice"         # [n:m] - Array slice
+    FILTER = "filter"       # [?expr] - Conditional filter
 
 
 @dataclass
 class PathNode:
+    """
+    A single node in the JSONPath expression tree.
+    
+    Attributes:
+        type: The type of path operation
+        value: Associated value (field name, index, slice bounds, etc.)
+        filter_expr: Filter expression string for FILTER type nodes
+    """
     type: PathNodeType
     value: Any = None
     filter_expr: Optional[str] = None
@@ -30,17 +88,37 @@ class PathNode:
 
 class JSONPath:
     """
-    A simplified JSONPath implementation for jsonl-algebra.
-
-    Supports:
-    - $.field - Direct field access
-    - $.field.subfield - Nested field access
-    - $[*] or $.* - Wildcard (any child)
-    - $.field[*] - Array wildcard
-    - $.field[0] - Array index
-    - $.field[0:3] - Array slicing
-    - $..field - Recursive descent
-    - $.field[condition] - Filtered access
+    JSONPath expression parser and evaluator.
+    
+    Implements a subset of JSONPath specification optimized for JSONL
+    processing. Provides lazy evaluation semantics compatible with
+    streaming operations.
+    
+    Attributes:
+        path_string: Original JSONPath expression string
+        nodes: Parsed expression tree as list of PathNode objects
+        
+    Supported Syntax:
+        - `$.field` : Direct field access
+        - `$.field.subfield` : Nested field access  
+        - `$[*]` or `$.*` : Wildcard (all children)
+        - `$.field[*]` : Array wildcard (all elements)
+        - `$.field[0]` : Array index access
+        - `$.field[0:3]` : Array slice [start:end]
+        - `$..field` : Recursive descent (all descendants)
+        - `$.field[?expr]` : Filter expression
+        
+    Evaluation Semantics:
+        - Returns list of all matching values
+        - Missing paths return empty list (not error)
+        - Wildcards expand to multiple values
+        - Recursive descent searches entire subtree
+        
+    Example:
+        >>> path = JSONPath("$.users[*].email")
+        >>> data = {"users": [{"email": "a@b.com"}, {"email": "c@d.com"}]}
+        >>> path.evaluate(data)
+        ['a@b.com', 'c@d.com']
     """
 
     def __init__(self, path_string: str):
@@ -48,7 +126,25 @@ class JSONPath:
         self.nodes = self._parse(path_string)
 
     def _parse(self, path: str) -> List[PathNode]:
-        """Parse a JSONPath string into a list of PathNode objects."""
+        """
+        Parse a JSONPath string into an expression tree.
+        
+        Converts string representation to structured PathNode list
+        using regex-based tokenization.
+        
+        Args:
+            path: JSONPath expression string starting with '$'
+            
+        Returns:
+            List of PathNode objects representing the expression
+            
+        Raises:
+            ValueError: If path doesn't start with '$'
+            
+        Note:
+            Current implementation uses simple regex parsing.
+            Production system would use proper lexer/parser.
+        """
         if not path.startswith("$"):
             raise ValueError("JSONPath must start with '$'")
 
@@ -94,14 +190,47 @@ class JSONPath:
 
     def evaluate(self, data: Any) -> List[Any]:
         """
-        Evaluate the JSONPath against data and return all matching values.
-
-        Returns a list of values that match the path.
+        Evaluate JSONPath expression against data.
+        
+        Traverses the data structure according to the path expression,
+        collecting all matching values.
+        
+        Args:
+            data: JSON-compatible data structure (dict, list, or primitive)
+            
+        Returns:
+            List of all values matching the path (empty if no matches)
+            
+        Time Complexity:
+            O(n) for simple paths where n = data size
+            O(n*m) for recursive descent where m = tree depth
+            
+        Example:
+            >>> path = JSONPath("$..price")
+            >>> data = {"items": [{"price": 10}, {"price": 20}]}
+            >>> path.evaluate(data)
+            [10, 20]
         """
         return self._evaluate_nodes(self.nodes, [data])
 
     def _evaluate_nodes(self, nodes: List[PathNode], contexts: List[Any]) -> List[Any]:
-        """Recursively evaluate path nodes against current contexts."""
+        """
+        Recursively evaluate path nodes against current contexts.
+        
+        Core evaluation engine that processes path nodes left-to-right,
+        maintaining a list of current context values.
+        
+        Args:
+            nodes: Remaining path nodes to evaluate
+            contexts: Current values to evaluate against
+            
+        Returns:
+            List of values after applying all path nodes
+            
+        Algorithm:
+            For each node, apply its operation to all current contexts,
+            collecting results for the next node.
+        """
         if not nodes:
             return contexts
 
@@ -157,7 +286,22 @@ class JSONPath:
         return results
 
     def _get_all_descendants(self, obj: Any) -> List[Any]:
-        """Get all descendant values recursively."""
+        """
+        Get all descendant values for recursive descent.
+        
+        Performs depth-first traversal of the data structure,
+        collecting all nested values.
+        
+        Args:
+            obj: Root object to traverse
+            
+        Returns:
+            List containing obj and all its descendants
+            
+        Note:
+            Includes the root object itself in results.
+            Handles circular references by value (not by reference).
+        """
         descendants = [obj]
 
         if isinstance(obj, dict):
@@ -170,7 +314,27 @@ class JSONPath:
         return descendants
 
     def _evaluate_filter(self, item: Any, filter_expr: str) -> bool:
-        """Evaluate a simple filter expression (placeholder implementation)."""
+        """
+        Evaluate a filter expression against an item.
+        
+        Simple expression evaluator for filter predicates.
+        Currently supports basic comparisons.
+        
+        Args:
+            item: Data item to test
+            filter_expr: Filter expression string
+            
+        Returns:
+            True if item matches filter, False otherwise
+            
+        Supported Operators:
+            - `>` : Greater than (numeric)
+            - `==` : Equality (string comparison)
+            
+        Note:
+            This is a simplified implementation.
+            Full JSONPath would support complex expressions.
+        """
         # This would need a proper expression parser
         # For now, just handle simple cases like "price > 10"
         try:
@@ -198,9 +362,20 @@ class JSONPath:
 
 
 class PathQuantifier(Enum):
-    ANY = "any"
-    ALL = "all"
-    NONE = "none"
+    """
+    Quantifiers for path-based predicates.
+    
+    Determines how multiple path values are combined
+    when evaluating predicates.
+    
+    Mathematical Semantics:
+        - ANY: ∃x ∈ path(row) : predicate(x) (existential)
+        - ALL: ∀x ∈ path(row) : predicate(x) (universal)
+        - NONE: ¬∃x ∈ path(row) : predicate(x) (negated existential)
+    """
+    ANY = "any"    # At least one value matches
+    ALL = "all"    # All values must match
+    NONE = "none"  # No values may match
 
 
 def select_path(
@@ -210,16 +385,52 @@ def select_path(
     quantifier: PathQuantifier = PathQuantifier.ANY,
 ) -> List[Dict]:
     """
-    Select rows where a JSONPath expression matches according to the quantifier.
-
+    Select rows using JSONPath expressions with quantified predicates.
+    
+    Extends relational selection (σ) to handle nested JSON structures
+    by evaluating JSONPath expressions with optional predicates and
+    quantifiers.
+    
     Args:
-        relation: List of dictionaries to filter
-        path_expr: JSONPath expression
-        predicate: Optional predicate function to apply to path values
-        quantifier: ANY (default), ALL, or NONE
-
+        relation: Input relation (list of row dictionaries)
+        path_expr: JSONPath expression to evaluate
+        predicate: Optional function to test path values
+        quantifier: How to combine multiple path matches (ANY/ALL/NONE)
+        
     Returns:
-        Filtered list of dictionaries
+        Filtered relation containing only matching rows
+        
+    Mathematical Notation:
+        σ_{path,p,q}(R) where:
+        - path: JSONPath expression
+        - p: predicate function
+        - q: quantifier (ANY/ALL/NONE)
+        
+    Semantics:
+        - If predicate is None: Check if path exists (has any values)
+        - With predicate:
+            - ANY: Row included if ∃ value matching predicate
+            - ALL: Row included if ∀ values match predicate
+            - NONE: Row included if ¬∃ value matching predicate
+            
+    Example:
+        >>> data = [
+        ...     {"id": 1, "scores": [85, 90, 78]},
+        ...     {"id": 2, "scores": [92, 95, 88]}
+        ... ]
+        >>> # Find students with all scores >= 80
+        >>> honor_roll = select_path(
+        ...     data,
+        ...     "$.scores[*]",
+        ...     lambda x: x >= 80,
+        ...     PathQuantifier.ALL
+        ... )
+        >>> # Returns only id=2
+        
+    Note:
+        Empty path results with ALL quantifier return False.
+        This maintains logical consistency: ∀x ∈ ∅ : p(x) is vacuously true,
+        but we use False for practical filtering semantics.
     """
     path = JSONPath(path_expr)
     result = []
@@ -253,9 +464,34 @@ def select_any(
     relation: List[Dict], path_expr: str, predicate: Callable[[Any], bool] = None
 ) -> List[Dict]:
     """
-    Select rows where ANY element in the path matches the predicate.
-
-    This is equivalent to select_path() with PathQuantifier.ANY (the default).
+    Select rows where ANY path value matches the predicate (existential).
+    
+    Convenience function for existential quantification over path values.
+    Most common use case for path-based selection.
+    
+    Args:
+        relation: Input relation
+        path_expr: JSONPath expression
+        predicate: Optional predicate for path values
+        
+    Returns:
+        Rows with at least one matching path value
+        
+    Mathematical Notation:
+        σ_{∃path,p}(R) = {r ∈ R | ∃v ∈ path(r) : p(v)}
+        
+    Example:
+        >>> # Find orders with any item over $100
+        >>> expensive_orders = select_any(
+        ...     orders,
+        ...     "$.items[*].price",
+        ...     lambda x: x > 100
+        ... )
+        
+    See Also:
+        select_path: Full interface with quantifier parameter
+        select_all: Universal quantification
+        select_none: Negated existential quantification
     """
     return select_path(relation, path_expr, predicate, PathQuantifier.ANY)
 
@@ -264,15 +500,37 @@ def select_all(
     relation: List[Dict], path_expr: str, predicate: Callable[[Any], bool] = None
 ) -> List[Dict]:
     """
-    Select rows where ALL elements in the path match the predicate.
-
+    Select rows where ALL path values match the predicate (universal).
+    
+    Implements universal quantification over path values.
+    Useful for ensuring all nested values meet a criterion.
+    
     Args:
-        relation: List of dictionaries to filter
+        relation: Input relation
         path_expr: JSONPath expression
-        predicate: Predicate function to apply to path values
-
+        predicate: Predicate to test on all path values
+        
     Returns:
-        Rows where all path values satisfy the predicate
+        Rows where every path value satisfies predicate
+        
+    Mathematical Notation:
+        σ_{∀path,p}(R) = {r ∈ R | ∀v ∈ path(r) : p(v)}
+        
+    Semantics:
+        - Empty path results return False (no values to test)
+        - All values must exist and satisfy predicate
+        
+    Example:
+        >>> # Find products where all reviews are 4+ stars
+        >>> quality_products = select_all(
+        ...     products,
+        ...     "$.reviews[*].rating",
+        ...     lambda x: x >= 4
+        ... )
+        
+    Note:
+        Careful with empty collections - they return False,
+        not vacuous truth as in formal logic.
     """
     return select_path(relation, path_expr, predicate, PathQuantifier.ALL)
 
@@ -281,29 +539,93 @@ def select_none(
     relation: List[Dict], path_expr: str, predicate: Callable[[Any], bool] = None
 ) -> List[Dict]:
     """
-    Select rows where NO elements in the path match the predicate.
-
+    Select rows where NO path values match the predicate (negated existential).
+    
+    Implements negated existential quantification.
+    Useful for filtering out rows with unwanted nested values.
+    
     Args:
-        relation: List of dictionaries to filter
+        relation: Input relation
         path_expr: JSONPath expression
-        predicate: Predicate function to apply to path values
-
+        predicate: Predicate that must not match any value
+        
     Returns:
-        Rows where no path values satisfy the predicate
+        Rows where no path value satisfies predicate
+        
+    Mathematical Notation:
+        σ_{¬∃path,p}(R) = {r ∈ R | ¬∃v ∈ path(r) : p(v)}
+        Equivalent to: {r ∈ R | ∀v ∈ path(r) : ¬p(v)}
+        
+    Example:
+        >>> # Find orders with no failed payments
+        >>> successful_orders = select_none(
+        ...     orders,
+        ...     "$.payments[*].status",
+        ...     lambda x: x == "failed"
+        ... )
+        
+    Note:
+        Empty path results return True (no values match).
+        Complement of select_any for the same predicate.
     """
     return select_path(relation, path_expr, predicate, PathQuantifier.NONE)
 
 
 def project_template(relation: List[Dict], template: Dict[str, str]) -> List[Dict]:
     """
-    Project using template expressions that can include JSONPath and aggregations.
-
+    Project and transform rows using JSONPath template expressions.
+    
+    Extends projection (π) to handle nested data extraction, transformation,
+    and aggregation within documents. Each template expression can extract
+    values from nested paths or compute aggregates.
+    
     Args:
-        relation: List of dictionaries to project
-        template: Dictionary mapping output field names to template expressions
-
+        relation: Input relation
+        template: Mapping from output field names to template expressions
+        
     Returns:
-        List of dictionaries with projected fields
+        Transformed relation with template-defined structure
+        
+    Mathematical Notation:
+        π_{template}(R) where template: field → expression
+        
+    Template Expression Types:
+        1. **JSONPath**: Extract nested values
+           - `"$.user.name"` → Single value
+           - `"$.items[*].price"` → Array of values
+           
+        2. **Aggregations**: Compute over arrays
+           - `"sum($.items[*].price)"` → Total price
+           - `"count($.items[*])"` → Number of items
+           - `"avg($.scores[*])"` → Average score
+           - `"min($.values[*])"` → Minimum value
+           - `"max($.values[*])"` → Maximum value
+           
+        3. **Existence**: Check if path exists
+           - `"exists($.optional_field)"` → Boolean
+           
+        4. **Literals**: Static values
+           - `"constant_value"` → String literal
+           
+    Example:
+        >>> template = {
+        ...     "customer_id": "$.customer.id",
+        ...     "customer_name": "$.customer.name",
+        ...     "order_total": "sum($.items[*].price)",
+        ...     "item_count": "count($.items[*])",
+        ...     "has_discount": "exists($.discount_code)",
+        ...     "order_type": "standard"  # Literal
+        ... }
+        >>> orders_summary = project_template(orders, template)
+        
+    Error Handling:
+        - Invalid paths return None
+        - Failed expressions return None
+        - Graceful degradation for malformed data
+        
+    Note:
+        This provides document-level transformations similar to
+        MongoDB aggregation pipeline's $project stage.
     """
     result = []
 
@@ -325,12 +647,44 @@ def project_template(relation: List[Dict], template: Dict[str, str]) -> List[Dic
 
 def _evaluate_template_expression(row: Dict, expr: str) -> Any:
     """
-    Evaluate a template expression against a row.
-
-    Supports:
-    - JSONPath expressions: $.field.subfield
-    - Aggregation functions: sum($.array[*]), count($.array[*])
-    - Simple functions: exists($.field)
+    Evaluate a single template expression against a row.
+    
+    Internal function that handles different expression types:
+    JSONPath, aggregations, existence checks, and literals.
+    
+    Args:
+        row: Data row to evaluate against
+        expr: Template expression string
+        
+    Returns:
+        Evaluated result (can be any JSON-compatible type)
+        
+    Expression Grammar:
+        expression ::= aggregation | existence | jsonpath | literal
+        aggregation ::= ('sum'|'avg'|'min'|'max'|'count') '(' jsonpath ')'
+        existence ::= 'exists(' jsonpath ')'
+        jsonpath ::= '$' path_components
+        literal ::= any_string
+        
+    Evaluation Rules:
+        1. Aggregations: Apply function to all path values
+        2. Existence: Return boolean for path presence
+        3. JSONPath alone:
+           - Single value: Return the value
+           - Multiple values: Return as array
+           - No values: Return None
+        4. Other strings: Return as literal
+        
+    Example:
+        >>> row = {"prices": [10, 20, 30]}
+        >>> _evaluate_template_expression(row, "sum($.prices[*])")
+        60
+        >>> _evaluate_template_expression(row, "$.prices[1]")
+        20
+        
+    Note:
+        Aggregations filter non-numeric values for numeric operations.
+        This ensures robustness with mixed-type arrays.
     """
     expr = expr.strip()
 

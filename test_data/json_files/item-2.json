@@ -1,0 +1,18 @@
+{
+  "id": "26cc2a82-a164-4ade-a854-01ef55c207ae",
+  "name": "Kim",
+  "type": "guest",
+  "attributes": {
+    "age": 86,
+    "active": false,
+    "tags": [
+      "critical",
+      "alpha",
+      "legacy"
+    ],
+    "metadata": {
+      "created": "2025-06-14T05:24:33+00:00",
+      "updated": "2025-06-14T05:24:33+00:00"
+    }
+  }
+}

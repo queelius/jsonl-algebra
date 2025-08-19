@@ -1,0 +1,17 @@
+{
+  "id": "f8db8555-52e8-4c63-9392-b8ab0232e1a5",
+  "name": "Kim",
+  "type": "superadmin",
+  "attributes": {
+    "age": 87,
+    "active": true,
+    "tags": [
+      "founder"
+    ],
+    "metadata": {
+      "created": "2025-06-14T05:24:33+00:00",
+      "updated": "2025-06-14T05:24:33+00:00"
+    }
+  },
+  "extra_i": "surprise!"
+}

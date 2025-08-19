@@ -55,5 +55,16 @@ markdown_extensions:
 
 nav:
   - Home: index.md
-  - API Reference: reference.md
-  - JSONPath Design: jsonpath-design.md
+  - Quick Reference: quick-reference.md
+  - Getting Started:
+    - Development: development.md
+    - Project Management: project-management.md
+  - Design & Architecture:
+    - JSONPath Design: jsonpath-design.md
+    - Streaming Architecture: streaming.md
+  - API Reference:
+    - Overview: reference.md
+    - Core Operations: api/core.md
+    - GroupBy Operations: api/groupby.md
+    - Streaming Operations: api/streaming.md
+    - JSONPath Operations: api/jsonpath.md

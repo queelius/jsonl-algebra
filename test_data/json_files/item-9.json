@@ -1,0 +1,16 @@
+{
+  "id": "930138f1-0169-4134-b2d7-6bf45d0b5889",
+  "name": "Eve",
+  "type": "admin",
+  "attributes": {
+    "age": 59,
+    "active": true,
+    "tags": [
+      "beta"
+    ],
+    "metadata": {
+      "created": "2025-06-14T05:24:33+00:00",
+      "updated": "2025-06-14T05:24:33+00:00"
+    }
+  }
+}

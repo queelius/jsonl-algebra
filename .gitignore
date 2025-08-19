@@ -7,3 +7,12 @@ __pycache__
 dist
 site
 *.whl
+# Test data and temporary files
+test_data/temp_*.jsonl
+examples/*.pyc
+examples/__pycache__/
+
+# Large generated files
+dev/output.jsonl
+dev/reports.jsonl
+dev/*.csv

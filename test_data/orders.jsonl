@@ -1,0 +1,11 @@
+{"order_id": 101, "user_id": 1, "amount": 250}
+{"order_id": 102, "user_id": 2, "amount": 50}
+{"order_id": 103, "user_id": 1, "amount": 75}
+{"order_id": 104, "user_id": 3, "amount": 300}
+{"order_id": 1, "user_id": 1, "amount": 100}
+{"order_id": 2, "user_id": 2, "amount": 50}
+{"order_id": 3, "user_id": 1, "amount": 200}
+{"order_id": 4, "user_id": 3, "amount": 300}
+{"order_id": 5, "user_id": 2, "amount": 75}
+{"order_id": 6, "user_id": 3, "amount": 150}
+{"order_id": 7, "user_id": 3, "amount": 50}

@@ -1,0 +1,3 @@
+# GroupBy Operations
+
+::: ja.groupby

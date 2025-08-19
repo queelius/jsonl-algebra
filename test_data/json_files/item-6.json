@@ -1,0 +1,18 @@
+{
+  "id": "8b9eb8b3-6e0c-4212-b3f7-7cc511bd8a9c",
+  "name": "Frank",
+  "type": "user",
+  "attributes": {
+    "age": 10,
+    "active": true,
+    "tags": [
+      "new",
+      "founder"
+    ],
+    "metadata": {
+      "created": "2025-06-14T05:24:33+00:00",
+      "updated": "2025-06-14T05:24:33+00:00"
+    }
+  },
+  "extra_m": "surprise!"
+}

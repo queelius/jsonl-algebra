@@ -1,4 +1,78 @@
 #!/usr/bin/env python3
+"""
+Command-line interface for jsonl-algebra.
+
+This module provides the argument parsing and command dispatch for the `ja` CLI tool.
+It implements a Unix-philosophy tool for performing relational algebra operations
+on JSONL (JSON Lines) data.
+
+Design Philosophy:
+    1. **Composability**: Each operation reads from stdin/file and writes to stdout
+    2. **Streaming First**: Prefer streaming operations for memory efficiency
+    3. **Simple Syntax**: Intuitive command names and argument patterns
+    4. **Progressive Enhancement**: Basic operations simple, advanced features optional
+
+Command Structure:
+    ```
+    ja <operation> [arguments] [options] [file]
+    ```
+    
+    Where:
+    - operation: The relational algebra operation (select, project, join, etc.)
+    - arguments: Operation-specific required arguments
+    - options: Optional flags and parameters
+    - file: Input file (defaults to stdin for pipe compatibility)
+
+Operation Categories:
+    1. **Streaming Operations** (O(1) memory):
+       - select: Filter rows with predicates
+       - project: Select columns
+       - rename: Rename columns
+       - union: Concatenate relations
+       
+    2. **Stateful Streaming** (O(k) memory):
+       - distinct: Remove duplicates (tracks seen values)
+       
+    3. **Memory Operations** (O(n) memory):
+       - join: Combine relations on keys
+       - sort: Order rows
+       - groupby: Aggregate by groups
+       - intersection: Common rows
+       - difference: Set difference
+       - product: Cartesian product
+       
+    4. **JSONPath Operations** (streaming):
+       - select-path: Filter with JSONPath
+       - select-any/all/none: Quantified path filters
+       - project-template: Transform with templates
+
+Memory Management:
+    The CLI automatically selects the most memory-efficient processing mode:
+    - Streaming when possible
+    - Windowed processing with --window-size for approximations
+    - Full memory loading only when necessary
+
+Examples:
+    ```bash
+    # Simple pipeline
+    cat users.jsonl | ja select 'age > 25' | ja project name,email
+    
+    # Join operation
+    ja join users.jsonl orders.jsonl --on id=user_id
+    
+    # JSONPath filtering
+    ja select-any '$.tags[*]' data.jsonl --predicate 'lambda x: x == "important"'
+    
+    # Windowed processing for large files
+    ja sort timestamp huge.jsonl --window-size 1000
+    ```
+
+Exit Codes:
+    - 0: Success
+    - 1: Error (invalid arguments, parse errors, etc.)
+    - 130: Interrupted (Ctrl+C)
+"""
+
 import sys, argparse, json
 from .commands import (
     handle_select,
@@ -22,17 +96,28 @@ from .commands import (
 
 
 def add_window_argument(parser):
-    """Add --window-size argument to parser for operations that support windowed processing."""
-    parser.add_argument(
-        "--window-size",
-        type=int,
-        default=None,
-        help="Process data in windows of specified size for memory efficiency (approximate results)",
-    )
-
-
-def add_window_argument(parser):
-    """Add --window-size argument to parser for operations that support windowed processing."""
+    """
+    Add --window-size argument to parser for windowed processing support.
+    
+    Windowed processing enables memory-efficient handling of large datasets
+    by processing data in fixed-size chunks. This trades exact results for
+    bounded memory usage.
+    
+    Args:
+        parser: ArgumentParser or subparser to add the argument to
+        
+    Added Argument:
+        --window-size N: Process data in windows of N rows
+        
+    Use Cases:
+        - Sort: Each window sorted independently
+        - GroupBy: Groups computed within windows
+        - Join: Left relation processed in windows
+        
+    Trade-offs:
+        - Pros: Bounded memory O(w) instead of O(n)
+        - Cons: Approximate results, not globally accurate
+    """
     parser.add_argument(
         "--window-size",
         type=int,
@@ -42,7 +127,35 @@ def add_window_argument(parser):
 
 
 def main():
-    parser = argparse.ArgumentParser(prog="ja", description="JSONL algebra")
+    """
+    Main entry point for the jsonl-algebra CLI.
+    
+    Sets up argument parsing, dispatches to command handlers, and manages
+    the overall CLI flow. This function:
+    
+    1. Creates the argument parser with subcommands
+    2. Defines arguments for each operation
+    3. Parses command-line arguments
+    4. Dispatches to appropriate handler
+    5. Handles errors and exit codes
+    
+    Command Registration:
+        Each relational algebra operation is registered as a subcommand
+        with its specific arguments and options. The registration order
+        doesn't matter, but they're organized by category for clarity.
+        
+    Error Handling:
+        - Invalid arguments: Handled by argparse (exits with error)
+        - Runtime errors: Handled by command handlers
+        - Unknown commands: Should not occur with required subparsers
+        - Broken pipes: Clean exit when piping to head/less
+        - Keyboard interrupt: Clean exit on Ctrl+C
+    """
+    parser = argparse.ArgumentParser(
+        prog="ja",
+        description="JSONL algebra - Relational operations on JSON Lines data",
+        epilog="Use 'ja <command> --help' for command-specific help"
+    )
     subparsers = parser.add_subparsers(dest="cmd", required=True)
 
     # select - supports streaming

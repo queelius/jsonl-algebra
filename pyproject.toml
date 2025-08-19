@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "jsonl-algebra"
-version = "0.8"
+version = "0.9.0"
 description = "A lightweight relational algebra CLI over JSONL"
 readme = "README.md"
 authors = [{ name = "Alex Towell" }]
@@ -40,7 +40,6 @@ test = [
 ]
 
 classifiers = [
-    "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
     "Intended Audience :: System Administrators",
     "Programming Language :: Python :: 3",

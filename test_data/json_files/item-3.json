@@ -1,0 +1,18 @@
+{
+  "id": "c68bb93a-1dd8-49e9-9c40-1f4dd73b9076",
+  "name": "Grace",
+  "type": "guest",
+  "attributes": {
+    "age": 77,
+    "active": true,
+    "tags": [
+      "beta",
+      "legacy",
+      "new"
+    ],
+    "metadata": {
+      "created": "2025-06-14T05:24:33+00:00",
+      "updated": "2025-06-14T05:24:33+00:00"
+    }
+  }
+}
