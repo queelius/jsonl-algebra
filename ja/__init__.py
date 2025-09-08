@@ -3,6 +3,8 @@ ja (JSONL Algebra)
 
 A Python package for performing relational algebra operations on lists of
 JSON objects (JSONL data).
+
+This package provides both functional and fluid APIs for data manipulation.
 """
 
 from .core import (
@@ -30,9 +32,15 @@ from .groupby import groupby_agg
 
 from .commands import read_jsonl
 
+# Fluid API imports
+from .relation import RelationQuery, GroupedRelation
+from .fluid import query, from_jsonl, from_records, Q
+
 __all__ = [
+    # Core types
     "Row",
     "Relation",
+    # Functional API
     "select",
     "project",
     "join",
@@ -51,6 +59,13 @@ __all__ = [
     "select_all",
     "select_none",
     "project_template",
+    # Fluid API
+    "RelationQuery",
+    "GroupedRelation",
+    "query",
+    "from_jsonl",
+    "from_records",
+    "Q",
 ]
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"  # Bumped for fluid API addition

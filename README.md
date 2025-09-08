@@ -2,15 +2,18 @@
 
 **ja** is a lightweight command-line tool and Python library for performing relational algebra operations on JSONL (JSON Lines) data. It's designed to be a simple, dependency-free alternative for common data manipulation tasks, inspired by tools like `jq` and traditional SQL.
 
+**New in v0.2**: Fluid API for intuitive method chaining!
+
 ## Features
 
+- **Two powerful APIs**: Traditional functional API and new fluid/chainable API for intuitive data manipulation
 - Perform common relational algebra operations: select, project, join, union, intersection, difference, distinct, sort, product, and group by with aggregations.
 
 - `groupby`: A powerful feature that allows you to group data by one or more keys and perform various aggregations on the grouped data.
-  - By default, includes `sum`, `avg`, `min`, `max`, `count`, `list` (collect all values), `first` (first value in group), `last` (last value in group) aggregations.
+  - Includes `sum`, `avg`, `min`, `max`, `count`, `list`, `first`, `last`, `median`, `mode`, `std`, `unique`, `concat` aggregations
   - Can be extended with custom aggregation functions. See "Extending Group By Aggregations" section.
 - Works with JSONL files or piped data from stdin/stdout.
-- Can be used as a CLI tool or as a Python library.
+- Can be used as a CLI tool or as a Python library (functional or fluid style).
 - No external dependencies.
 
 ## Installation
@@ -116,7 +119,44 @@ Use `ja <command> --help` for more details on specific commands.
 
 ## Programmatic API Usage
 
-You can also use `ja` as a Python library:
+You can use `ja` as a Python library with two different API styles:
+
+### Fluid API (New in v0.2!)
+
+The fluid API provides an intuitive, chainable interface for data manipulation:
+
+```python
+import ja
+
+# Create a query from various sources
+result = (ja.query(data)  # or ja.from_jsonl("file.jsonl")
+    .select(lambda r: r["age"] > 25)
+    .project(["name", "email", "age"])
+    .join(orders, on=[("id", "user_id")])
+    .groupby("category")
+    .agg(total="sum:amount", avg_rating="avg:rating")
+    .sort("total", desc=True)
+    .limit(10)
+    .collect())  # Execute and get results
+
+# Alternative entry points
+result = ja.from_jsonl("data.jsonl")  # Load from file
+result = ja.from_records(list_of_dicts)  # From Python list
+result = ja.Q(data)  # Short alias for quick use
+
+# Execution modes
+result.collect()  # Get results as list
+result.stream()   # Get lazy iterator
+result.first()    # Get first row
+result.count()    # Count rows
+result.to_jsonl("output.jsonl")  # Write to file
+result.to_pandas()  # Convert to DataFrame (requires pandas)
+result.explain()  # Show query plan
+```
+
+### Traditional Functional API
+
+The original functional API is still fully supported:
 
 ```python
 import ja
@@ -183,6 +223,78 @@ for row in grouped_orders:
 # ja.select, ja.project, ja.join, ja.rename, ja.union,
 # ja.difference, ja.distinct, ja.intersection, ja.sort_by,
 # ja.product, ja.groupby_agg
+```
+
+### Fluid API Examples
+
+```python
+import ja
+
+# Example 1: Complex data pipeline
+users = ja.from_jsonl("users.jsonl")
+orders = ja.from_jsonl("orders.jsonl")
+
+top_customers = (users
+    .select(lambda r: r["status"] == "active")
+    .join(orders, on="user_id")
+    .groupby("user_id")
+    .agg(
+        total_spent="sum:amount",
+        order_count="count",
+        avg_order="avg:amount",
+        products="list:product_id"
+    )
+    .sort("total_spent", desc=True)
+    .limit(10)
+    .collect())
+
+# Example 2: Data analysis with new aggregations
+sales_analysis = (ja.from_jsonl("sales.jsonl")
+    .select(lambda r: r["year"] == 2024)
+    .groupby("region")
+    .agg(
+        revenue="sum:amount",
+        median_sale="median:amount",
+        std_dev="std:amount",
+        top_product="mode:product",
+        unique_customers="unique:customer_id"
+    )
+    .sort("revenue", desc=True)
+    .to_pandas())  # Convert to DataFrame for further analysis
+
+# Example 3: Streaming large datasets
+(ja.from_jsonl("huge_log_file.jsonl")
+    .select(lambda r: r["level"] == "ERROR")
+    .map(lambda r: {**r, "date": r["timestamp"][:10]})
+    .project(["date", "error_code", "message"])
+    .limit(1000)
+    .to_jsonl("errors_sample.jsonl"))
+
+# Example 4: Method chaining flexibility
+query = ja.from_jsonl("data.jsonl")
+
+# Build query conditionally
+if filter_active:
+    query = query.select(lambda r: r["active"])
+
+if group_by_category:
+    query = query.groupby("category").count()
+
+results = query.collect()
+
+# Example 5: Explain query plan
+query = (ja.from_jsonl("data.jsonl")
+    .select(lambda r: r["value"] > 100)
+    .groupby("category")
+    .agg("sum:value")
+    .sort("sum_value"))
+
+print(query.explain())
+# Output:
+# RelationQuery
+#   → select(<lambda>)
+#   → groupby(['category']).agg([('sum', 'value')])
+#   → sort(('sum_value',), desc=False)
 ```
 
 ## Extending Group By Aggregations

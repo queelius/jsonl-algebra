@@ -87,6 +87,42 @@ def project_stream(relation_stream: RowStream, columns: List[str]) -> RowStream:
         yield {col: row[col] for col in columns if col in row}
 
 
+def union_stream(stream1: RowStream, stream2: RowStream) -> RowStream:
+    """
+    Stream-based union that combines two streams.
+    
+    Args:
+        stream1: First generator/iterator of rows
+        stream2: Second generator/iterator of rows
+        
+    Yields:
+        Row: All rows from both streams
+    """
+    for row in stream1:
+        yield row
+    for row in stream2:
+        yield row
+
+
+def distinct_stream(relation_stream: RowStream) -> RowStream:
+    """
+    Stream-based distinct that removes duplicates while streaming.
+    
+    Args:
+        relation_stream: Generator/iterator of rows
+        
+    Yields:
+        Row: Unique rows (first occurrence only)
+    """
+    seen = set()
+    for row in relation_stream:
+        # Convert row to hashable form
+        row_key = tuple(sorted(row.items()))
+        if row_key not in seen:
+            seen.add(row_key)
+            yield row
+
+
 def rename_stream(relation_stream: RowStream, renames: Dict[str, str]) -> RowStream:
     """
     Stream-based column renaming that processes rows one at a time.

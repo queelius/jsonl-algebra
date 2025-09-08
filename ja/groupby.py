@@ -146,6 +146,105 @@ def _agg_last_func(last_value: Any) -> Any:
     return last_value
 
 
+def _agg_median_func(collected_values: List[Any]) -> Any:
+    """
+    Calculates the median of numeric values in a list.
+    
+    Args:
+        collected_values: A list of values.
+        
+    Returns:
+        The median of numeric values, or None if no numeric values are found.
+    """
+    numeric_vals = sorted(_agg_numeric_values(collected_values))
+    if not numeric_vals:
+        return None
+    n = len(numeric_vals)
+    mid = n // 2
+    if n % 2 == 0:
+        return (numeric_vals[mid - 1] + numeric_vals[mid]) / 2
+    else:
+        return numeric_vals[mid]
+
+
+def _agg_mode_func(collected_values: List[Any]) -> Any:
+    """
+    Finds the most common value (mode) in a list.
+    
+    Args:
+        collected_values: A list of values.
+        
+    Returns:
+        The most common value, or None if list is empty.
+    """
+    if not collected_values:
+        return None
+    from collections import Counter
+    counter = Counter(collected_values)
+    mode_val, _ = counter.most_common(1)[0]
+    return mode_val
+
+
+def _agg_std_func(collected_values: List[Any]) -> Any:
+    """
+    Calculates the standard deviation of numeric values.
+    
+    Args:
+        collected_values: A list of values.
+        
+    Returns:
+        The standard deviation, or None if insufficient values.
+    """
+    numeric_vals = _agg_numeric_values(collected_values)
+    if len(numeric_vals) < 2:
+        return None
+    
+    mean = sum(numeric_vals) / len(numeric_vals)
+    variance = sum((x - mean) ** 2 for x in numeric_vals) / len(numeric_vals)
+    return variance ** 0.5
+
+
+def _agg_unique_func(collected_values: List[Any]) -> List[Any]:
+    """
+    Returns unique values from the collected values.
+    
+    Args:
+        collected_values: A list of values.
+        
+    Returns:
+        List of unique values.
+    """
+    seen = set()
+    unique_vals = []
+    for val in collected_values:
+        # Handle unhashable types by converting to string
+        try:
+            if val not in seen:
+                seen.add(val)
+                unique_vals.append(val)
+        except TypeError:
+            val_str = str(val)
+            if val_str not in seen:
+                seen.add(val_str)
+                unique_vals.append(val)
+    return unique_vals
+
+
+def _agg_concat_func(collected_values: List[Any], separator: str = ", ") -> str:
+    """
+    Concatenates string values with a separator.
+    
+    Args:
+        collected_values: A list of values.
+        separator: String to join values with.
+        
+    Returns:
+        Concatenated string.
+    """
+    str_vals = [str(v) for v in collected_values if v is not None]
+    return separator.join(str_vals)
+
+
 # --- Aggregation Dispatcher ---
 # This dictionary maps aggregation function names (strings) to their
 # corresponding helper functions. The helper functions are responsible for
@@ -163,6 +262,13 @@ AGGREGATION_DISPATCHER: Dict[str, Callable[[Any], Any]] = {
     "list": _agg_list_func,
     "first": _agg_first_func,
     "last": _agg_last_func,
+    # New aggregations
+    "median": _agg_median_func,
+    "mode": _agg_mode_func,
+    "std": _agg_std_func,
+    "stddev": _agg_std_func,  # Alias
+    "unique": _agg_unique_func,
+    "concat": _agg_concat_func,
     # "count" is handled as a special case directly within `groupby_agg`
     # as it doesn't operate on a collected list/value in the same way.
 }
@@ -243,7 +349,7 @@ def groupby_agg(
             # storage_key_for_agg is used to store the collected data for a specific (agg_func, agg_col) pair
             storage_key_for_agg = f"{agg_func}_{agg_col}"
 
-            if agg_func in ["sum", "avg", "min", "max", "list"]:
+            if agg_func in ["sum", "avg", "min", "max", "list", "median", "mode", "std", "stddev", "unique", "concat"]:
                 # These aggregations collect all values from agg_col into a list
                 group_values.setdefault(storage_key_for_agg, []).append(val)
             elif agg_func == "first":

@@ -1,4 +1,4 @@
-from typing import List, Dict, Callable, Tuple, Any
+from typing import List, Dict, Callable, Tuple, Any, Iterable
 
 # JSONPath extensions - integrated into core
 from ja.jsonpath import (
@@ -11,8 +11,8 @@ from ja.jsonpath import (
     project_template as _project_template,
 )
 
-Row = Dict[str, any]
-Relation = List[Row]
+Row = Dict[str, Any]
+Relation = Iterable[Row]
 
 
 def _row_to_hashable_key(row: Row) -> tuple:
@@ -44,31 +44,31 @@ def _row_to_hashable_key(row: Row) -> tuple:
     return tuple(sorted(row.items()))
 
 
-def select(relation: Relation, predicate: Callable[[Row], bool]) -> Relation:
+def select(relation: Relation, predicate: Callable[[Row], bool]) -> List[Row]:
     """
     Filters rows from a relation based on a predicate.
 
     Args:
-        relation: The input relation (list of rows).
+        relation: The input relation (iterable of rows).
         predicate: A function that takes a row and returns True if the row
                    should be included in the result.
 
     Returns:
-        A new relation containing only the rows for which the predicate is True.
+        A new list containing only the rows for which the predicate is True.
     """
     return [row for row in relation if predicate(row)]
 
 
-def project(relation: Relation, columns: List[str]) -> Relation:
+def project(relation: Relation, columns: List[str]) -> List[Row]:
     """
     Selects specific columns from a relation.
 
     Args:
-        relation: The input relation (list of rows).
+        relation: The input relation (iterable of rows).
         columns: A list of column names to include in the result.
 
     Returns:
-        A new relation containing only the specified columns for each row.
+        A new list containing only the specified columns for each row.
         If a row does not contain a specified column, it's omitted for that row.
     """
     return [{col: row[col] for col in columns if col in row} for row in relation]
