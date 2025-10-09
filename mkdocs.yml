@@ -36,6 +36,36 @@ plugins:
           paths: ["ja"]
 
 
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.tabbed:
+      alternate_style: true
+  - admonition
+  - pymdownx.details
+  - tables
+  - attr_list
+  - toc:
+      permalink: true
+
 nav:
   - Home: index.md
-  - Reference: reference.md
+  - Getting Started:
+    - Installation: getting-started/installation.md
+    - Quick Start: getting-started/quickstart.md
+    - Core Concepts: getting-started/concepts.md
+  - User Guide:
+    - CLI Commands: guide/cli-commands.md
+    - Interactive REPL:
+      - Introduction: guide/repl/introduction.md
+      - Dataset Management: guide/repl/datasets.md
+      - Operations: guide/repl/operations.md
+      - Tips & Tricks: guide/repl/tips.md
+    - Import/Export: guide/import-export.md
+  - Examples:
+    - Basic Workflows: examples/basic.md
+    - REPL Examples: examples/repl.md
+  - API Reference: reference.md

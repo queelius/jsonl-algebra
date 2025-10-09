@@ -1,578 +1,1072 @@
 """Interactive REPL (Read-Eval-Print Loop) for JSONL algebra operations.
 
-This module provides a friendly, interactive shell for chaining JSONL algebra
-operations together. It's a great way to explore your data, build up complex
-transformation pipelines step-by-step, and see the results instantly.
+This module provides a powerful, interactive shell for JSONL data manipulation
+with named datasets, immediate execution, and a non-destructive design.
 
-Think of it as a command-line laboratory for your JSONL data!
+Key features:
+- Named datasets: Load and manage multiple JSONL files by name
+- Safe operations: All transformations require unique output names
+- Immediate execution: See results right away, no pipeline building
+- File-based streaming: Store paths, not data (memory efficient)
+- Shell integration: Execute bash commands with !<command>
 """
 
+import os
 import shlex
 import subprocess
 import sys
+import tempfile
+from pathlib import Path
+from typing import Dict, Optional
 
 
-class ReplCompiler:
-    """Compiles and executes a sequence of JSONL algebra commands.
+class ReplSession:
+    """Interactive REPL session for JSONL data manipulation.
 
-    This class is the engine of the REPL. It manages the state of the command
-    pipeline, parses user input, and translates the pipeline into a shell command
-    that can be executed. It's designed to provide an intuitive, interactive
-    experience for building data workflows.
+    This class manages a workspace of named datasets (JSONL files) and provides
+    commands for loading, transforming, and exploring data interactively.
+
+    Design principles:
+    - Non-destructive: Operations create new datasets, never modify originals
+    - Explicit: All operations require unique output names
+    - Streaming: Store file paths, not data in memory
     """
 
     def __init__(self):
-        """Initialize the REPL compiler with an empty pipeline."""
-        self.pipeline = []
-        self.current_input_source = None  # Can be a file path or None (implying stdin)
-        self.handlers = {}  # Command handlers are registered in the `run` method.
+        """Initialize the REPL session."""
+        self.datasets: Dict[str, str] = {}  # name -> file_path
+        self.current_dataset: Optional[str] = None
+        self.settings = {
+            "window_size": 20,  # Default preview limit
+        }
+        self.temp_dir = tempfile.mkdtemp(prefix="ja_repl_")
+        self.temp_counter = 0
 
-    def parse_command(self, line):
-        """Parse a line of input into a command and its arguments.
+    def _get_temp_file(self, name: str) -> str:
+        """Generate a unique temp file path for a dataset name."""
+        self.temp_counter += 1
+        return os.path.join(self.temp_dir, f"{name}_{self.temp_counter}.jsonl")
 
-        Uses `shlex` to handle quoted arguments correctly.
+    def _check_name_conflict(self, name: str) -> None:
+        """Raise error if dataset name already exists."""
+        if name in self.datasets:
+            raise ValueError(
+                f"Dataset '{name}' already exists. Use a different name."
+            )
 
-        Args:
-            line (str): The raw input line from the user.
+    def _require_current(self) -> str:
+        """Raise error if no current dataset is set."""
+        if self.current_dataset is None:
+            raise ValueError(
+                "No current dataset. Use 'load <file>' or 'cd <name>' first."
+            )
+        return self.current_dataset
 
-        Returns:
-            A tuple of (command, args_list), or (None, None) if parsing fails.
+    def _execute_ja_command(self, cmd_parts: list) -> subprocess.CompletedProcess:
+        """Execute a ja command and return the result."""
+        cmd = shlex.join(cmd_parts)
+        try:
+            result = subprocess.run(
+                cmd,
+                shell=True,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            return result
+        except Exception as e:
+            raise RuntimeError(f"Failed to execute command: {e}")
+
+    # ==================== Command Handlers ====================
+
+    def handle_load(self, args):
+        """Load a JSONL file into the workspace.
+
+        Usage: load <file> [name]
+
+        If name is not provided, uses the file stem (filename without extension).
+        The loaded dataset becomes the current dataset.
         """
+        if not args:
+            print("Error: 'load' requires a file path.")
+            print("Usage: load <file> [name]")
+            return
+
+        file_path = args[0]
+        if not os.path.exists(file_path):
+            print(f"Error: File not found: {file_path}")
+            return
+
+        # Determine dataset name
+        if len(args) > 1:
+            name = args[1]
+        else:
+            name = Path(file_path).stem
+
+        # Check for conflicts
+        try:
+            self._check_name_conflict(name)
+        except ValueError as e:
+            print(f"Error: {e}")
+            return
+
+        # Register the dataset
+        self.datasets[name] = os.path.abspath(file_path)
+        self.current_dataset = name
+        print(f"Loaded: {name} (current)")
+        print(f"  Path: {self.datasets[name]}")
+
+    def handle_cd(self, args):
+        """Switch to a different dataset.
+
+        Usage: cd <name>
+        """
+        if not args:
+            print("Error: 'cd' requires a dataset name.")
+            print("Usage: cd <name>")
+            return
+
+        name = args[0]
+        if name not in self.datasets:
+            print(f"Error: Unknown dataset '{name}'.")
+            print(f"Available datasets: {', '.join(self.datasets.keys())}")
+            return
+
+        self.current_dataset = name
+        print(f"Current dataset: {name}")
+
+    def handle_pwd(self, args):
+        """Show the current dataset name and path.
+
+        Usage: pwd
+        Alias: current
+        """
+        if self.current_dataset is None:
+            print("No current dataset.")
+            return
+
+        print(f"Current dataset: {self.current_dataset}")
+        print(f"  Path: {self.datasets[self.current_dataset]}")
+
+    def handle_current(self, args):
+        """Alias for pwd."""
+        self.handle_pwd(args)
+
+    def handle_datasets(self, args):
+        """List all registered datasets.
+
+        Usage: datasets
+
+        Shows all loaded datasets with a marker for the current one.
+        """
+        if not self.datasets:
+            print("No datasets loaded.")
+            return
+
+        print("Registered datasets:")
+        for name in sorted(self.datasets.keys()):
+            marker = " (current)" if name == self.current_dataset else ""
+            print(f"  {name}{marker}")
+            print(f"    {self.datasets[name]}")
+
+    def handle_save(self, args):
+        """Save the current dataset to a file.
+
+        Usage: save <file>
+
+        Writes the current dataset to the specified file path.
+        Does not register the file as a new dataset.
+        """
+        if not args:
+            print("Error: 'save' requires a file path.")
+            print("Usage: save <file>")
+            return
+
+        try:
+            current = self._require_current()
+        except ValueError as e:
+            print(f"Error: {e}")
+            return
+
+        output_file = args[0]
+        input_file = self.datasets[current]
+
+        # Copy the current dataset to the output file
+        try:
+            with open(input_file, 'r') as inf, open(output_file, 'w') as outf:
+                outf.write(inf.read())
+            print(f"Saved {current} to: {output_file}")
+        except Exception as e:
+            print(f"Error saving file: {e}")
+
+    def handle_ls(self, args):
+        """Preview a dataset.
+
+        Usage: ls [name] [--limit N]
+
+        Shows the first N lines of the dataset (default: window_size setting).
+        If name is omitted, shows the current dataset.
+        """
+        # Parse arguments
+        dataset_name = None
+        limit = self.settings["window_size"]
+
+        i = 0
+        while i < len(args):
+            arg = args[i]
+            if arg == "--limit":
+                if i + 1 >= len(args):
+                    print("Error: --limit requires a number.")
+                    return
+                try:
+                    limit = int(args[i + 1])
+                    i += 2
+                except ValueError:
+                    print(f"Error: Invalid limit value '{args[i + 1]}'.")
+                    return
+            elif arg.startswith("--limit="):
+                try:
+                    limit = int(arg.split("=", 1)[1])
+                    i += 1
+                except ValueError:
+                    print(f"Error: Invalid limit value in '{arg}'.")
+                    return
+            else:
+                dataset_name = arg
+                i += 1
+
+        # Determine which dataset to show
+        if dataset_name is None:
+            try:
+                dataset_name = self._require_current()
+            except ValueError as e:
+                print(f"Error: {e}")
+                return
+        elif dataset_name not in self.datasets:
+            print(f"Error: Unknown dataset '{dataset_name}'.")
+            return
+
+        file_path = self.datasets[dataset_name]
+
+        # Use head to show first N lines
+        try:
+            result = subprocess.run(
+                ["head", f"-n{limit}", file_path],
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            if result.returncode == 0:
+                print(result.stdout.rstrip())
+            else:
+                print(f"Error reading dataset: {result.stderr}")
+        except Exception as e:
+            print(f"Error: {e}")
+
+    def handle_shell(self, args):
+        """Execute a shell command.
+
+        Usage: !<command>
+
+        Passes the command directly to the shell.
+        """
+        # args is already the full command (without the !)
+        cmd = " ".join(args)
+        try:
+            result = subprocess.run(
+                cmd,
+                shell=True,
+                check=False,
+            )
+        except Exception as e:
+            print(f"Error executing shell command: {e}")
+
+    def handle_window_size(self, args):
+        """Get or set the window size setting.
+
+        Usage: window-size [N]
+
+        Without arguments, shows the current value.
+        With a number, sets the value.
+        """
+        if not args:
+            print(f"window-size: {self.settings['window_size']}")
+            return
+
+        try:
+            new_size = int(args[0])
+            if new_size <= 0:
+                print("Error: window-size must be a positive integer.")
+                return
+            self.settings["window_size"] = new_size
+            print(f"window-size set to: {new_size}")
+        except ValueError:
+            print(f"Error: Invalid number '{args[0]}'.")
+
+    def handle_info(self, args):
+        """Show statistics and information about a dataset.
+
+        Usage: info [name]
+
+        If name is omitted, shows info for the current dataset.
+        Displays: row count, file size, fields, and a sample row.
+        """
+        # Determine which dataset to show info for
+        dataset_name = None
+        if args:
+            dataset_name = args[0]
+            if dataset_name not in self.datasets:
+                print(f"Error: Unknown dataset '{dataset_name}'.")
+                return
+        else:
+            try:
+                dataset_name = self._require_current()
+            except ValueError as e:
+                print(f"Error: {e}")
+                return
+
+        file_path = self.datasets[dataset_name]
+
+        try:
+            import json
+            import os
+
+            # Get file size
+            file_size = os.path.getsize(file_path)
+            if file_size < 1024:
+                size_str = f"{file_size} B"
+            elif file_size < 1024 * 1024:
+                size_str = f"{file_size / 1024:.1f} KB"
+            else:
+                size_str = f"{file_size / (1024 * 1024):.1f} MB"
+
+            # Count rows and collect field names
+            row_count = 0
+            all_fields = set()
+            first_row = None
+
+            with open(file_path, 'r') as f:
+                for line in f:
+                    if line.strip():
+                        row_count += 1
+                        try:
+                            obj = json.loads(line)
+                            if first_row is None:
+                                first_row = obj
+                            # Collect field names (flatten nested objects)
+                            self._collect_fields(obj, all_fields)
+                        except json.JSONDecodeError:
+                            pass  # Skip malformed lines
+
+            # Sort fields for consistent display
+            fields = sorted(all_fields)
+
+            # Display info
+            print(f"\nDataset: {dataset_name}")
+            print(f"Path: {file_path}")
+            print(f"Rows: {row_count:,}")
+            print(f"Size: {size_str}")
+
+            if fields:
+                # Limit field display to avoid clutter
+                if len(fields) <= 20:
+                    print(f"Fields: {', '.join(fields)}")
+                else:
+                    print(f"Fields ({len(fields)} total): {', '.join(fields[:20])}, ...")
+
+            if first_row:
+                print(f"\nSample (first row):")
+                print(f"  {json.dumps(first_row, indent=2)}")
+
+            print()
+
+        except FileNotFoundError:
+            print(f"Error: File not found: {file_path}")
+        except Exception as e:
+            print(f"Error reading dataset: {e}")
+
+    def _collect_fields(self, obj, field_set, prefix=""):
+        """Recursively collect field names from a JSON object.
+
+        Nested fields are represented with dot notation (e.g., 'user.name').
+        """
+        if isinstance(obj, dict):
+            for key, value in obj.items():
+                full_key = f"{prefix}.{key}" if prefix else key
+                field_set.add(full_key)
+                if isinstance(value, dict):
+                    self._collect_fields(value, field_set, full_key)
+                elif isinstance(value, list) and value and isinstance(value[0], dict):
+                    # For arrays of objects, show the array field plus nested fields
+                    self._collect_fields(value[0], field_set, full_key)
+        elif isinstance(obj, list) and obj and isinstance(obj[0], dict):
+            self._collect_fields(obj[0], field_set, prefix)
+
+    # ==================== Unary Operations ====================
+
+    def handle_select(self, args):
+        """Filter rows with an expression.
+
+        Usage: select '<expr>' <output_name>
+
+        Creates a new dataset with filtered rows.
+        """
+        if len(args) < 2:
+            print("Error: 'select' requires an expression and output name.")
+            print("Usage: select '<expr>' <output_name>")
+            return
+
+        try:
+            current = self._require_current()
+        except ValueError as e:
+            print(f"Error: {e}")
+            return
+
+        expr = args[0]
+        output_name = args[1]
+
+        try:
+            self._check_name_conflict(output_name)
+        except ValueError as e:
+            print(f"Error: {e}")
+            return
+
+        # Create temp file for output
+        output_file = self._get_temp_file(output_name)
+        input_file = self.datasets[current]
+
+        # Execute: ja select '<expr>' <input> > <output>
+        cmd_parts = ["ja", "select", expr, input_file]
+        result = self._execute_ja_command(cmd_parts)
+
+        if result.returncode == 0:
+            # Save output to temp file
+            with open(output_file, 'w') as f:
+                f.write(result.stdout)
+
+            self.datasets[output_name] = output_file
+            self.current_dataset = output_name
+            print(f"Created: {output_name} (current)")
+        else:
+            print(f"Error: {result.stderr}")
+
+    def handle_project(self, args):
+        """Select specific fields.
+
+        Usage: project <fields> <output_name>
+
+        Creates a new dataset with only the specified fields.
+        """
+        if len(args) < 2:
+            print("Error: 'project' requires fields and output name.")
+            print("Usage: project <fields> <output_name>")
+            return
+
+        try:
+            current = self._require_current()
+        except ValueError as e:
+            print(f"Error: {e}")
+            return
+
+        fields = args[0]
+        output_name = args[1]
+
+        try:
+            self._check_name_conflict(output_name)
+        except ValueError as e:
+            print(f"Error: {e}")
+            return
+
+        output_file = self._get_temp_file(output_name)
+        input_file = self.datasets[current]
+
+        cmd_parts = ["ja", "project", fields, input_file]
+        result = self._execute_ja_command(cmd_parts)
+
+        if result.returncode == 0:
+            with open(output_file, 'w') as f:
+                f.write(result.stdout)
+
+            self.datasets[output_name] = output_file
+            self.current_dataset = output_name
+            print(f"Created: {output_name} (current)")
+        else:
+            print(f"Error: {result.stderr}")
+
+    def handle_rename(self, args):
+        """Rename fields.
+
+        Usage: rename <mapping> <output_name>
+
+        Example: rename old=new,foo=bar output
+        """
+        if len(args) < 2:
+            print("Error: 'rename' requires a mapping and output name.")
+            print("Usage: rename <old=new,...> <output_name>")
+            return
+
+        try:
+            current = self._require_current()
+        except ValueError as e:
+            print(f"Error: {e}")
+            return
+
+        mapping = args[0]
+        output_name = args[1]
+
+        try:
+            self._check_name_conflict(output_name)
+        except ValueError as e:
+            print(f"Error: {e}")
+            return
+
+        output_file = self._get_temp_file(output_name)
+        input_file = self.datasets[current]
+
+        cmd_parts = ["ja", "rename", mapping, input_file]
+        result = self._execute_ja_command(cmd_parts)
+
+        if result.returncode == 0:
+            with open(output_file, 'w') as f:
+                f.write(result.stdout)
+
+            self.datasets[output_name] = output_file
+            self.current_dataset = output_name
+            print(f"Created: {output_name} (current)")
+        else:
+            print(f"Error: {result.stderr}")
+
+    def handle_distinct(self, args):
+        """Remove duplicate rows.
+
+        Usage: distinct <output_name>
+        """
+        if len(args) < 1:
+            print("Error: 'distinct' requires an output name.")
+            print("Usage: distinct <output_name>")
+            return
+
+        try:
+            current = self._require_current()
+        except ValueError as e:
+            print(f"Error: {e}")
+            return
+
+        output_name = args[0]
+
+        try:
+            self._check_name_conflict(output_name)
+        except ValueError as e:
+            print(f"Error: {e}")
+            return
+
+        output_file = self._get_temp_file(output_name)
+        input_file = self.datasets[current]
+
+        cmd_parts = ["ja", "distinct", input_file]
+        result = self._execute_ja_command(cmd_parts)
+
+        if result.returncode == 0:
+            with open(output_file, 'w') as f:
+                f.write(result.stdout)
+
+            self.datasets[output_name] = output_file
+            self.current_dataset = output_name
+            print(f"Created: {output_name} (current)")
+        else:
+            print(f"Error: {result.stderr}")
+
+    def handle_sort(self, args):
+        """Sort rows by key(s).
+
+        Usage: sort <keys> [--desc] <output_name>
+
+        Example: sort age,name output
+        Example: sort age --desc output
+        """
+        if len(args) < 2:
+            print("Error: 'sort' requires keys and output name.")
+            print("Usage: sort <keys> [--desc] <output_name>")
+            return
+
+        try:
+            current = self._require_current()
+        except ValueError as e:
+            print(f"Error: {e}")
+            return
+
+        # Parse args: keys, optional --desc, output_name
+        keys = args[0]
+        desc = False
+        output_name = args[-1]
+
+        if "--desc" in args:
+            desc = True
+
+        try:
+            self._check_name_conflict(output_name)
+        except ValueError as e:
+            print(f"Error: {e}")
+            return
+
+        output_file = self._get_temp_file(output_name)
+        input_file = self.datasets[current]
+
+        cmd_parts = ["ja", "sort", keys, input_file]
+        if desc:
+            cmd_parts.append("--desc")
+
+        result = self._execute_ja_command(cmd_parts)
+
+        if result.returncode == 0:
+            with open(output_file, 'w') as f:
+                f.write(result.stdout)
+
+            self.datasets[output_name] = output_file
+            self.current_dataset = output_name
+            print(f"Created: {output_name} (current)")
+        else:
+            print(f"Error: {result.stderr}")
+
+    def handle_groupby(self, args):
+        """Group rows by a key.
+
+        Usage: groupby <key> [--agg <spec>] <output_name>
+
+        Example: groupby region output
+        Example: groupby region --agg count,sum(amount) output
+        """
+        if len(args) < 2:
+            print("Error: 'groupby' requires a key and output name.")
+            print("Usage: groupby <key> [--agg <spec>] <output_name>")
+            return
+
+        try:
+            current = self._require_current()
+        except ValueError as e:
+            print(f"Error: {e}")
+            return
+
+        key = args[0]
+        output_name = args[-1]
+
+        # Check for --agg
+        agg_spec = None
+        if "--agg" in args:
+            agg_idx = args.index("--agg")
+            if agg_idx + 1 < len(args) - 1:  # -1 because last is output_name
+                agg_spec = args[agg_idx + 1]
+
+        try:
+            self._check_name_conflict(output_name)
+        except ValueError as e:
+            print(f"Error: {e}")
+            return
+
+        output_file = self._get_temp_file(output_name)
+        input_file = self.datasets[current]
+
+        cmd_parts = ["ja", "groupby", key, input_file]
+        if agg_spec:
+            cmd_parts.extend(["--agg", agg_spec])
+
+        result = self._execute_ja_command(cmd_parts)
+
+        if result.returncode == 0:
+            with open(output_file, 'w') as f:
+                f.write(result.stdout)
+
+            self.datasets[output_name] = output_file
+            self.current_dataset = output_name
+            print(f"Created: {output_name} (current)")
+        else:
+            print(f"Error: {result.stderr}")
+
+    # ==================== Binary Operations ====================
+
+    def handle_join(self, args):
+        """Join with another dataset.
+
+        Usage: join <dataset_name> --on <mapping> <output_name>
+
+        Example: join orders --on user_id=id user_orders
+        """
+        if len(args) < 4 or "--on" not in args:
+            print("Error: 'join' requires a dataset, --on mapping, and output name.")
+            print("Usage: join <dataset> --on <mapping> <output_name>")
+            return
+
+        try:
+            current = self._require_current()
+        except ValueError as e:
+            print(f"Error: {e}")
+            return
+
+        right_name = args[0]
+        if right_name not in self.datasets:
+            print(f"Error: Unknown dataset '{right_name}'.")
+            return
+
+        on_idx = args.index("--on")
+        on_mapping = args[on_idx + 1]
+        output_name = args[-1]
+
+        try:
+            self._check_name_conflict(output_name)
+        except ValueError as e:
+            print(f"Error: {e}")
+            return
+
+        output_file = self._get_temp_file(output_name)
+        left_file = self.datasets[current]
+        right_file = self.datasets[right_name]
+
+        cmd_parts = ["ja", "join", left_file, right_file, "--on", on_mapping]
+        result = self._execute_ja_command(cmd_parts)
+
+        if result.returncode == 0:
+            with open(output_file, 'w') as f:
+                f.write(result.stdout)
+
+            self.datasets[output_name] = output_file
+            self.current_dataset = output_name
+            print(f"Created: {output_name} (current)")
+        else:
+            print(f"Error: {result.stderr}")
+
+    def handle_union(self, args):
+        """Union with another dataset.
+
+        Usage: union <dataset_name> <output_name>
+        """
+        if len(args) < 2:
+            print("Error: 'union' requires a dataset name and output name.")
+            print("Usage: union <dataset> <output_name>")
+            return
+
+        try:
+            current = self._require_current()
+        except ValueError as e:
+            print(f"Error: {e}")
+            return
+
+        right_name = args[0]
+        output_name = args[1]
+
+        if right_name not in self.datasets:
+            print(f"Error: Unknown dataset '{right_name}'.")
+            return
+
+        try:
+            self._check_name_conflict(output_name)
+        except ValueError as e:
+            print(f"Error: {e}")
+            return
+
+        output_file = self._get_temp_file(output_name)
+        left_file = self.datasets[current]
+        right_file = self.datasets[right_name]
+
+        cmd_parts = ["ja", "union", left_file, right_file]
+        result = self._execute_ja_command(cmd_parts)
+
+        if result.returncode == 0:
+            with open(output_file, 'w') as f:
+                f.write(result.stdout)
+
+            self.datasets[output_name] = output_file
+            self.current_dataset = output_name
+            print(f"Created: {output_name} (current)")
+        else:
+            print(f"Error: {result.stderr}")
+
+    def handle_intersection(self, args):
+        """Intersection with another dataset.
+
+        Usage: intersection <dataset_name> <output_name>
+        """
+        if len(args) < 2:
+            print("Error: 'intersection' requires a dataset name and output name.")
+            print("Usage: intersection <dataset> <output_name>")
+            return
+
+        try:
+            current = self._require_current()
+        except ValueError as e:
+            print(f"Error: {e}")
+            return
+
+        right_name = args[0]
+        output_name = args[1]
+
+        if right_name not in self.datasets:
+            print(f"Error: Unknown dataset '{right_name}'.")
+            return
+
+        try:
+            self._check_name_conflict(output_name)
+        except ValueError as e:
+            print(f"Error: {e}")
+            return
+
+        output_file = self._get_temp_file(output_name)
+        left_file = self.datasets[current]
+        right_file = self.datasets[right_name]
+
+        cmd_parts = ["ja", "intersection", left_file, right_file]
+        result = self._execute_ja_command(cmd_parts)
+
+        if result.returncode == 0:
+            with open(output_file, 'w') as f:
+                f.write(result.stdout)
+
+            self.datasets[output_name] = output_file
+            self.current_dataset = output_name
+            print(f"Created: {output_name} (current)")
+        else:
+            print(f"Error: {result.stderr}")
+
+    def handle_difference(self, args):
+        """Difference with another dataset.
+
+        Usage: difference <dataset_name> <output_name>
+        """
+        if len(args) < 2:
+            print("Error: 'difference' requires a dataset name and output name.")
+            print("Usage: difference <dataset> <output_name>")
+            return
+
+        try:
+            current = self._require_current()
+        except ValueError as e:
+            print(f"Error: {e}")
+            return
+
+        right_name = args[0]
+        output_name = args[1]
+
+        if right_name not in self.datasets:
+            print(f"Error: Unknown dataset '{right_name}'.")
+            return
+
+        try:
+            self._check_name_conflict(output_name)
+        except ValueError as e:
+            print(f"Error: {e}")
+            return
+
+        output_file = self._get_temp_file(output_name)
+        left_file = self.datasets[current]
+        right_file = self.datasets[right_name]
+
+        cmd_parts = ["ja", "difference", left_file, right_file]
+        result = self._execute_ja_command(cmd_parts)
+
+        if result.returncode == 0:
+            with open(output_file, 'w') as f:
+                f.write(result.stdout)
+
+            self.datasets[output_name] = output_file
+            self.current_dataset = output_name
+            print(f"Created: {output_name} (current)")
+        else:
+            print(f"Error: {result.stderr}")
+
+    def handle_product(self, args):
+        """Cartesian product with another dataset.
+
+        Usage: product <dataset_name> <output_name>
+        """
+        if len(args) < 2:
+            print("Error: 'product' requires a dataset name and output name.")
+            print("Usage: product <dataset> <output_name>")
+            return
+
+        try:
+            current = self._require_current()
+        except ValueError as e:
+            print(f"Error: {e}")
+            return
+
+        right_name = args[0]
+        output_name = args[1]
+
+        if right_name not in self.datasets:
+            print(f"Error: Unknown dataset '{right_name}'.")
+            return
+
+        try:
+            self._check_name_conflict(output_name)
+        except ValueError as e:
+            print(f"Error: {e}")
+            return
+
+        output_file = self._get_temp_file(output_name)
+        left_file = self.datasets[current]
+        right_file = self.datasets[right_name]
+
+        cmd_parts = ["ja", "product", left_file, right_file]
+        result = self._execute_ja_command(cmd_parts)
+
+        if result.returncode == 0:
+            with open(output_file, 'w') as f:
+                f.write(result.stdout)
+
+            self.datasets[output_name] = output_file
+            self.current_dataset = output_name
+            print(f"Created: {output_name} (current)")
+        else:
+            print(f"Error: {result.stderr}")
+
+    def handle_help(self, args):
+        """Display help message."""
+        help_text = """
+JSONL Algebra REPL - Interactive Data Manipulation
+
+DATASET MANAGEMENT:
+  load <file> [name]           Load a JSONL file (default name: file stem)
+  cd <name>                    Switch to a dataset
+  pwd / current                Show current dataset
+  datasets                     List all registered datasets
+  info [name]                  Show dataset statistics (rows, size, fields)
+  save <file>                  Save current dataset to file
+
+UNARY OPERATIONS (operate on current dataset):
+  select '<expr>' <output>     Filter rows with expression
+  project <fields> <output>    Select specific fields (comma-separated)
+  rename <old=new> <output>    Rename fields
+  distinct <output>            Remove duplicates
+  sort <keys> [--desc] <out>   Sort by keys
+  groupby <key> [--agg <spec>] <output>
+                               Group and optionally aggregate
+
+BINARY OPERATIONS (combine current with another dataset):
+  join <dataset> --on <map> <output>
+                               Join datasets on keys
+  union <dataset> <output>     Union of datasets
+  intersection <dataset> <out> Intersection of datasets
+  difference <dataset> <out>   Difference of datasets
+  product <dataset> <output>   Cartesian product
+
+VIEWING & EXPLORATION:
+  ls [name] [--limit N]        Preview dataset (default: current)
+  !<command>                   Execute shell command
+
+SETTINGS:
+  window-size [N]              Get/set preview window size
+
+META:
+  help                         Show this help
+  exit                         Quit REPL
+
+NOTES:
+- All operations create NEW datasets with unique names
+- Use dot notation for nested fields (e.g., user.name)
+- Current dataset is used as input for operations
+- Operations automatically switch to the new output dataset
+
+EXAMPLES:
+  ja> load users.jsonl
+  ja> select 'age > 30' adults
+  ja> project name,email adults_contact
+  ja> load orders.jsonl
+  ja> cd adults_contact
+  ja> join orders --on user_id=id final
+  ja> ls --limit 5
+  ja> save results.jsonl
+"""
+        print(help_text)
+
+    def parse_command(self, line: str):
+        """Parse a command line into command and arguments."""
         try:
             parts = shlex.split(line)
         except ValueError as e:
-            print(f"Error parsing command: {e}. Check your quotes.")
+            print(f"Error parsing command: {e}")
             return None, None
+
         if not parts:
             return None, None
+
         command = parts[0].lower()
         args = parts[1:]
         return command, args
 
-    def handle_from(self, args):
-        """Set the initial data source for the pipeline (e.g., a file).
-
-        This command must be the first one used when starting a new pipeline
-        with a file source.
-
-        Args:
-            args (list): A list containing the file path or "stdin".
-        """
-        if not args:
-            print("Error: 'from' requires a file path (or 'stdin').")
-            return
-        if self.pipeline:
-            print(
-                "Error: 'from' can only be used at the beginning of a new pipeline. Use 'reset' first."
-            )
-            return
-        self.current_input_source = args[0]
-        if self.current_input_source.lower() == "stdin":
-            self.current_input_source = None  # Internally, None means stdin for clarity
-            print("Input source set to: stdin")
-        else:
-            print(f"Input source set to: {self.current_input_source}")
-
-    def add_to_pipeline(self, command_name, args, cli_command_name=None):
-        """Add a new command step to the current pipeline.
-
-        Args:
-            command_name (str): The name of the REPL command (e.g., "project").
-            args (list): The list of arguments for the command.
-            cli_command_name (str, optional): The corresponding `ja` CLI command name.
-                                             Defaults to `command_name`.
-        """
-        if not cli_command_name:
-            cli_command_name = command_name
-        # Ensure 'from' is not added to the pipeline steps directly
-        if command_name.lower() == "from":
-            print(
-                "Error: 'from' is a directive, not a pipeline step. Use 'reset' then 'from <file>'."
-            )
-            return
-        self.pipeline.append(
-            {
-                "repl_command": command_name,
-                "cli_command": cli_command_name,
-                "args": args,
-            }
-        )
-        print(f"Added: {command_name} {' '.join(shlex.quote(a) for a in args)}")
-
-    def handle_select(self, args):
-        """Handle the 'select' command by adding it to the pipeline."""
-        if not args:
-            print("Error: 'select' requires an expression.")
-            return
-        self.add_to_pipeline("select", args)
-
-    def handle_project(self, args):
-        """Handle the 'project' command by adding it to the pipeline."""
-        if not args:
-            print("Error: 'project' requires column names.")
-            return
-        self.add_to_pipeline("project", args)
-
-    def handle_join(self, args):
-        """Handle the 'join' command by adding it to the pipeline."""
-        if len(args) < 3 or args[-2].lower() != "--on":
-            print("Error: 'join' requires <right_file> --on <key_map>.")
-            print("Example: join orders.jsonl --on user.id=customer_id")
-            return
-        self.add_to_pipeline("join", args)
-
-    def handle_rename(self, args):
-        """Handle the 'rename' command by adding it to the pipeline."""
-        if not args:
-            print("Error: 'rename' requires a mapping (e.g., old_name=new_name).")
-            return
-        self.add_to_pipeline("rename", args)
-
-    def handle_distinct(self, args):
-        """Handle the 'distinct' command by adding it to the pipeline."""
-        if args:
-            print("Warning: 'distinct' does not take arguments in REPL mode. Ignoring.")
-        self.add_to_pipeline("distinct", [])
-
-    def handle_sort(self, args):
-        """Handle the 'sort' command by adding it to the pipeline."""
-        if not args:
-            print("Error: 'sort' requires column names.")
-            return
-        self.add_to_pipeline("sort", args)
-
-    def handle_groupby(self, args):
-        """Handle the 'groupby' command by adding it to the pipeline."""
-        # Support both chained groupby (no --agg) and immediate aggregation (with --agg)
-        if "--agg" in args:
-            # Traditional groupby with immediate aggregation
-            if len(args) < 3 or args[-2].lower() != "--agg":
-                print("Error: 'groupby --agg' requires <key> --agg <spec>.")
-                print("Example: groupby user.location --agg count,sum(amount)")
-                return
-        else:
-            # Chained groupby mode
-            if not args:
-                print("Error: 'groupby' requires a key.")
-                print("Example: groupby region")
-                return
-        self.add_to_pipeline("groupby", args)
-
-    def handle_agg(self, args):
-        """Handle the 'agg' command by adding it to the pipeline."""
-        if not args:
-            print("Error: 'agg' requires an aggregation specification.")
-            print("Example: agg count,total=sum(amount)")
-            return
-        self.add_to_pipeline("agg", args)
-
-    def handle_product(self, args):
-        """Handle the 'product' command by adding it to the pipeline."""
-        if not args:
-            print("Error: 'product' requires a right file path.")
-            return
-        self.add_to_pipeline("product", args)
-
-    def handle_union(self, args):
-        """Handle the 'union' command by adding it to the pipeline."""
-        if not args:
-            print("Error: 'union' requires a file path.")
-            return
-        self.add_to_pipeline("union", args)
-
-    def handle_intersection(self, args):
-        """Handle the 'intersection' command by adding it to the pipeline."""
-        if not args:
-            print("Error: 'intersection' requires a file path.")
-            return
-        self.add_to_pipeline("intersection", args)
-
-    def handle_difference(self, args):
-        """Handle the 'difference' command by adding it to the pipeline."""
-        if not args:
-            print("Error: 'difference' requires a file path.")
-            return
-        self.add_to_pipeline("difference", args)
-
-    def _generate_pipeline_command_string_and_segments(self):
-        """Construct the full shell command string from the pipeline steps.
-
-        This is the core logic that translates the user's interactive steps into
-        a runnable `ja ... | ja ...` shell command.
-
-        Returns:
-            A tuple containing:
-            - The full, executable shell command string.
-            - A list of individual command segments for display.
-            - An error message string, if any.
-        """
-        if not self.pipeline:
-            return None, None, "Pipeline is empty."
-
-        display_segments = []
-        execution_segments = []
-
-        for i, step in enumerate(self.pipeline):
-            current_ja_cmd_parts = ["ja", step["cli_command"]]
-            is_first_command_in_pipe = i == 0
-
-            if step["cli_command"] in ["join", "product", "union", "intersection", "difference"]:
-                # REPL args: <right_file> [--on <key_map>] for join
-                # REPL args: <right_file> for product
-                # CLI: ja join <left> <right> --on <key_map>
-                # CLI: ja product <left> <right>
-                right_file_repl_arg = step["args"][0]
-
-                if is_first_command_in_pipe:
-                    left_input_for_cli = (
-                        self.current_input_source if self.current_input_source else "-"
-                    )
-                else:
-                    left_input_for_cli = "-"
-
-                current_ja_cmd_parts.append(left_input_for_cli)
-                current_ja_cmd_parts.append(right_file_repl_arg)
-
-                if step["cli_command"] == "join":
-                    current_ja_cmd_parts.extend(step["args"][1:])  # --on <key_map>
-
-            elif step["cli_command"] == "groupby":
-                # REPL args: <key> [--agg <spec>]
-                # CLI: ja groupby <key> <file_or_stdin> [--agg <spec>]
-                key_repl_arg = step["args"][0]
-                other_args = step["args"][1:]
-
-                current_ja_cmd_parts.append(key_repl_arg)
-
-                if is_first_command_in_pipe:
-                    input_file_for_cli = (
-                        self.current_input_source if self.current_input_source else "-"
-                    )
-                else:
-                    input_file_for_cli = "-"
-                current_ja_cmd_parts.append(input_file_for_cli)
-                current_ja_cmd_parts.extend(other_args)
-
-            elif step["cli_command"] == "agg":
-                # REPL args: <spec>
-                # CLI: ja agg <spec> [file_or_stdin]
-                current_ja_cmd_parts.extend(step["args"])
-
-                if is_first_command_in_pipe:
-                    if self.current_input_source:
-                        current_ja_cmd_parts.append(self.current_input_source)
-
-            else:  # select, project, rename, distinct, sort
-                # REPL args: <command_specific_args>
-                # CLI: ja <command> [command_specific_args...] [file_if_first_and_not_stdin]
-                current_ja_cmd_parts.extend(step["args"])
-
-                if is_first_command_in_pipe:
-                    if self.current_input_source:
-                        current_ja_cmd_parts.append(self.current_input_source)
-
-            joined_segment = shlex.join(current_ja_cmd_parts)
-            display_segments.append(joined_segment)
-            execution_segments.append(joined_segment)
-
-        executable_command_string = " | ".join(execution_segments)
-        return executable_command_string, display_segments, None
-
-    def handle_compile(self, cmd_args):
-        """Generate and print a bash script for the current pipeline."""
-        _executable_cmd_str, display_segments, error_msg = (
-            self._generate_pipeline_command_string_and_segments()
-        )
-
-        if error_msg:
-            print(error_msg)
+    def process(self, line: str):
+        """Process a single command line."""
+        if not line or line.strip() == "":
             return
 
-        print("\n--- Compiled Bash Script ---")
-        print("#!/bin/bash")
-        print("# Generated by ja REPL")
-
-        if not display_segments:
-            print("# Pipeline is empty.")
-        elif len(display_segments) == 1:
-            print(display_segments[0])
-        else:
-            # Build the pretty-printed pipeline string
-            script_str = display_segments[0]
-            for i in range(1, len(display_segments)):
-                script_str += f" | \\\n  {display_segments[i]}"
-            print(script_str)
-        print("--------------------------\n")
-
-    def handle_execute(self, cmd_args):
-        """Execute the current pipeline and display the output."""
-        limit_lines = None
-        if cmd_args:
-            if cmd_args[0].startswith("--lines="):
-                try:
-                    limit_lines = int(cmd_args[0].split("=")[1])
-                    if limit_lines <= 0:
-                        print("Error: --lines must be a positive integer.")
-                        return
-                except (ValueError, IndexError):
-                    print(
-                        "Error: Invalid format for --lines. Use --lines=N (e.g., --lines=10)."
-                    )
-                    return
-            else:
-                print(
-                    f"Warning: Unknown argument '{cmd_args[0]}' for execute. Ignoring. Did you mean --lines=N?"
-                )
-
-        command_to_execute, _display_segments, error_msg = (
-            self._generate_pipeline_command_string_and_segments()
-        )
-
-        if error_msg:
-            print(error_msg)
-            return
-        if not command_to_execute:
-            print(
-                "Internal error: No command to execute."
-            )  # Should be caught by error_msg
+        # Handle shell commands
+        if line.startswith("!"):
+            cmd = line[1:].strip()
+            self.handle_shell(shlex.split(cmd))
             return
 
-        print(f"Executing: {command_to_execute}")
+        command, args = self.parse_command(line)
+        if command is None:
+            return
 
-        try:
-            process = subprocess.run(
-                command_to_execute,
-                shell=True,  # Essential for pipes
-                capture_output=True,
-                text=True,
-                check=False,  # Manually check returncode
-            )
-
-            print("\n--- Output ---")
-            if process.stdout:
-                output_lines_list = process.stdout.splitlines()
-                if limit_lines is not None:
-                    for i, line_content in enumerate(output_lines_list):
-                        if i < limit_lines:
-                            print(line_content)
-                        else:
-                            print(
-                                f"... (output truncated to {limit_lines} lines, total {len(output_lines_list)})"
-                            )
-                            break
-                else:
-                    print(process.stdout.strip())
-            elif process.returncode == 0:
-                print("(No output produced)")
-
-            if process.stderr:
-                print("\n--- Errors ---")
-                print(process.stderr.strip())
-
-            if process.returncode != 0:
-                print(f"\nCommand exited with status {process.returncode}")
-            elif not process.stdout and not process.stderr and process.returncode == 0:
-                print("(Execution successful: No output and no errors)")
-
-            print("--------------\n")
-
-        except FileNotFoundError:  # pragma: no cover
-            print(f"Error: Command 'ja' not found. Make sure it's in your PATH.")
-        except Exception as e:  # pragma: no cover
-            print(
-                f"An unexpected error occurred while trying to execute the command: {e}"
-            )
-            # import traceback
-            # traceback.print_exc()
-
-    def handle_reset(self, args):
-        """Clear the current pipeline and reset the input source."""
-        self.pipeline = []
-        self.current_input_source = None
-        print("Pipeline reset.")
-
-    def handle_pipeline_show(self, args):
-        """Display the steps in the current pipeline."""
-        if not self.pipeline:
-            print("Pipeline is empty.")
-        else:
-            print("Current pipeline:")
-            if self.current_input_source:
-                print(f"  Input: {self.current_input_source}")
-            else:
-                print(
-                    f"  Input: stdin (assumed for the first command if 'from' not used)"
-                )
-            for idx, step in enumerate(self.pipeline):
-                print(
-                    f"  {idx + 1}. {step['repl_command']} {' '.join(shlex.quote(a) for a in step['args'])}"
-                )
-        print("")
-
-    def handle_help(self, args):
-        """Display the help message with all available REPL commands."""
-        print("\nWelcome to the `ja` REPL! Build data pipelines interactively.")
-        print("Here are the available commands:\n")
-        print("  from <file|stdin>      : Start a new pipeline from a file or stdin.")
-        print("                           Example: from users.jsonl")
-        print("  select '<expr>'        : Filter rows with a Python expression.")
-        print("                           Example: select 'user.age > 30'")
-        print(
-            "  project <cols>         : Pick columns, supporting nested data with dot notation."
-        )
-        print("                           Example: project id,user.name,user.location")
-        print("  join <file> --on <L=R> : Join with another file on one or more keys.")
-        print("                           Example: join orders.jsonl --on id=user_id")
-        print("  rename <old=new,...>   : Rename columns. Supports dot notation.")
-        print("                           Example: rename user.id=user_id,location=loc")
-        print("  distinct               : Remove duplicate rows based on all columns.")
-        print(
-            "  sort <cols>            : Sort rows by one or more columns (supports dot notation)."
-        )
-        print("                           Example: sort user.age,id")
-        print("  groupby <key> --agg <> : Group rows and aggregate data.")
-        print(
-            "                           Example: groupby cat --agg count,avg:user.score"
-        )
-        print(
-            "  product <file>         : Create a Cartesian product with another file."
-        )
-        print("                           Example: product features.jsonl")
-        print("  union <file>           : Combine rows from another file (deduplicated).")
-        print("                           Example: union archived_users.jsonl")
-        print("  intersection <file>    : Keep only rows present in another file.")
-        print("                           Example: intersection active_users.jsonl")
-        print("  difference <file>      : Remove rows present in another file.")
-        print("                           Example: difference temp_users.jsonl")
-
-        print("\n--- Pipeline Control ---")
-        print(
-            "  execute [--lines=N]    : Run the pipeline and see output (e.g., execute --lines=10)."
-        )
-        print(
-            "  compile                : Show the bash script for the current pipeline."
-        )
-        print("  pipeline               : Show the steps in the current pipeline.")
-        print("  reset                  : Clear the current pipeline.")
-        print("  help                   : Show this help message.")
-        print("  exit                   : Exit the REPL.\n")
-
-        print("Tips:")
-        print("- Use dot notation (e.g., `user.address.city`) for nested JSON fields.")
-        print(
-            """- Wrap arguments with spaces in quotes (e.g., select 'name == "John Doe"').\n"""
-        )
-
-    def process(self, line):
-        """Process a single line of input from the REPL.
-
-        This method parses the line, finds the appropriate handler for the
-        command, and invokes it.
-
-        Args:
-            line (str): The line of input to process.
-        """
-        try:
-            if not line:
-                return
-
-            command, cmd_args = self.parse_command(line)
-            if command is None:  # Parsing error
-                return
-
-            if command in self.handlers:
-                self.handlers[command](cmd_args)
-            elif command:
-                print(
-                    f"Unknown command: '{command}'. Type 'help' for available commands."
-                )
-
-        except EOFError:
-            print("\nExiting...")
-        except KeyboardInterrupt:
-            print("\nInterrupted. Use 'exit' to quit.")
-        except Exception as e:
-            print(f"An unexpected error occurred: {e}")
-            import traceback
-
-            traceback.print_exc()
-
-    def run(self, initial_command_list=None):  # Renamed 'args' for clarity
-        """Start the main REPL event loop.
-
-        This method prints a welcome message, registers all command handlers,
-        and enters an infinite loop to read and process user input.
-
-        Args:
-            initial_command_list (list, optional): A list of command-line arguments
-                                                   to process before starting the
-                                                   interactive loop.
-        """
-        print("Welcome to ja REPL. Type 'help' for commands, 'exit' to quit.")
-        self.handlers = {  # Assign to self.handlers so self.process() can use it
-            "from": self.handle_from,
+        # Command routing
+        handlers = {
+            "load": self.handle_load,
+            "cd": self.handle_cd,
+            "pwd": self.handle_pwd,
+            "current": self.handle_current,
+            "datasets": self.handle_datasets,
+            "info": self.handle_info,
+            "save": self.handle_save,
+            "ls": self.handle_ls,
+            "window-size": self.handle_window_size,
             "select": self.handle_select,
             "project": self.handle_project,
-            "join": self.handle_join,
             "rename": self.handle_rename,
             "distinct": self.handle_distinct,
             "sort": self.handle_sort,
             "groupby": self.handle_groupby,
-            "product": self.handle_product,
+            "join": self.handle_join,
             "union": self.handle_union,
             "intersection": self.handle_intersection,
             "difference": self.handle_difference,
-            "compile": self.handle_compile,
-            "execute": self.handle_execute,
-            "agg": self.handle_agg,
-            "reset": self.handle_reset,
-            "pipeline": self.handle_pipeline_show,
+            "product": self.handle_product,
             "help": self.handle_help,
-            "exit": lambda _args: sys.exit(
-                0
-            ),  # Consistent signature with other handlers
+            "exit": lambda _: sys.exit(0),
         }
 
-        if initial_command_list and len(initial_command_list) > 0:
-            processed_initial_parts = list(initial_command_list)
-            # If the first token of initial_command_list is not a known REPL command,
-            # assume 'from' should be prepended.
-            # This allows `ja repl myfile.jsonl` to be treated as `from myfile.jsonl`.
-            if processed_initial_parts[0].lower() not in self.handlers:
-                processed_initial_parts.insert(0, "from")
+        handler = handlers.get(command)
+        if handler:
+            try:
+                handler(args)
+            except Exception as e:
+                print(f"Error: {e}")
+                import traceback
+                traceback.print_exc()
+        else:
+            print(f"Unknown command: '{command}'. Type 'help' for available commands.")
 
-            initial_line = shlex.join(
-                processed_initial_parts
-            )  # Use shlex.join for safety
+    def run(self, initial_args=None):
+        """Run the REPL main loop."""
+        print("Welcome to ja REPL. Type 'help' for commands, 'exit' to quit.")
+
+        # Handle initial args (e.g., ja repl data.jsonl)
+        if initial_args and len(initial_args) > 0:
+            # Auto-load the file
+            initial_line = f"load {shlex.join(initial_args)}"
             self.process(initial_line)
 
         while True:
             try:
                 line = input("ja> ").strip()
-                if not line:
-                    continue
-                # 'exit' command will be handled by self.process -> self.handlers['exit']
                 self.process(line)
             except EOFError:
                 print("\nExiting...")
-                sys.exit(0)  # Ensure clean exit
+                sys.exit(0)
             except KeyboardInterrupt:
                 print("\nInterrupted. Type 'exit' or Ctrl-D to quit.")
-                # Loop continues, allowing user to recover or exit cleanly.
 
 
-def repl(parsed_cli_args):  # Receives the argparse.Namespace object
-    """Entry point for the `ja repl` command.
-
-    Initializes and runs the ReplCompiler.
-
-    Args:
-        parsed_cli_args (argparse.Namespace): The parsed command-line arguments,
-                                              which may include an initial file
-                                              to load.
-    """
-    compiler = ReplCompiler()
-    # Get the list of initial arguments passed to `ja repl ...`
-    # getattr default to empty list if 'initial_args' is not present (it will be due to nargs="*")
-    initial_repl_args_list = getattr(parsed_cli_args, "initial_args", [])
-    compiler.run(initial_command_list=initial_repl_args_list)
+def repl(parsed_cli_args):
+    """Entry point for the ja repl command."""
+    session = ReplSession()
+    initial_args = getattr(parsed_cli_args, "initial_args", [])
+    session.run(initial_args)

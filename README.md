@@ -13,7 +13,7 @@ Tired of wrestling with complex JSON in the command line? **`ja`** is here to he
 * **Intuitive Relational Operations**: All the classics are here: `select`, `project`, `join`, `union`, `difference`, `distinct`, and more.
 * **Seamless Nested Data Support**: Access and manipulate nested fields using simple, intuitive **dot notation** (e.g., `user.address.city`). This is a core design principle.
 * **Powerful Aggregations**: Group your data with `groupby` and calculate `sum`, `avg`, `min`, `max`, `count`, or see all values in a `list`.
-* **Interactive REPL**: Jump into an interactive session with `ja repl` to build and test complex pipelines step-by-step.
+* **Interactive REPL**: Jump into an interactive session with `ja repl` to explore and transform data interactively with named datasets and immediate execution.
 * **Schema Inference & Validation**: Automatically discover the schema of your data with `schema infer` and validate it against a known structure.
 * **Format Conversion**: Easily convert data to and from CSV, including intelligent flattening of nested structures.
 * **Built for Pipes**: `ja` is a good Unix citizen. It reads from `stdin`, writes to `stdout`, and is designed to be a component in larger shell pipelines.
@@ -148,6 +148,63 @@ ja schema infer my_data.jsonl > my_schema.json
 # Validate that a file conforms to a schema
 ja schema validate my_schema.json my_data.jsonl
 ```
+
+### **Interactive REPL**
+
+The REPL provides an interactive workspace for data exploration and transformation:
+
+```bash
+# Start the REPL
+ja repl
+
+# Or load a file immediately
+ja repl users.jsonl
+```
+
+**Example REPL Session:**
+
+```
+ja> load users.jsonl
+Loaded: users (current)
+
+ja> select 'age > 30' adults
+Created: adults (current)
+
+ja> info
+Dataset: adults
+Rows: 15
+Size: 2.3 KB
+Fields: id, name, age, email, city
+
+ja> load orders.jsonl
+Loaded: orders (current)
+
+ja> cd adults
+Current dataset: adults
+
+ja> join orders --on id=user_id user_orders
+Created: user_orders (current)
+
+ja> sort amount --desc sorted
+Created: sorted (current)
+
+ja> ls --limit 5
+{"id": 1, "name": "Alice", "age": 35, "order_id": 101, "amount": 1200}
+...
+
+ja> save results.jsonl
+Saved sorted to: results.jsonl
+```
+
+**REPL Commands:**
+- `load <file> [name]` - Load a JSONL file
+- `cd <name>` - Switch to a dataset
+- `datasets` - List all loaded datasets
+- `info [name]` - Show dataset statistics
+- `ls [--limit N]` - Preview data
+- All operations: `select`, `project`, `join`, `groupby`, etc. (require output name)
+- `!<command>` - Execute shell commands
+- `save <file>` - Persist current dataset
 
 ## Programmatic API Usage
 
