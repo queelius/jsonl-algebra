@@ -50,10 +50,31 @@ from .core import (
 # Import from the new modules
 from .agg import aggregate_single_group, aggregate_grouped_data
 from .group import groupby_agg, groupby_with_metadata, groupby_chained
+# Import composable operations
+from .compose import (
+    Pipeline,
+    pipeline,
+    lazy_pipeline,
+    compose,
+    pipe,
+    Select,
+    Project,
+    Sort,
+    Distinct,
+    Rename,
+    GroupBy,
+    Take,
+    Skip,
+    Map,
+    Filter,
+    Batch,
+)
 
 __all__ = [
+    # Core types
     "Row",
     "Relation",
+    # Core operations
     "select",
     "project",
     "join",
@@ -65,12 +86,31 @@ __all__ = [
     "sort_by",
     "product",
     "collect",
+    # Grouping and aggregation
     "groupby_agg",
     "groupby_with_metadata",
     "groupby_chained",
     "aggregate_single_group",
     "aggregate_grouped_data",
+    # I/O
     "read_jsonl",
+    # Composable operations
+    "Pipeline",
+    "pipeline",
+    "lazy_pipeline",
+    "compose",
+    "pipe",
+    "Select",
+    "Project",
+    "Sort",
+    "Distinct",
+    "Rename",
+    "GroupBy",
+    "Take",
+    "Skip",
+    "Map",
+    "Filter",
+    "Batch",
 ]
 
 __version__ = "0.1.0"

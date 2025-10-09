@@ -5,7 +5,7 @@ aggregation and metadata-based chaining for multi-level grouping.
 """
 
 from collections import defaultdict
-from typing import Dict, List, Any, Tuple
+from typing import Dict, List, Any, Tuple, Union
 
 from .agg import parse_agg_specs, apply_single_agg
 from .expr import ExprEval
@@ -45,9 +45,7 @@ def groupby_with_metadata(data: Relation, group_key: str) -> Relation:
             key_value = json.dumps(key_value, ensure_ascii=False, sort_keys=True)
             groups[key_value].append(row)
 
-    import sys
-    print("hi", file=sys.stderr)
-    # print("Huh?")
+    # Second pass: add metadata to each row
     # Second pass: add metadata and flatten
     result = []
     last_index = len(groups) - 1
@@ -155,7 +153,7 @@ def groupby_chained(grouped_data: Relation, new_group_key: str) -> Relation:
     return result
 
 
-def groupby_agg(data: Relation, group_key: str, agg_spec: str) -> Relation:
+def groupby_agg(data: Relation, group_key: str, agg_spec: Union[str, List[Tuple[str, str]]]) -> Relation:
     """Group and aggregate in one operation.
     
     This function is kept for backward compatibility and for the --agg flag.
@@ -179,7 +177,18 @@ def groupby_agg(data: Relation, group_key: str, agg_spec: str) -> Relation:
     
     # Apply aggregations
     result = []
-    agg_specs = parse_agg_specs(agg_spec)
+
+    # Handle both string and list inputs for backward compatibility
+    if isinstance(agg_spec, str):
+        agg_specs = parse_agg_specs(agg_spec)
+    else:
+        # Convert old list format to new format
+        agg_specs = []
+        for name, field in agg_spec:
+            if name == "count":
+                agg_specs.append(("count", "count"))
+            elif name in ["sum", "avg", "min", "max"]:
+                agg_specs.append((f"{name}_{field}", f"{name}({field})"))
     
     for key, group_rows in groups.items():
         row_result = {group_key: key}

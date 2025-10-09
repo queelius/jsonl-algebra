@@ -15,7 +15,7 @@ from ja.core import (
     sort_by,
     union,
 )
-from ja.groupby import groupby_agg
+from ja.group import groupby_agg
 
 
 class TestCoreFunctions(unittest.TestCase):

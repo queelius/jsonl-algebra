@@ -1,0 +1,90 @@
+{
+  "mcpServers": {
+    "jsonl-algebra": {
+      "command": "python",
+      "args": ["-m", "integrations.mcp_server"],
+      "env": {},
+      "schema": {
+        "name": "jsonl-algebra",
+        "version": "1.0.0",
+        "description": "MCP server for JSONL data manipulation using jsonl-algebra",
+        "author": "Alex Towell",
+        "capabilities": {
+          "tools": true,
+          "resources": true,
+          "prompts": false
+        },
+        "tools": [
+          {
+            "name": "jsonl_query",
+            "description": "Query JSONL files using natural language or SQL-like syntax"
+          },
+          {
+            "name": "jsonl_select",
+            "description": "Filter records using JMESPath expressions"
+          },
+          {
+            "name": "jsonl_project",
+            "description": "Select specific fields from records"
+          },
+          {
+            "name": "jsonl_aggregate",
+            "description": "Group and aggregate data with powerful operations"
+          },
+          {
+            "name": "jsonl_join",
+            "description": "Join multiple JSONL files on common keys"
+          },
+          {
+            "name": "jsonl_sort",
+            "description": "Sort records by any field"
+          },
+          {
+            "name": "jsonl_sample",
+            "description": "Take random samples from large datasets"
+          },
+          {
+            "name": "jsonl_stats",
+            "description": "Get comprehensive statistics about JSONL files"
+          },
+          {
+            "name": "jsonl_transform",
+            "description": "Apply complex transformation pipelines"
+          }
+        ],
+        "examples": [
+          {
+            "prompt": "Show me all users with age > 25 from users.jsonl",
+            "tool": "jsonl_select",
+            "args": {
+              "file_path": "users.jsonl",
+              "expression": "age > `25`"
+            }
+          },
+          {
+            "prompt": "Calculate average salary by department",
+            "tool": "jsonl_aggregate",
+            "args": {
+              "file_path": "employees.jsonl",
+              "group_by": ["department"],
+              "aggregations": {
+                "salary": "avg"
+              }
+            }
+          },
+          {
+            "prompt": "Join orders with customers on customer_id",
+            "tool": "jsonl_join",
+            "args": {
+              "left_file": "orders.jsonl",
+              "right_file": "customers.jsonl",
+              "left_key": "customer_id",
+              "right_key": "id",
+              "join_type": "inner"
+            }
+          }
+        ]
+      }
+    }
+  }
+}
