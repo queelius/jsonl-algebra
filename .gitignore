@@ -7,3 +7,6 @@ __pycache__
 dist
 site
 *.whl
+*.aux
+*.out
+*.log
