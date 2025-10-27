@@ -2,54 +2,106 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://queelius.github.io/jsonl-algebra/</loc>
-         <lastmod>2025-08-19</lastmod>
+         <lastmod>2025-10-27</lastmod>
+    </url>
+    <url>
+         <loc>https://queelius.github.io/jsonl-algebra/DOCUMENTATION_SUMMARY/</loc>
+         <lastmod>2025-10-27</lastmod>
     </url>
     <url>
          <loc>https://queelius.github.io/jsonl-algebra/chained-groups/</loc>
-         <lastmod>2025-08-19</lastmod>
+         <lastmod>2025-10-27</lastmod>
+    </url>
+    <url>
+         <loc>https://queelius.github.io/jsonl-algebra/contributing/</loc>
+         <lastmod>2025-10-27</lastmod>
+    </url>
+    <url>
+         <loc>https://queelius.github.io/jsonl-algebra/faq/</loc>
+         <lastmod>2025-10-27</lastmod>
     </url>
     <url>
          <loc>https://queelius.github.io/jsonl-algebra/future-plans/</loc>
-         <lastmod>2025-08-19</lastmod>
+         <lastmod>2025-10-27</lastmod>
     </url>
     <url>
          <loc>https://queelius.github.io/jsonl-algebra/getting-started/</loc>
-         <lastmod>2025-08-19</lastmod>
+         <lastmod>2025-10-27</lastmod>
     </url>
     <url>
          <loc>https://queelius.github.io/jsonl-algebra/quickstart/</loc>
-         <lastmod>2025-08-19</lastmod>
+         <lastmod>2025-10-27</lastmod>
     </url>
     <url>
          <loc>https://queelius.github.io/jsonl-algebra/reference/</loc>
-         <lastmod>2025-08-19</lastmod>
+         <lastmod>2025-10-27</lastmod>
     </url>
     <url>
          <loc>https://queelius.github.io/jsonl-algebra/advanced/repl/</loc>
-         <lastmod>2025-08-19</lastmod>
+         <lastmod>2025-10-27</lastmod>
+    </url>
+    <url>
+         <loc>https://queelius.github.io/jsonl-algebra/cli/overview/</loc>
+         <lastmod>2025-10-27</lastmod>
     </url>
     <url>
          <loc>https://queelius.github.io/jsonl-algebra/concepts/all-i-kept/</loc>
-         <lastmod>2025-08-19</lastmod>
+         <lastmod>2025-10-27</lastmod>
     </url>
     <url>
          <loc>https://queelius.github.io/jsonl-algebra/concepts/chained-groups/</loc>
-         <lastmod>2025-08-19</lastmod>
+         <lastmod>2025-10-27</lastmod>
     </url>
     <url>
          <loc>https://queelius.github.io/jsonl-algebra/concepts/jsonl-algebra/</loc>
-         <lastmod>2025-08-19</lastmod>
+         <lastmod>2025-10-27</lastmod>
     </url>
     <url>
          <loc>https://queelius.github.io/jsonl-algebra/cookbook/log-analysis/</loc>
-         <lastmod>2025-08-19</lastmod>
+         <lastmod>2025-10-27</lastmod>
+    </url>
+    <url>
+         <loc>https://queelius.github.io/jsonl-algebra/getting-started/concepts/</loc>
+         <lastmod>2025-10-27</lastmod>
+    </url>
+    <url>
+         <loc>https://queelius.github.io/jsonl-algebra/getting-started/installation/</loc>
+         <lastmod>2025-10-27</lastmod>
+    </url>
+    <url>
+         <loc>https://queelius.github.io/jsonl-algebra/getting-started/quickstart/</loc>
+         <lastmod>2025-10-27</lastmod>
+    </url>
+    <url>
+         <loc>https://queelius.github.io/jsonl-algebra/guide/repl/datasets/</loc>
+         <lastmod>2025-10-27</lastmod>
+    </url>
+    <url>
+         <loc>https://queelius.github.io/jsonl-algebra/guide/repl/introduction/</loc>
+         <lastmod>2025-10-27</lastmod>
+    </url>
+    <url>
+         <loc>https://queelius.github.io/jsonl-algebra/guide/repl/operations/</loc>
+         <lastmod>2025-10-27</lastmod>
+    </url>
+    <url>
+         <loc>https://queelius.github.io/jsonl-algebra/integrations/overview/</loc>
+         <lastmod>2025-10-27</lastmod>
     </url>
     <url>
          <loc>https://queelius.github.io/jsonl-algebra/operations/overview/</loc>
-         <lastmod>2025-08-19</lastmod>
+         <lastmod>2025-10-27</lastmod>
+    </url>
+    <url>
+         <loc>https://queelius.github.io/jsonl-algebra/shell/introduction/</loc>
+         <lastmod>2025-10-27</lastmod>
     </url>
     <url>
          <loc>https://queelius.github.io/jsonl-algebra/tools/dataset-generator/</loc>
-         <lastmod>2025-08-19</lastmod>
+         <lastmod>2025-10-27</lastmod>
+    </url>
+    <url>
+         <loc>https://queelius.github.io/jsonl-algebra/tutorials/data-analysis/</loc>
+         <lastmod>2025-10-27</lastmod>
     </url>
 </urlset>

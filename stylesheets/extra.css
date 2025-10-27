@@ -1,0 +1,215 @@
+/* Custom styles for jsonl-algebra documentation */
+
+/* Code blocks with enhanced styling */
+.md-typeset code {
+    background-color: var(--md-code-bg-color);
+    border-radius: 0.2rem;
+    padding: 0.1rem 0.3rem;
+    font-size: 0.85em;
+}
+
+/* Command examples get special styling */
+.md-typeset pre > code {
+    background-color: var(--md-code-bg-color);
+}
+
+/* Make admonitions more visible */
+.md-typeset .admonition {
+    border-left: 0.4rem solid;
+    border-radius: 0.2rem;
+    box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.05);
+    margin: 1.5rem 0;
+}
+
+/* Tip boxes in blue */
+.md-typeset .admonition.tip {
+    border-left-color: #00b8d4;
+}
+
+/* Warning boxes in orange */
+.md-typeset .admonition.warning {
+    border-left-color: #ff9100;
+}
+
+/* Success boxes in green */
+.md-typeset .admonition.success {
+    border-left-color: #00c853;
+}
+
+/* Info boxes */
+.md-typeset .admonition.info {
+    border-left-color: #2196f3;
+}
+
+/* Tables with better spacing */
+.md-typeset table:not([class]) {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1.5rem 0;
+    font-size: 0.9rem;
+}
+
+.md-typeset table:not([class]) th {
+    background-color: var(--md-default-fg-color--lightest);
+    font-weight: 700;
+    padding: 0.8rem 1rem;
+}
+
+.md-typeset table:not([class]) td {
+    padding: 0.6rem 1rem;
+    border-top: 0.05rem solid var(--md-default-fg-color--lightest);
+}
+
+/* Command syntax highlighting */
+.md-typeset .language-bash .n {
+    color: #0091ea;
+}
+
+/* Better inline code in dark mode */
+[data-md-color-scheme="slate"] .md-typeset code {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Navigation tabs */
+.md-tabs {
+    background-color: var(--md-primary-fg-color);
+}
+
+/* Keyboard keys styling */
+.md-typeset kbd {
+    background-color: var(--md-code-bg-color);
+    border: 0.1rem solid var(--md-default-fg-color--lightest);
+    border-radius: 0.2rem;
+    box-shadow: 0 0.2rem 0 0.1rem var(--md-default-fg-color--lightest);
+    color: var(--md-default-fg-color);
+    display: inline-block;
+    font-size: 0.75em;
+    padding: 0 0.5rem;
+    vertical-align: text-top;
+}
+
+/* Mermaid diagrams */
+.mermaid {
+    text-align: center;
+    margin: 2rem 0;
+}
+
+/* Command output blocks */
+.md-typeset pre.output {
+    background-color: #f5f5f5;
+    border-left: 4px solid #00b8d4;
+    padding: 1rem;
+}
+
+[data-md-color-scheme="slate"] .md-typeset pre.output {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Enhanced code block headers */
+.md-typeset .highlight span.filename {
+    background-color: var(--md-code-bg-color);
+    border-bottom: 0.05rem solid var(--md-default-fg-color--lightest);
+    border-radius: 0.2rem 0.2rem 0 0;
+    display: block;
+    font-size: 0.8em;
+    padding: 0.5rem 1rem;
+}
+
+/* Links in navigation */
+.md-nav__link--active {
+    font-weight: 700;
+}
+
+/* Search box styling */
+.md-search__input {
+    border-radius: 0.3rem;
+}
+
+/* Footer improvements */
+.md-footer-meta {
+    background-color: var(--md-footer-bg-color--dark);
+}
+
+/* Responsive images */
+.md-typeset img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.2rem;
+    box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.1);
+}
+
+/* Version badge */
+.md-header__source {
+    margin-left: 1rem;
+}
+
+/* Custom class for ASCII art */
+.md-typeset pre.ascii-art {
+    font-family: monospace;
+    font-size: 0.8em;
+    line-height: 1.2;
+}
+
+/* Example blocks */
+.md-typeset .example {
+    background-color: var(--md-code-bg-color);
+    border-left: 0.4rem solid #00b8d4;
+    border-radius: 0.2rem;
+    padding: 1rem;
+    margin: 1.5rem 0;
+}
+
+/* Command reference tables */
+.md-typeset table.command-ref td:first-child {
+    font-family: var(--md-code-font-family);
+    font-weight: 700;
+    color: #0091ea;
+}
+
+/* Better spacing for nested lists */
+.md-typeset ul ul,
+.md-typeset ol ul,
+.md-typeset ul ol,
+.md-typeset ol ol {
+    margin: 0.5rem 0;
+}
+
+/* Highlighted text */
+.md-typeset mark {
+    background-color: #fff59d;
+    padding: 0.1rem 0.2rem;
+    border-radius: 0.1rem;
+}
+
+[data-md-color-scheme="slate"] .md-typeset mark {
+    background-color: rgba(255, 245, 157, 0.3);
+}
+
+/* Task lists */
+.md-typeset .task-list-item {
+    list-style-type: none;
+}
+
+.md-typeset .task-list-control {
+    margin-right: 0.5rem;
+}
+
+/* Footnotes */
+.md-typeset .footnote {
+    font-size: 0.8em;
+}
+
+/* Better spacing for definition lists */
+.md-typeset dd {
+    margin-left: 2rem;
+    margin-bottom: 1rem;
+}
+
+/* Code copy button positioning */
+.md-clipboard {
+    color: var(--md-default-fg-color--light);
+}
+
+.md-clipboard:hover {
+    color: var(--md-accent-fg-color);
+}

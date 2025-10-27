@@ -18,7 +18,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.17">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.21">
     
     
       
@@ -26,7 +26,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.7e37652d.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.2a3383ac.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
@@ -49,6 +49,8 @@
     
     
       <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
     
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -84,6 +86,10 @@
     <div data-md-component="announce">
       
     </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
     
     
       
@@ -178,6 +184,8 @@
         </button>
       </nav>
       
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
     </form>
     <div class="md-search__output">
       <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
@@ -198,7 +206,7 @@
         <a href="https://github.com/queelius/jsonl-algebra" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.0.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
   </div>
   <div class="md-source__repository">
     queelius/jsonl-algebra
@@ -244,17 +252,218 @@
   
   
   
-    <li class="md-tabs__item">
-      <a href="../reference/" class="md-tabs__link">
+    
+    
+      <li class="md-tabs__item">
+        <a href="installation/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Getting Started
+
+        </a>
+      </li>
+    
+  
+
+      
         
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../concepts/relational-algebra.md" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Core Concepts
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../cli/overview/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  CLI Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../shell/introduction/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  ja-shell
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../api/core.md" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Library API
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../integrations/overview/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Integrations
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../tutorials/data-analysis/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Tutorials
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../repl/introduction.md" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Interactive REPL
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../contributing/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Contributing
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../reference/" class="md-tabs__link">
+          
   
   
     
   
   Reference
 
-      </a>
-    </li>
+        </a>
+      </li>
+    
   
 
       
@@ -293,7 +502,7 @@
       <a href="https://github.com/queelius/jsonl-algebra" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.0.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
   </div>
   <div class="md-source__repository">
     queelius/jsonl-algebra
@@ -331,9 +540,1705 @@
   
   
   
-    <li class="md-nav__item">
-      <a href="../reference/" class="md-nav__link">
+    
+    
+      
         
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Getting Started
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Getting Started
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Installation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Quick Start
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="concepts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Core Concepts
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Core Concepts
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Core Concepts
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../concepts/relational-algebra.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Relational Algebra
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../concepts/dotnotation.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Dot Notation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../concepts/streaming.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Streaming & Piping
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../concepts/expressions.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Expression Language
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    CLI Reference
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            CLI Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Commands
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            Commands
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/commands/select.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    select (Filter)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/commands/project.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    project (Choose Fields)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/commands/join.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    join (Combine)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/commands/groupby.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    groupby (Group)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/commands/sort.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    sort (Order)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/commands/union.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    union (Merge)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/commands/distinct.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    distinct (Deduplicate)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/commands/rename.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    rename (Transform)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/commands.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    All Commands
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/examples.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Examples & Patterns
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    ja-shell
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            ja-shell
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shell/introduction/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Introduction
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shell/tutorial.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Getting Started Tutorial
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shell/commands.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Command Reference
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shell/advanced.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Advanced Features
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shell/use-cases.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Use Cases
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Library API
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            Library API
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/core.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Core Operations
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/composability.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Composability & Pipelines
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/vfs.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Virtual Filesystem
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/schema.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Schema & Validation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/import-export.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Import & Export
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Integrations
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            Integrations
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../integrations/overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../integrations/mcp.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    MCP Server
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../integrations/log-analyzer.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Log Analyzer
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../integrations/data-explorer.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Data Explorer
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../integrations/ml-pipeline.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    ML Pipeline
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Tutorials
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            Tutorials
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/data-analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Analyzing Log Files
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/etl.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Building ETL Pipelines
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/json-exploration.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Exploring Unfamiliar JSON
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/monitoring.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Real-time Monitoring
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/quality.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Data Quality Checks
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Interactive REPL
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            Interactive REPL
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../repl/introduction.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Introduction
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../repl/datasets.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Dataset Management
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../repl/operations.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Operations
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../repl/tips.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Tips & Tricks
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Contributing
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            Contributing
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Contributing Guide
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../testing.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Testing Strategy
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../development.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Development Setup
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_11" >
+        
+          
+          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+            
   
   
   <span class="md-ellipsis">
@@ -342,7 +2247,111 @@
   </span>
   
 
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    API Reference
+    
+  </span>
+  
+
       </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    FAQ
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../troubleshooting.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Troubleshooting
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../changelog.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Changelog
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -776,183 +2785,183 @@
   
 
 
-<h1 id="getting-started-with-ja">Getting Started with ja</h1>
+<h1 id="getting-started-with-ja">Getting Started with ja<a class="headerlink" href="#getting-started-with-ja" title="Permanent link">&para;</a></h1>
 <p>This guide walks you through jsonl-algebra's core concepts using realistic example data.</p>
-<h2 id="installation">Installation</h2>
-<pre><code class="language-bash"># Basic installation
-pip install jsonl-algebra
-
-# With dataset generation tools
-pip install &quot;jsonl-algebra[dataset]&quot;
-</code></pre>
-<h2 id="generate-example-data">Generate Example Data</h2>
+<h2 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h2>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Basic installation</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>pip<span class="w"> </span>install<span class="w"> </span>jsonl-algebra
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># With dataset generation tools</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;jsonl-algebra[dataset]&quot;</span>
+</span></code></pre></div>
+<h2 id="generate-example-data">Generate Example Data<a class="headerlink" href="#generate-example-data" title="Permanent link">&para;</a></h2>
 <p>Let's start by creating some example data to work with:</p>
-<pre><code class="language-bash"># Generate sample datasets
-ja-generate-dataset --num-companies 8 --num-people 30 --output-dir examples/
-
-# This creates:
-# - examples/companies.jsonl (8 companies with nested headquarters data)
-# - examples/people.jsonl (30 people with nested personal info, jobs, and household relationships)
-</code></pre>
-<h2 id="explore-the-data">Explore the Data</h2>
-<h3 id="look-at-the-structure">Look at the Structure</h3>
-<pre><code class="language-bash"># See the first few records
-ja examples/people.jsonl --head 2 --pretty
-
-# Check companies structure  
-ja examples/companies.jsonl --head 2 --pretty
-</code></pre>
-<h3 id="basic-filtering">Basic Filtering</h3>
-<pre><code class="language-bash"># Find people over 30
-ja examples/people.jsonl --where 'person.age &gt; 30' --select person.name,person.age
-
-# Find tech companies
-ja examples/companies.jsonl --where 'industry == &quot;Technology&quot;' --select name,size
-</code></pre>
-<h3 id="working-with-nested-data">Working with Nested Data</h3>
-<pre><code class="language-bash"># Extract names and locations
-ja examples/people.jsonl --select person.name,person.location.state,person.location.city
-
-# Group by location
-ja examples/people.jsonl --group-by person.location.state --count
-</code></pre>
-<h2 id="core-operations">Core Operations</h2>
-<h3 id="selection-and-projection">Selection and Projection</h3>
-<pre><code class="language-bash"># Select high earners in California
-ja examples/people.jsonl \\
-  --where 'person.job.salary &gt;= 80000 and person.location.state == &quot;CA&quot;' \\
-  --select person.name,person.job.title,person.job.salary
-
-# Project just essential job info
-ja examples/people.jsonl \\
-  --select person.name.first,person.name.last,person.job.title,person.job.company_name
-</code></pre>
-<h3 id="grouping-and-aggregation">Grouping and Aggregation</h3>
-<pre><code class="language-bash"># Count employees by company
-ja examples/people.jsonl --group-by person.job.company_name --count
-
-# Average salary by company
-ja examples/people.jsonl \\
-  --group-by person.job.company_name \\
-  --agg 'avg_salary=avg(person.job.salary),count=count(*)' \\
-  --sort-by avg_salary --reverse
-
-# Salary statistics by state
-ja examples/people.jsonl \\
-  --group-by person.location.state \\
-  --agg 'avg_salary=avg(person.job.salary),min_salary=min(person.job.salary),max_salary=max(person.job.salary),count=count(*)'
-</code></pre>
-<h3 id="joins">Joins</h3>
-<pre><code class="language-bash"># Join people with their companies
-ja examples/people.jsonl \\
-  --join examples/companies.jsonl \\
-  --on 'person.job.company_name = name' \\
-  --select person.name,person.job.title,name,industry,headquarters.city
-
-# Find people working for large tech companies
-ja examples/people.jsonl \\
-  --join examples/companies.jsonl \\
-  --on 'person.job.company_name = name' \\
-  --where 'industry == &quot;Technology&quot; and size &gt; 1000' \\
-  --select person.name,person.job.title,name,size
-</code></pre>
-<h2 id="advanced-examples">Advanced Examples</h2>
-<h3 id="household-analysis">Household Analysis</h3>
-<pre><code class="language-bash"># Find households with multiple people
-ja examples/people.jsonl \\
-  --group-by household_id \\
-  --agg 'count=count(*),members=collect(person.name.first)' \\
-  --where 'count &gt; 1' \\
-  --select household_id,count,members
-
-# Average age by household
-ja examples/people.jsonl \\
-  --group-by household_id \\
-  --agg 'avg_age=avg(person.age),family_name=first(person.name.last)' \\
-  --select family_name,avg_age \\
-  --sort-by avg_age --reverse
-</code></pre>
-<h3 id="multi-step-pipelines">Multi-step Pipelines</h3>
-<pre><code class="language-bash"># Complex analysis: High earners by industry and location
-ja examples/people.jsonl \\
-  --join examples/companies.jsonl --on 'person.job.company_name = name' \\
-  --where 'person.job.salary &gt;= 70000' \\
-  --group-by 'industry,person.location.state' \\
-  --agg 'count=count(*),avg_salary=avg(person.job.salary)' \\
-  --where 'count &gt;= 2' \\
-  --sort-by avg_salary --reverse
-</code></pre>
-<h3 id="chained-grouping">Chained Grouping</h3>
-<pre><code class="language-bash"># Group by industry, then by job title within each industry
-ja examples/people.jsonl \\
-  --join examples/companies.jsonl --on 'person.job.company_name = name' \\
-  --group-by industry \\
-  --group-by person.job.title \\
-  --agg 'count=count(*),avg_salary=avg(person.job.salary)' \\
-  --sort-by avg_salary --reverse
-</code></pre>
-<h2 id="key-concepts">Key Concepts</h2>
-<h3 id="nested-json-navigation">Nested JSON Navigation</h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># Generate sample datasets</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>ja-generate-dataset<span class="w"> </span>--num-companies<span class="w"> </span><span class="m">8</span><span class="w"> </span>--num-people<span class="w"> </span><span class="m">30</span><span class="w"> </span>--output-dir<span class="w"> </span>examples/
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1"># This creates:</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="c1"># - examples/companies.jsonl (8 companies with nested headquarters data)</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="c1"># - examples/people.jsonl (30 people with nested personal info, jobs, and household relationships)</span>
+</span></code></pre></div>
+<h2 id="explore-the-data">Explore the Data<a class="headerlink" href="#explore-the-data" title="Permanent link">&para;</a></h2>
+<h3 id="look-at-the-structure">Look at the Structure<a class="headerlink" href="#look-at-the-structure" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># See the first few records</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>ja<span class="w"> </span>examples/people.jsonl<span class="w"> </span>--head<span class="w"> </span><span class="m">2</span><span class="w"> </span>--pretty
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># Check companies structure  </span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>ja<span class="w"> </span>examples/companies.jsonl<span class="w"> </span>--head<span class="w"> </span><span class="m">2</span><span class="w"> </span>--pretty
+</span></code></pre></div>
+<h3 id="basic-filtering">Basic Filtering<a class="headerlink" href="#basic-filtering" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Find people over 30</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>ja<span class="w"> </span>examples/people.jsonl<span class="w"> </span>--where<span class="w"> </span><span class="s1">&#39;person.age &gt; 30&#39;</span><span class="w"> </span>--select<span class="w"> </span>person.name,person.age
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># Find tech companies</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>ja<span class="w"> </span>examples/companies.jsonl<span class="w"> </span>--where<span class="w"> </span><span class="s1">&#39;industry == &quot;Technology&quot;&#39;</span><span class="w"> </span>--select<span class="w"> </span>name,size
+</span></code></pre></div>
+<h3 id="working-with-nested-data">Working with Nested Data<a class="headerlink" href="#working-with-nested-data" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Extract names and locations</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>ja<span class="w"> </span>examples/people.jsonl<span class="w"> </span>--select<span class="w"> </span>person.name,person.location.state,person.location.city
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1"># Group by location</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>ja<span class="w"> </span>examples/people.jsonl<span class="w"> </span>--group-by<span class="w"> </span>person.location.state<span class="w"> </span>--count
+</span></code></pre></div>
+<h2 id="core-operations">Core Operations<a class="headerlink" href="#core-operations" title="Permanent link">&para;</a></h2>
+<h3 id="selection-and-projection">Selection and Projection<a class="headerlink" href="#selection-and-projection" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># Select high earners in California</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>ja<span class="w"> </span>examples/people.jsonl<span class="w"> </span><span class="se">\\</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">  </span>--where<span class="w"> </span><span class="s1">&#39;person.job.salary &gt;= 80000 and person.location.state == &quot;CA&quot;&#39;</span><span class="w"> </span><span class="se">\\</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">  </span>--select<span class="w"> </span>person.name,person.job.title,person.job.salary
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="c1"># Project just essential job info</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>ja<span class="w"> </span>examples/people.jsonl<span class="w"> </span><span class="se">\\</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="w">  </span>--select<span class="w"> </span>person.name.first,person.name.last,person.job.title,person.job.company_name
+</span></code></pre></div>
+<h3 id="grouping-and-aggregation">Grouping and Aggregation<a class="headerlink" href="#grouping-and-aggregation" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># Count employees by company</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>ja<span class="w"> </span>examples/people.jsonl<span class="w"> </span>--group-by<span class="w"> </span>person.job.company_name<span class="w"> </span>--count
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="c1"># Average salary by company</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>ja<span class="w"> </span>examples/people.jsonl<span class="w"> </span><span class="se">\\</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">  </span>--group-by<span class="w"> </span>person.job.company_name<span class="w"> </span><span class="se">\\</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="w">  </span>--agg<span class="w"> </span><span class="s1">&#39;avg_salary=avg(person.job.salary),count=count(*)&#39;</span><span class="w"> </span><span class="se">\\</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="w">  </span>--sort-by<span class="w"> </span>avg_salary<span class="w"> </span>--reverse
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="c1"># Salary statistics by state</span>
+</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>ja<span class="w"> </span>examples/people.jsonl<span class="w"> </span><span class="se">\\</span>
+</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a><span class="w">  </span>--group-by<span class="w"> </span>person.location.state<span class="w"> </span><span class="se">\\</span>
+</span><span id="__span-6-13"><a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a><span class="w">  </span>--agg<span class="w"> </span><span class="s1">&#39;avg_salary=avg(person.job.salary),min_salary=min(person.job.salary),max_salary=max(person.job.salary),count=count(*)&#39;</span>
+</span></code></pre></div>
+<h3 id="joins">Joins<a class="headerlink" href="#joins" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># Join people with their companies</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>ja<span class="w"> </span>examples/people.jsonl<span class="w"> </span><span class="se">\\</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">  </span>--join<span class="w"> </span>examples/companies.jsonl<span class="w"> </span><span class="se">\\</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">  </span>--on<span class="w"> </span><span class="s1">&#39;person.job.company_name = name&#39;</span><span class="w"> </span><span class="se">\\</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="w">  </span>--select<span class="w"> </span>person.name,person.job.title,name,industry,headquarters.city
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="c1"># Find people working for large tech companies</span>
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>ja<span class="w"> </span>examples/people.jsonl<span class="w"> </span><span class="se">\\</span>
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="w">  </span>--join<span class="w"> </span>examples/companies.jsonl<span class="w"> </span><span class="se">\\</span>
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="w">  </span>--on<span class="w"> </span><span class="s1">&#39;person.job.company_name = name&#39;</span><span class="w"> </span><span class="se">\\</span>
+</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="w">  </span>--where<span class="w"> </span><span class="s1">&#39;industry == &quot;Technology&quot; and size &gt; 1000&#39;</span><span class="w"> </span><span class="se">\\</span>
+</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="w">  </span>--select<span class="w"> </span>person.name,person.job.title,name,size
+</span></code></pre></div>
+<h2 id="advanced-examples">Advanced Examples<a class="headerlink" href="#advanced-examples" title="Permanent link">&para;</a></h2>
+<h3 id="household-analysis">Household Analysis<a class="headerlink" href="#household-analysis" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># Find households with multiple people</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>ja<span class="w"> </span>examples/people.jsonl<span class="w"> </span><span class="se">\\</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">  </span>--group-by<span class="w"> </span>household_id<span class="w"> </span><span class="se">\\</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">  </span>--agg<span class="w"> </span><span class="s1">&#39;count=count(*),members=collect(person.name.first)&#39;</span><span class="w"> </span><span class="se">\\</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="w">  </span>--where<span class="w"> </span><span class="s1">&#39;count &gt; 1&#39;</span><span class="w"> </span><span class="se">\\</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="w">  </span>--select<span class="w"> </span>household_id,count,members
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="c1"># Average age by household</span>
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>ja<span class="w"> </span>examples/people.jsonl<span class="w"> </span><span class="se">\\</span>
+</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="w">  </span>--group-by<span class="w"> </span>household_id<span class="w"> </span><span class="se">\\</span>
+</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a><span class="w">  </span>--agg<span class="w"> </span><span class="s1">&#39;avg_age=avg(person.age),family_name=first(person.name.last)&#39;</span><span class="w"> </span><span class="se">\\</span>
+</span><span id="__span-8-12"><a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a><span class="w">  </span>--select<span class="w"> </span>family_name,avg_age<span class="w"> </span><span class="se">\\</span>
+</span><span id="__span-8-13"><a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a><span class="w">  </span>--sort-by<span class="w"> </span>avg_age<span class="w"> </span>--reverse
+</span></code></pre></div>
+<h3 id="multi-step-pipelines">Multi-step Pipelines<a class="headerlink" href="#multi-step-pipelines" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># Complex analysis: High earners by industry and location</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>ja<span class="w"> </span>examples/people.jsonl<span class="w"> </span><span class="se">\\</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">  </span>--join<span class="w"> </span>examples/companies.jsonl<span class="w"> </span>--on<span class="w"> </span><span class="s1">&#39;person.job.company_name = name&#39;</span><span class="w"> </span><span class="se">\\</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">  </span>--where<span class="w"> </span><span class="s1">&#39;person.job.salary &gt;= 70000&#39;</span><span class="w"> </span><span class="se">\\</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="w">  </span>--group-by<span class="w"> </span><span class="s1">&#39;industry,person.location.state&#39;</span><span class="w"> </span><span class="se">\\</span>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="w">  </span>--agg<span class="w"> </span><span class="s1">&#39;count=count(*),avg_salary=avg(person.job.salary)&#39;</span><span class="w"> </span><span class="se">\\</span>
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="w">  </span>--where<span class="w"> </span><span class="s1">&#39;count &gt;= 2&#39;</span><span class="w"> </span><span class="se">\\</span>
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="w">  </span>--sort-by<span class="w"> </span>avg_salary<span class="w"> </span>--reverse
+</span></code></pre></div>
+<h3 id="chained-grouping">Chained Grouping<a class="headerlink" href="#chained-grouping" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1"># Group by industry, then by job title within each industry</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>ja<span class="w"> </span>examples/people.jsonl<span class="w"> </span><span class="se">\\</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">  </span>--join<span class="w"> </span>examples/companies.jsonl<span class="w"> </span>--on<span class="w"> </span><span class="s1">&#39;person.job.company_name = name&#39;</span><span class="w"> </span><span class="se">\\</span>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="w">  </span>--group-by<span class="w"> </span>industry<span class="w"> </span><span class="se">\\</span>
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="w">  </span>--group-by<span class="w"> </span>person.job.title<span class="w"> </span><span class="se">\\</span>
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="w">  </span>--agg<span class="w"> </span><span class="s1">&#39;count=count(*),avg_salary=avg(person.job.salary)&#39;</span><span class="w"> </span><span class="se">\\</span>
+</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="w">  </span>--sort-by<span class="w"> </span>avg_salary<span class="w"> </span>--reverse
+</span></code></pre></div>
+<h2 id="key-concepts">Key Concepts<a class="headerlink" href="#key-concepts" title="Permanent link">&para;</a></h2>
+<h3 id="nested-json-navigation">Nested JSON Navigation<a class="headerlink" href="#nested-json-navigation" title="Permanent link">&para;</a></h3>
 <p>ja uses JSONPath-like syntax to navigate nested structures:</p>
 <ul>
 <li><code>person.name.first</code> - Access nested fields with dots</li>
 <li><code>person.location.state</code> - Navigate deep into objects</li>
 <li><code>headquarters.city</code> - Works with any level of nesting</li>
 </ul>
-<h3 id="algebraic-operations">Algebraic Operations</h3>
+<h3 id="algebraic-operations">Algebraic Operations<a class="headerlink" href="#algebraic-operations" title="Permanent link">&para;</a></h3>
 <p>ja operations are composable and can be chained:</p>
-<pre><code class="language-bash"># Each operation produces a new relation
-ja data.jsonl --where 'age &gt; 25' | ja --group-by department | ja --agg 'count=count(*)'
-</code></pre>
-<h3 id="streaming-processing">Streaming Processing</h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="c1"># Each operation produces a new relation</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>ja<span class="w"> </span>data.jsonl<span class="w"> </span>--where<span class="w"> </span><span class="s1">&#39;age &gt; 25&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>ja<span class="w"> </span>--group-by<span class="w"> </span>department<span class="w"> </span><span class="p">|</span><span class="w"> </span>ja<span class="w"> </span>--agg<span class="w"> </span><span class="s1">&#39;count=count(*)&#39;</span>
+</span></code></pre></div>
+<h3 id="streaming-processing">Streaming Processing<a class="headerlink" href="#streaming-processing" title="Permanent link">&para;</a></h3>
 <p>ja processes data in a streaming fashion, making it efficient for large datasets:</p>
-<pre><code class="language-bash"># Generate larger dataset for testing
-ja-generate-dataset --num-companies 100 --num-people 10000 --output-dir large/
-
-# Still processes efficiently
-ja large/people.jsonl --group-by person.location.state --count
-</code></pre>
-<h2 id="next-steps">Next Steps</h2>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="c1"># Generate larger dataset for testing</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>ja-generate-dataset<span class="w"> </span>--num-companies<span class="w"> </span><span class="m">100</span><span class="w"> </span>--num-people<span class="w"> </span><span class="m">10000</span><span class="w"> </span>--output-dir<span class="w"> </span>large/
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="c1"># Still processes efficiently</span>
+</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>ja<span class="w"> </span>large/people.jsonl<span class="w"> </span>--group-by<span class="w"> </span>person.location.state<span class="w"> </span>--count
+</span></code></pre></div>
+<h2 id="next-steps">Next Steps<a class="headerlink" href="#next-steps" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Read the <a href="../concepts/jsonl-algebra/">Concepts Guide</a> for deeper understanding</li>
 <li>Explore <a href="../concepts/chained-groups/">Chained Groups</a> for advanced grouping</li>
 <li>Check out the <a href="../cookbook/log-analysis/">Cookbook</a> for real-world examples</li>
 <li>Try the <a href="../advanced/repl/">Interactive REPL</a> for experimentation</li>
 </ul>
-<h2 id="generated-data-reference">Generated Data Reference</h2>
+<h2 id="generated-data-reference">Generated Data Reference<a class="headerlink" href="#generated-data-reference" title="Permanent link">&para;</a></h2>
 <p>The <code>ja-generate-dataset</code> command creates two related files:</p>
-<h3 id="companiesjsonl-structure">companies.jsonl Structure</h3>
-<pre><code class="language-json">{
-  &quot;id&quot;: &quot;uuid&quot;,
-  &quot;name&quot;: &quot;Company Name&quot;,
-  &quot;industry&quot;: &quot;Technology&quot;,
-  &quot;headquarters&quot;: {&quot;city&quot;: &quot;San Francisco&quot;, &quot;state&quot;: &quot;CA&quot;, &quot;country&quot;: &quot;USA&quot;},
-  &quot;size&quot;: 1500,
-  &quot;founded&quot;: 2010
-}
-</code></pre>
-<h3 id="peoplejsonl-structure">people.jsonl Structure</h3>
-<pre><code class="language-json">{
-  &quot;id&quot;: &quot;uuid&quot;,
-  &quot;created_at&quot;: &quot;2023-05-15T10:30:00Z&quot;,
-  &quot;status&quot;: &quot;active&quot;,
-  &quot;household_id&quot;: &quot;household-uuid&quot;,
-  &quot;person&quot;: {
-    &quot;name&quot;: {&quot;first&quot;: &quot;Sarah&quot;, &quot;last&quot;: &quot;Johnson&quot;},
-    &quot;age&quot;: 32,
-    &quot;gender&quot;: &quot;female&quot;,
-    &quot;email&quot;: &quot;sarah.johnson@gmail.com&quot;,
-    &quot;phone&quot;: &quot;555-123-4567&quot;,
-    &quot;location&quot;: {&quot;city&quot;: &quot;San Francisco&quot;, &quot;state&quot;: &quot;CA&quot;, &quot;country&quot;: &quot;USA&quot;},
-    &quot;interests&quot;: [&quot;hiking&quot;, &quot;photography&quot;],
-    &quot;job&quot;: {
-      &quot;title&quot;: &quot;Software Engineer&quot;,
-      &quot;company_name&quot;: &quot;Tech Solutions Inc&quot;, 
-      &quot;salary&quot;: 95000.0
-    }
-  }
-}
-</code></pre>
+<h3 id="companiesjsonl-structure">companies.jsonl Structure<a class="headerlink" href="#companiesjsonl-structure" title="Permanent link">&para;</a></h3>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="p">{</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="w">  </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;uuid&quot;</span><span class="p">,</span>
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="w">  </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Company Name&quot;</span><span class="p">,</span>
+</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="w">  </span><span class="nt">&quot;industry&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Technology&quot;</span><span class="p">,</span>
+</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="w">  </span><span class="nt">&quot;headquarters&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;city&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;San Francisco&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;state&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;CA&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;country&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;USA&quot;</span><span class="p">},</span>
+</span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="w">  </span><span class="nt">&quot;size&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1500</span><span class="p">,</span>
+</span><span id="__span-13-7"><a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a><span class="w">  </span><span class="nt">&quot;founded&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2010</span>
+</span><span id="__span-13-8"><a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="peoplejsonl-structure">people.jsonl Structure<a class="headerlink" href="#peoplejsonl-structure" title="Permanent link">&para;</a></h3>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="p">{</span>
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="w">  </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;uuid&quot;</span><span class="p">,</span>
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="w">  </span><span class="nt">&quot;created_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2023-05-15T10:30:00Z&quot;</span><span class="p">,</span>
+</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;active&quot;</span><span class="p">,</span>
+</span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="w">  </span><span class="nt">&quot;household_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;household-uuid&quot;</span><span class="p">,</span>
+</span><span id="__span-14-6"><a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a><span class="w">  </span><span class="nt">&quot;person&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-14-7"><a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a><span class="w">    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;first&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Sarah&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;last&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Johnson&quot;</span><span class="p">},</span>
+</span><span id="__span-14-8"><a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a><span class="w">    </span><span class="nt">&quot;age&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">32</span><span class="p">,</span>
+</span><span id="__span-14-9"><a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a><span class="w">    </span><span class="nt">&quot;gender&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;female&quot;</span><span class="p">,</span>
+</span><span id="__span-14-10"><a id="__codelineno-14-10" name="__codelineno-14-10" href="#__codelineno-14-10"></a><span class="w">    </span><span class="nt">&quot;email&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;sarah.johnson@gmail.com&quot;</span><span class="p">,</span>
+</span><span id="__span-14-11"><a id="__codelineno-14-11" name="__codelineno-14-11" href="#__codelineno-14-11"></a><span class="w">    </span><span class="nt">&quot;phone&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;555-123-4567&quot;</span><span class="p">,</span>
+</span><span id="__span-14-12"><a id="__codelineno-14-12" name="__codelineno-14-12" href="#__codelineno-14-12"></a><span class="w">    </span><span class="nt">&quot;location&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;city&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;San Francisco&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;state&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;CA&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;country&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;USA&quot;</span><span class="p">},</span>
+</span><span id="__span-14-13"><a id="__codelineno-14-13" name="__codelineno-14-13" href="#__codelineno-14-13"></a><span class="w">    </span><span class="nt">&quot;interests&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;hiking&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;photography&quot;</span><span class="p">],</span>
+</span><span id="__span-14-14"><a id="__codelineno-14-14" name="__codelineno-14-14" href="#__codelineno-14-14"></a><span class="w">    </span><span class="nt">&quot;job&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-14-15"><a id="__codelineno-14-15" name="__codelineno-14-15" href="#__codelineno-14-15"></a><span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Software Engineer&quot;</span><span class="p">,</span>
+</span><span id="__span-14-16"><a id="__codelineno-14-16" name="__codelineno-14-16" href="#__codelineno-14-16"></a><span class="w">      </span><span class="nt">&quot;company_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Tech Solutions Inc&quot;</span><span class="p">,</span><span class="w"> </span>
+</span><span id="__span-14-17"><a id="__codelineno-14-17" name="__codelineno-14-17" href="#__codelineno-14-17"></a><span class="w">      </span><span class="nt">&quot;salary&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">95000.0</span>
+</span><span id="__span-14-18"><a id="__codelineno-14-18" name="__codelineno-14-18" href="#__codelineno-14-18"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-14-19"><a id="__codelineno-14-19" name="__codelineno-14-19" href="#__codelineno-14-19"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-14-20"><a id="__codelineno-14-20" name="__codelineno-14-20" href="#__codelineno-14-20"></a><span class="p">}</span>
+</span></code></pre></div>
 <p>The data includes realistic relationships:</p>
 <ul>
 <li><strong>Employment</strong>: <code>person.job.company_name</code> matches company <code>name</code></li>
@@ -960,122 +2969,122 @@ ja large/people.jsonl --group-by person.location.state --count
 <li><strong>Geographic</strong>: Hierarchical city/state/country structure with <code>ja</code></li>
 </ul>
 <p>Welcome to <code>ja</code>, the JSONL Algebra toolkit! This guide will walk you through the basics of using <code>ja</code> to manipulate JSONL data with the power of relational algebra.</p>
-<h2 id="what-is-jsonl">What is JSONL?</h2>
+<h2 id="what-is-jsonl">What is JSONL?<a class="headerlink" href="#what-is-jsonl" title="Permanent link">&para;</a></h2>
 <p>JSONL (JSON Lines) is a convenient format for storing structured data where each line is a valid JSON object. It's perfect for streaming and processing large datasets because you can read it line by line.</p>
-<p>Example JSONL file:</p>
-<pre><code class="language-json">{&quot;name&quot;: &quot;Alice&quot;, &quot;age&quot;: 30, &quot;city&quot;: &quot;New York&quot;}
-{&quot;name&quot;: &quot;Bob&quot;, &quot;age&quot;: 25, &quot;city&quot;: &quot;San Francisco&quot;}
-{&quot;name&quot;: &quot;Charlie&quot;, &quot;age&quot;: 35, &quot;city&quot;: &quot;New York&quot;}
-</code></pre>
-<h2 id="installation_1">Installation</h2>
-<pre><code class="language-bash">pip install jsonl-algebra
-</code></pre>
+<p>Example JSONL file:
+<div class="language-json highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Alice&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;age&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">30</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;city&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;New York&quot;</span><span class="p">}</span>
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Bob&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;age&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">25</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;city&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;San Francisco&quot;</span><span class="p">}</span>
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Charlie&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;age&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">35</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;city&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;New York&quot;</span><span class="p">}</span>
+</span></code></pre></div></p>
+<h2 id="installation_1">Installation<a class="headerlink" href="#installation_1" title="Permanent link">&para;</a></h2>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>pip<span class="w"> </span>install<span class="w"> </span>jsonl-algebra
+</span></code></pre></div>
 <p>This installs the <code>ja</code> command-line tool and the Python library.</p>
-<h2 id="your-first-commands">Your First Commands</h2>
-<h3 id="1-viewing-data">1. Viewing Data</h3>
+<h2 id="your-first-commands">Your First Commands<a class="headerlink" href="#your-first-commands" title="Permanent link">&para;</a></h2>
+<h3 id="1-viewing-data">1. Viewing Data<a class="headerlink" href="#1-viewing-data" title="Permanent link">&para;</a></h3>
 <p>The simplest operation is to view your data:</p>
-<pre><code class="language-bash">cat data.jsonl
-</code></pre>
-<h3 id="2-selecting-rows-filtering">2. Selecting Rows (Filtering)</h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>cat<span class="w"> </span>data.jsonl
+</span></code></pre></div>
+<h3 id="2-selecting-rows-filtering">2. Selecting Rows (Filtering)<a class="headerlink" href="#2-selecting-rows-filtering" title="Permanent link">&para;</a></h3>
 <p>Use <code>select</code> to filter rows based on conditions:</p>
-<pre><code class="language-bash"># Select people over 30
-ja select 'age &gt; `30`' data.jsonl
-
-# Select people from New York
-ja select 'city == `&quot;New York&quot;`' data.jsonl
-</code></pre>
-<h3 id="3-projecting-columns">3. Projecting Columns</h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="c1"># Select people over 30</span>
+</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>ja<span class="w"> </span><span class="k">select</span><span class="w"> </span><span class="s1">&#39;age &gt; `30`&#39;</span><span class="w"> </span>data.jsonl
+</span><span id="__span-18-3"><a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a>
+</span><span id="__span-18-4"><a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a><span class="c1"># Select people from New York</span>
+</span><span id="__span-18-5"><a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a>ja<span class="w"> </span><span class="k">select</span><span class="w"> </span><span class="s1">&#39;city == `&quot;New York&quot;`&#39;</span><span class="w"> </span>data.jsonl
+</span></code></pre></div>
+<h3 id="3-projecting-columns">3. Projecting Columns<a class="headerlink" href="#3-projecting-columns" title="Permanent link">&para;</a></h3>
 <p>Use <code>project</code> to select specific fields:</p>
-<pre><code class="language-bash"># Get just names and ages
-ja project name,age data.jsonl
-
-# Project nested fields
-ja project user.name,user.email users.jsonl
-</code></pre>
-<h3 id="4-working-with-nested-data">4. Working with Nested Data</h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="c1"># Get just names and ages</span>
+</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>ja<span class="w"> </span>project<span class="w"> </span>name,age<span class="w"> </span>data.jsonl
+</span><span id="__span-19-3"><a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a>
+</span><span id="__span-19-4"><a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a><span class="c1"># Project nested fields</span>
+</span><span id="__span-19-5"><a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a>ja<span class="w"> </span>project<span class="w"> </span>user.name,user.email<span class="w"> </span>users.jsonl
+</span></code></pre></div>
+<h3 id="4-working-with-nested-data">4. Working with Nested Data<a class="headerlink" href="#4-working-with-nested-data" title="Permanent link">&para;</a></h3>
 <p><code>ja</code> excels at handling nested JSON structures:</p>
-<pre><code class="language-bash"># Given nested data like:
-# {&quot;person&quot;: {&quot;name&quot;: {&quot;first&quot;: &quot;Alice&quot;, &quot;last&quot;: &quot;Smith&quot;}, &quot;age&quot;: 30}}
-
-# Project nested fields
-ja project person.name.first data.jsonl
-
-# Flatten nested structures
-ja project person.name.first,person.age --flatten data.jsonl
-# Output: {&quot;person.name.first&quot;: &quot;Alice&quot;, &quot;person.age&quot;: 30}
-</code></pre>
-<h2 id="a-complete-example">A Complete Example</h2>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="c1"># Given nested data like:</span>
+</span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="c1"># {&quot;person&quot;: {&quot;name&quot;: {&quot;first&quot;: &quot;Alice&quot;, &quot;last&quot;: &quot;Smith&quot;}, &quot;age&quot;: 30}}</span>
+</span><span id="__span-20-3"><a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a>
+</span><span id="__span-20-4"><a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a><span class="c1"># Project nested fields</span>
+</span><span id="__span-20-5"><a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a>ja<span class="w"> </span>project<span class="w"> </span>person.name.first<span class="w"> </span>data.jsonl
+</span><span id="__span-20-6"><a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a>
+</span><span id="__span-20-7"><a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a><span class="c1"># Flatten nested structures</span>
+</span><span id="__span-20-8"><a id="__codelineno-20-8" name="__codelineno-20-8" href="#__codelineno-20-8"></a>ja<span class="w"> </span>project<span class="w"> </span>person.name.first,person.age<span class="w"> </span>--flatten<span class="w"> </span>data.jsonl
+</span><span id="__span-20-9"><a id="__codelineno-20-9" name="__codelineno-20-9" href="#__codelineno-20-9"></a><span class="c1"># Output: {&quot;person.name.first&quot;: &quot;Alice&quot;, &quot;person.age&quot;: 30}</span>
+</span></code></pre></div>
+<h2 id="a-complete-example">A Complete Example<a class="headerlink" href="#a-complete-example" title="Permanent link">&para;</a></h2>
 <p>Let's walk through a real-world scenario. You have two files:</p>
-<p><strong>users.jsonl</strong>:</p>
-<pre><code class="language-json">{&quot;id&quot;: 1, &quot;name&quot;: &quot;Alice&quot;, &quot;department&quot;: &quot;Sales&quot;}
-{&quot;id&quot;: 2, &quot;name&quot;: &quot;Bob&quot;, &quot;department&quot;: &quot;Engineering&quot;}
-{&quot;id&quot;: 3, &quot;name&quot;: &quot;Charlie&quot;, &quot;department&quot;: &quot;Sales&quot;}
-</code></pre>
-<p><strong>sales.jsonl</strong>:</p>
-<pre><code class="language-json">{&quot;user_id&quot;: 1, &quot;amount&quot;: 1000, &quot;date&quot;: &quot;2024-01-01&quot;}
-{&quot;user_id&quot;: 1, &quot;amount&quot;: 1500, &quot;date&quot;: &quot;2024-01-02&quot;}
-{&quot;user_id&quot;: 2, &quot;amount&quot;: 2000, &quot;date&quot;: &quot;2024-01-01&quot;}
-{&quot;user_id&quot;: 3, &quot;amount&quot;: 1200, &quot;date&quot;: &quot;2024-01-01&quot;}
-</code></pre>
+<p><strong>users.jsonl</strong>:
+<div class="language-json highlight"><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="p">{</span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Alice&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;department&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Sales&quot;</span><span class="p">}</span>
+</span><span id="__span-21-2"><a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a><span class="p">{</span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Bob&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;department&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Engineering&quot;</span><span class="p">}</span>
+</span><span id="__span-21-3"><a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a><span class="p">{</span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Charlie&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;department&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Sales&quot;</span><span class="p">}</span>
+</span></code></pre></div></p>
+<p><strong>sales.jsonl</strong>:
+<div class="language-json highlight"><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="p">{</span><span class="nt">&quot;user_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;amount&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1000</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2024-01-01&quot;</span><span class="p">}</span>
+</span><span id="__span-22-2"><a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a><span class="p">{</span><span class="nt">&quot;user_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;amount&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1500</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2024-01-02&quot;</span><span class="p">}</span>
+</span><span id="__span-22-3"><a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a><span class="p">{</span><span class="nt">&quot;user_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;amount&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2000</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2024-01-01&quot;</span><span class="p">}</span>
+</span><span id="__span-22-4"><a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a><span class="p">{</span><span class="nt">&quot;user_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;amount&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1200</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2024-01-01&quot;</span><span class="p">}</span>
+</span></code></pre></div></p>
 <p><strong>Goal</strong>: Find total sales by department.</p>
-<pre><code class="language-bash"># Step 1: Join users with their sales
-ja join users.jsonl sales.jsonl --on id=user_id &gt; joined.jsonl
-
-# Step 2: Group by department and sum amounts
-ja groupby department --agg total=sum(amount) joined.jsonl
-
-# Or do it all in one pipeline:
-ja join users.jsonl sales.jsonl --on id=user_id | \
-  ja groupby department --agg total=sum(amount)
-</code></pre>
-<p>Output:</p>
-<pre><code class="language-json">{&quot;department&quot;: &quot;Sales&quot;, &quot;total&quot;: 3700}
-{&quot;department&quot;: &quot;Engineering&quot;, &quot;total&quot;: 2000}
-</code></pre>
-<h2 id="command-chaining">Command Chaining</h2>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="c1"># Step 1: Join users with their sales</span>
+</span><span id="__span-23-2"><a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a>ja<span class="w"> </span>join<span class="w"> </span>users.jsonl<span class="w"> </span>sales.jsonl<span class="w"> </span>--on<span class="w"> </span><span class="nv">id</span><span class="o">=</span>user_id<span class="w"> </span>&gt;<span class="w"> </span>joined.jsonl
+</span><span id="__span-23-3"><a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a>
+</span><span id="__span-23-4"><a id="__codelineno-23-4" name="__codelineno-23-4" href="#__codelineno-23-4"></a><span class="c1"># Step 2: Group by department and sum amounts</span>
+</span><span id="__span-23-5"><a id="__codelineno-23-5" name="__codelineno-23-5" href="#__codelineno-23-5"></a>ja<span class="w"> </span>groupby<span class="w"> </span>department<span class="w"> </span>--agg<span class="w"> </span><span class="nv">total</span><span class="o">=</span>sum<span class="o">(</span>amount<span class="o">)</span><span class="w"> </span>joined.jsonl
+</span><span id="__span-23-6"><a id="__codelineno-23-6" name="__codelineno-23-6" href="#__codelineno-23-6"></a>
+</span><span id="__span-23-7"><a id="__codelineno-23-7" name="__codelineno-23-7" href="#__codelineno-23-7"></a><span class="c1"># Or do it all in one pipeline:</span>
+</span><span id="__span-23-8"><a id="__codelineno-23-8" name="__codelineno-23-8" href="#__codelineno-23-8"></a>ja<span class="w"> </span>join<span class="w"> </span>users.jsonl<span class="w"> </span>sales.jsonl<span class="w"> </span>--on<span class="w"> </span><span class="nv">id</span><span class="o">=</span>user_id<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-23-9"><a id="__codelineno-23-9" name="__codelineno-23-9" href="#__codelineno-23-9"></a><span class="w">  </span>ja<span class="w"> </span>groupby<span class="w"> </span>department<span class="w"> </span>--agg<span class="w"> </span><span class="nv">total</span><span class="o">=</span>sum<span class="o">(</span>amount<span class="o">)</span>
+</span></code></pre></div>
+<p>Output:
+<div class="language-json highlight"><pre><span></span><code><span id="__span-24-1"><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="p">{</span><span class="nt">&quot;department&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Sales&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;total&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3700</span><span class="p">}</span>
+</span><span id="__span-24-2"><a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a><span class="p">{</span><span class="nt">&quot;department&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Engineering&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;total&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2000</span><span class="p">}</span>
+</span></code></pre></div></p>
+<h2 id="command-chaining">Command Chaining<a class="headerlink" href="#command-chaining" title="Permanent link">&para;</a></h2>
 <p>One of <code>ja</code>'s most powerful features is the ability to chain commands using Unix pipes:</p>
-<pre><code class="language-bash"># Complex data pipeline
-cat data.jsonl | \
-  ja select 'status == `&quot;active&quot;`' | \
-  ja project user.name,amount | \
-  ja sort amount --desc | \
-  head -10
-</code></pre>
-<h2 id="common-patterns">Common Patterns</h2>
-<h3 id="1-finding-unique-values">1. Finding Unique Values</h3>
-<pre><code class="language-bash">ja project category data.jsonl | ja distinct
-</code></pre>
-<h3 id="2-data-validation">2. Data Validation</h3>
-<pre><code class="language-bash"># Find records with missing fields
-ja select '!email' users.jsonl
-</code></pre>
-<h3 id="3-computing-statistics">3. Computing Statistics</h3>
-<pre><code class="language-bash"># Average order amount by customer
-ja groupby customer_id --agg avg_amount=avg(amount) orders.jsonl
-</code></pre>
-<h3 id="4-data-transformation">4. Data Transformation</h3>
-<pre><code class="language-bash"># Rename fields
-ja rename old_name=new_name,price=cost data.jsonl
-
-# Flatten nested structures for export
-ja project user.name,user.email,order.total --flatten data.jsonl | \
-  ja export csv &gt; output.csv
-</code></pre>
-<h2 id="next-steps_1">Next Steps</h2>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-25-1"><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="c1"># Complex data pipeline</span>
+</span><span id="__span-25-2"><a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a>cat<span class="w"> </span>data.jsonl<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-25-3"><a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a><span class="w">  </span>ja<span class="w"> </span><span class="k">select</span><span class="w"> </span><span class="s1">&#39;status == `&quot;active&quot;`&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-25-4"><a id="__codelineno-25-4" name="__codelineno-25-4" href="#__codelineno-25-4"></a><span class="w">  </span>ja<span class="w"> </span>project<span class="w"> </span>user.name,amount<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-25-5"><a id="__codelineno-25-5" name="__codelineno-25-5" href="#__codelineno-25-5"></a><span class="w">  </span>ja<span class="w"> </span>sort<span class="w"> </span>amount<span class="w"> </span>--desc<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-25-6"><a id="__codelineno-25-6" name="__codelineno-25-6" href="#__codelineno-25-6"></a><span class="w">  </span>head<span class="w"> </span>-10
+</span></code></pre></div>
+<h2 id="common-patterns">Common Patterns<a class="headerlink" href="#common-patterns" title="Permanent link">&para;</a></h2>
+<h3 id="1-finding-unique-values">1. Finding Unique Values<a class="headerlink" href="#1-finding-unique-values" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-26-1"><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a>ja<span class="w"> </span>project<span class="w"> </span>category<span class="w"> </span>data.jsonl<span class="w"> </span><span class="p">|</span><span class="w"> </span>ja<span class="w"> </span>distinct
+</span></code></pre></div>
+<h3 id="2-data-validation">2. Data Validation<a class="headerlink" href="#2-data-validation" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-27-1"><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a><span class="c1"># Find records with missing fields</span>
+</span><span id="__span-27-2"><a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a>ja<span class="w"> </span><span class="k">select</span><span class="w"> </span><span class="s1">&#39;!email&#39;</span><span class="w"> </span>users.jsonl
+</span></code></pre></div>
+<h3 id="3-computing-statistics">3. Computing Statistics<a class="headerlink" href="#3-computing-statistics" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-28-1"><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a><span class="c1"># Average order amount by customer</span>
+</span><span id="__span-28-2"><a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a>ja<span class="w"> </span>groupby<span class="w"> </span>customer_id<span class="w"> </span>--agg<span class="w"> </span><span class="nv">avg_amount</span><span class="o">=</span>avg<span class="o">(</span>amount<span class="o">)</span><span class="w"> </span>orders.jsonl
+</span></code></pre></div>
+<h3 id="4-data-transformation">4. Data Transformation<a class="headerlink" href="#4-data-transformation" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-29-1"><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a><span class="c1"># Rename fields</span>
+</span><span id="__span-29-2"><a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a>ja<span class="w"> </span>rename<span class="w"> </span><span class="nv">old_name</span><span class="o">=</span>new_name,price<span class="o">=</span>cost<span class="w"> </span>data.jsonl
+</span><span id="__span-29-3"><a id="__codelineno-29-3" name="__codelineno-29-3" href="#__codelineno-29-3"></a>
+</span><span id="__span-29-4"><a id="__codelineno-29-4" name="__codelineno-29-4" href="#__codelineno-29-4"></a><span class="c1"># Flatten nested structures for export</span>
+</span><span id="__span-29-5"><a id="__codelineno-29-5" name="__codelineno-29-5" href="#__codelineno-29-5"></a>ja<span class="w"> </span>project<span class="w"> </span>user.name,user.email,order.total<span class="w"> </span>--flatten<span class="w"> </span>data.jsonl<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-29-6"><a id="__codelineno-29-6" name="__codelineno-29-6" href="#__codelineno-29-6"></a><span class="w">  </span>ja<span class="w"> </span><span class="nb">export</span><span class="w"> </span>csv<span class="w"> </span>&gt;<span class="w"> </span>output.csv
+</span></code></pre></div>
+<h2 id="next-steps_1">Next Steps<a class="headerlink" href="#next-steps_1" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Learn about <a href="docs/advanced.md">Advanced Operations</a></li>
 <li>Explore the <a href="docs/repl.md">Interactive REPL</a></li>
 <li>Read about <a href="docs/schema.md">Schema Management</a></li>
 <li>Check out the <a href="docs/reference.md">API Reference</a></li>
 </ul>
-<h2 id="getting-help">Getting Help</h2>
-<pre><code class="language-bash"># General help
-ja --help
-
-# Command-specific help
-ja select --help
-ja groupby --help
-</code></pre>
+<h2 id="getting-help">Getting Help<a class="headerlink" href="#getting-help" title="Permanent link">&para;</a></h2>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-30-1"><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a><span class="c1"># General help</span>
+</span><span id="__span-30-2"><a id="__codelineno-30-2" name="__codelineno-30-2" href="#__codelineno-30-2"></a>ja<span class="w"> </span>--help
+</span><span id="__span-30-3"><a id="__codelineno-30-3" name="__codelineno-30-3" href="#__codelineno-30-3"></a>
+</span><span id="__span-30-4"><a id="__codelineno-30-4" name="__codelineno-30-4" href="#__codelineno-30-4"></a><span class="c1"># Command-specific help</span>
+</span><span id="__span-30-5"><a id="__codelineno-30-5" name="__codelineno-30-5" href="#__codelineno-30-5"></a>ja<span class="w"> </span><span class="k">select</span><span class="w"> </span>--help
+</span><span id="__span-30-6"><a id="__codelineno-30-6" name="__codelineno-30-6" href="#__codelineno-30-6"></a>ja<span class="w"> </span>groupby<span class="w"> </span>--help
+</span></code></pre></div>
 <p>Remember: <code>ja</code> is designed to be intuitive. If you know SQL or have used Unix tools like <code>awk</code> or <code>sed</code>, you'll feel right at home!</p>
 
 
@@ -1094,6 +3103,8 @@ ja groupby --help
             </div>
           
           
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
 <script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
         </div>
         
@@ -1119,6 +3130,33 @@ ja groupby --help
   
 </div>
       
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/queelius/jsonl-algebra" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.0.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://pypi.org/project/jsonl-algebra/" target="_blank" rel="noopener" title="pypi.org" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.8 200.5c-7.7-30.9-22.3-54.2-53.4-54.2h-40.1v47.4c0 36.8-31.2 67.8-66.8 67.8H172.7c-29.2 0-53.4 25-53.4 54.3v101.8c0 29 25.2 46 53.4 54.3 33.8 9.9 66.3 11.7 106.8 0 26.9-7.8 53.4-23.5 53.4-54.3v-40.7H226.2v-13.6h160.2c31.1 0 42.6-21.7 53.4-54.2 11.2-33.5 10.7-65.7 0-108.6M286.2 444.7a20.4 20.4 0 1 1 0-40.7 20.4 20.4 0 1 1 0 40.7M167.8 248.1h106.8c29.7 0 53.4-24.5 53.4-54.3V91.9c0-29-24.4-50.7-53.4-55.6-35.8-5.9-74.7-5.6-106.8.1-45.2 8-53.4 24.7-53.4 55.6v40.7h106.9v13.6h-147c-31.1 0-58.3 18.7-66.8 54.2-9.8 40.7-10.2 66.1 0 108.6 7.6 31.6 25.7 54.2 56.8 54.2H101v-48.8c0-35.3 30.5-66.4 66.8-66.4m-6.6-183.4a20.4 20.4 0 1 1 0 40.8 20.4 20.4 0 1 1 0-40.8"/></svg>
+    </a>
+  
+</div>
+      
     </div>
   </div>
 </footer>
@@ -1131,10 +3169,10 @@ ja groupby --help
     
     
       
-      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.highlight", "search.share"], "search": "../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "navigation.tracking", "navigation.indexes", "search.highlight", "search.share", "search.suggest", "content.code.copy", "content.code.annotate", "content.tabs.link"], "search": "../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.92b07e13.min.js"></script>
+      <script src="../assets/javascripts/bundle.f55a23d4.min.js"></script>
       
     
   </body>
