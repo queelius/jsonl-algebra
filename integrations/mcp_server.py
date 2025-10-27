@@ -19,8 +19,9 @@ from contextlib import contextmanager
 # Add parent directory to path to import ja
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from ja import project, select, sort_by, groupby_agg, join, union
-from ja.commands import head, tail, sample
+from ja import project, select, sort_by, groupby_agg, join, union, read_jsonl
+import random
+import itertools
 
 # MCP SDK imports
 try:
@@ -28,13 +29,14 @@ try:
     from mcp.types import (
         Tool,
         TextContent,
-        ToolCallResult,
+        CallToolResult,
         Resource,
         ResourceContents,
-        ResourceTextContent,
+        TextResourceContents,
     )
-except ImportError:
-    print("MCP SDK not installed. Install with: pip install mcp", file=sys.stderr)
+except ImportError as e:
+    print(f"MCP SDK not installed or import failed: {e}", file=sys.stderr)
+    print("Install with: pip install mcp", file=sys.stderr)
     sys.exit(1)
 
 
@@ -45,6 +47,11 @@ class JSONLAlgebraServer:
         self.server = Server("jsonl-algebra")
         self.temp_files = {}  # Track temporary files for cleanup
         self._setup_handlers()
+
+    def _read_jsonl_file(self, file_path: str) -> List[Dict[str, Any]]:
+        """Read a JSONL file and return list of records."""
+        with open(file_path, 'r') as f:
+            return read_jsonl(f)
 
     def _setup_handlers(self):
         """Set up the MCP protocol handlers."""
@@ -225,7 +232,7 @@ class JSONLAlgebraServer:
             ]
 
         @self.server.call_tool()
-        async def call_tool(name: str, arguments: Dict[str, Any]) -> List[ToolCallResult]:
+        async def call_tool(name: str, arguments: Dict[str, Any]) -> List[CallToolResult]:
             """Execute a JSONL manipulation tool."""
             try:
                 if name == "jsonl_query":
@@ -292,7 +299,7 @@ class JSONLAlgebraServer:
                                 lines.append(json.loads(line))
 
                         preview = json.dumps(lines, indent=2)
-                        return [ResourceTextContent(
+                        return [TextResourceContents(
                             uri=uri,
                             mimeType="application/jsonlines",
                             text=f"Preview of {file_path.name} (first 10 records):\n{preview}"
@@ -318,14 +325,16 @@ class JSONLAlgebraServer:
 
     async def _handle_select(self, args: Dict[str, Any]) -> str:
         """Filter records using JMESPath."""
-        data = select(args["file_path"], args["expression"])
+        data = self._read_jsonl_file(args["file_path"])
+        data = select(data, args["expression"])
         if "limit" in args:
-            data = head(data, args["limit"])
+            data = list(itertools.islice(data, args["limit"]))
         return self._jsonl_to_string(data)
 
     async def _handle_project(self, args: Dict[str, Any]) -> str:
         """Project specific fields."""
-        data = project(args["file_path"], args["fields"])
+        data = self._read_jsonl_file(args["file_path"])
+        data = project(data, args["fields"])
         return self._jsonl_to_string(data)
 
     async def _handle_aggregate(self, args: Dict[str, Any]) -> str:
@@ -338,15 +347,18 @@ class JSONLAlgebraServer:
         for field, op in aggregations.items():
             agg_list.append(f"{op}({field})")
 
-        data = groupby_agg(args["file_path"], group_by, agg_list)
+        data = self._read_jsonl_file(args["file_path"])
+        data = groupby_agg(data, group_by, agg_list)
         return self._jsonl_to_string(data)
 
     async def _handle_join(self, args: Dict[str, Any]) -> str:
         """Join two JSONL files."""
+        left_data = self._read_jsonl_file(args["left_file"])
+        right_data = self._read_jsonl_file(args["right_file"])
         join_type = args.get("join_type", "inner")
         data = join(
-            args["left_file"],
-            args["right_file"],
+            left_data,
+            right_data,
             args["left_key"],
             args["right_key"],
             join_type
@@ -355,7 +367,8 @@ class JSONLAlgebraServer:
 
     async def _handle_sort(self, args: Dict[str, Any]) -> str:
         """Sort records."""
-        data = sort_by(args["file_path"], args["sort_by"])
+        data = self._read_jsonl_file(args["file_path"])
+        data = sort_by(data, args["sort_by"])
         if args.get("reverse", False):
             data = list(data)
             data.reverse()
@@ -363,8 +376,18 @@ class JSONLAlgebraServer:
 
     async def _handle_sample(self, args: Dict[str, Any]) -> str:
         """Sample records randomly."""
-        data = sample(args["file_path"], args["size"], args.get("seed"))
-        return self._jsonl_to_string(data)
+        # Read all records
+        records = self._read_jsonl_file(args["file_path"])
+
+        # Set random seed if provided
+        if "seed" in args:
+            random.seed(args["seed"])
+
+        # Sample records
+        sample_size = min(args["size"], len(records))
+        sampled = random.sample(records, sample_size)
+
+        return self._jsonl_to_string(sampled)
 
     async def _handle_stats(self, args: Dict[str, Any]) -> str:
         """Get statistics about the JSONL file."""
@@ -412,8 +435,8 @@ class JSONLAlgebraServer:
         file_path = args["file_path"]
         pipeline = args["pipeline"]
 
-        # Start with the input file
-        current_data = file_path
+        # Start with the input data
+        current_data = self._read_jsonl_file(file_path)
 
         for step in pipeline:
             op = step["operation"]
@@ -429,11 +452,18 @@ class JSONLAlgebraServer:
                     current_data = list(current_data)
                     current_data.reverse()
             elif op == "head":
-                current_data = head(current_data, params["n"])
+                current_data = list(itertools.islice(current_data, params["n"]))
             elif op == "tail":
-                current_data = tail(current_data, params["n"])
+                # Convert to list and take last n elements
+                data_list = list(current_data) if not isinstance(current_data, list) else current_data
+                current_data = data_list[-params["n"]:]
             elif op == "sample":
-                current_data = sample(current_data, params["n"], params.get("seed"))
+                # Convert to list for sampling
+                records = list(current_data) if not isinstance(current_data, list) else current_data
+                if "seed" in params:
+                    random.seed(params["seed"])
+                sample_size = min(params["n"], len(records))
+                current_data = random.sample(records, sample_size)
             elif op == "groupby":
                 current_data = groupby_agg(
                     current_data,
@@ -484,7 +514,7 @@ class JSONLAlgebraServer:
 
     def _execute_operations(self, file_path: str, operations: List[Dict[str, Any]]) -> Any:
         """Execute a series of operations on a JSONL file."""
-        current_data = file_path
+        current_data = self._read_jsonl_file(file_path)
 
         for op in operations:
             if op["op"] == "select":
@@ -497,7 +527,7 @@ class JSONLAlgebraServer:
                     current_data = list(current_data)
                     current_data.reverse()
             elif op["op"] == "head":
-                current_data = head(current_data, op["n"])
+                current_data = list(itertools.islice(current_data, op["n"]))
 
         return current_data
 
