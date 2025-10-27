@@ -10,3 +10,25 @@ site
 *.aux
 *.out
 *.log
+
+# Coverage reports
+.coverage
+htmlcov/
+*.cover
+.hypothesis/
+
+# Build artifacts
+build/
+
+# LaTeX intermediate files
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.synctex.gz
+
+# Temporary files
+.DS_Store
+*.swp
+*.swo
+*~
