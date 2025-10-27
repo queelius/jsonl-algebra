@@ -4,6 +4,7 @@ site_author: Alex Towell
 site_url: https://queelius.github.io/jsonl-algebra
 repo_url: https://github.com/queelius/jsonl-algebra
 repo_name: queelius/jsonl-algebra
+edit_uri: edit/main/docs/
 
 theme:
   name: material
@@ -12,8 +13,14 @@ theme:
     - navigation.sections
     - navigation.expand
     - navigation.top
+    - navigation.tracking
+    - navigation.indexes
     - search.highlight
     - search.share
+    - search.suggest
+    - content.code.copy
+    - content.code.annotate
+    - content.tabs.link
   palette:
     - scheme: default
       primary: blue
@@ -27,6 +34,11 @@ theme:
       toggle:
         icon: material/brightness-4
         name: Switch to light mode
+  icon:
+    repo: fontawesome/brands/github
+  font:
+    text: Roboto
+    code: Roboto Mono
 
 plugins:
   - search
@@ -34,38 +46,128 @@ plugins:
       handlers:
         python:
           paths: ["ja"]
-
+          options:
+            show_source: true
+            show_root_heading: true
+            show_category_heading: true
+            show_symbol_type_heading: true
+            show_symbol_type_toc: true
+            members_order: source
 
 markdown_extensions:
   - pymdownx.highlight:
       anchor_linenums: true
-  - pymdownx.superfences
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
   - pymdownx.inlinehilite
   - pymdownx.snippets
   - pymdownx.tabbed:
       alternate_style: true
   - admonition
   - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.tasklist:
+      custom_checkbox: true
   - tables
   - attr_list
+  - md_in_html
+  - def_list
+  - footnotes
   - toc:
       permalink: true
+      toc_depth: 3
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/queelius/jsonl-algebra
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/project/jsonl-algebra/
+  version:
+    provider: mike
+
+extra_css:
+  - stylesheets/extra.css
 
 nav:
   - Home: index.md
+
   - Getting Started:
     - Installation: getting-started/installation.md
     - Quick Start: getting-started/quickstart.md
     - Core Concepts: getting-started/concepts.md
-  - User Guide:
-    - CLI Commands: guide/cli-commands.md
-    - Interactive REPL:
-      - Introduction: guide/repl/introduction.md
-      - Dataset Management: guide/repl/datasets.md
-      - Operations: guide/repl/operations.md
-      - Tips & Tricks: guide/repl/tips.md
-    - Import/Export: guide/import-export.md
-  - Examples:
-    - Basic Workflows: examples/basic.md
-    - REPL Examples: examples/repl.md
-  - API Reference: reference.md
+
+  - Core Concepts:
+    - Relational Algebra: concepts/relational-algebra.md
+    - Dot Notation: concepts/dotnotation.md
+    - Streaming & Piping: concepts/streaming.md
+    - Expression Language: concepts/expressions.md
+
+  - CLI Reference:
+    - Overview: cli/overview.md
+    - Commands:
+      - select (Filter): cli/commands/select.md
+      - project (Choose Fields): cli/commands/project.md
+      - join (Combine): cli/commands/join.md
+      - groupby (Group): cli/commands/groupby.md
+      - sort (Order): cli/commands/sort.md
+      - union (Merge): cli/commands/union.md
+      - distinct (Deduplicate): cli/commands/distinct.md
+      - rename (Transform): cli/commands/rename.md
+      - All Commands: cli/commands.md
+    - Examples & Patterns: cli/examples.md
+
+  - ja-shell:
+    - Introduction: shell/introduction.md
+    - Getting Started Tutorial: shell/tutorial.md
+    - Command Reference: shell/commands.md
+    - Advanced Features: shell/advanced.md
+    - Use Cases: shell/use-cases.md
+
+  - Library API:
+    - Core Operations: api/core.md
+    - Composability & Pipelines: api/composability.md
+    - Virtual Filesystem: api/vfs.md
+    - Schema & Validation: api/schema.md
+    - Import & Export: api/import-export.md
+
+  - Integrations:
+    - Overview: integrations/overview.md
+    - MCP Server: integrations/mcp.md
+    - Log Analyzer: integrations/log-analyzer.md
+    - Data Explorer: integrations/data-explorer.md
+    - ML Pipeline: integrations/ml-pipeline.md
+
+  - Tutorials:
+    - Analyzing Log Files: tutorials/data-analysis.md
+    - Building ETL Pipelines: tutorials/etl.md
+    - Exploring Unfamiliar JSON: tutorials/json-exploration.md
+    - Real-time Monitoring: tutorials/monitoring.md
+    - Data Quality Checks: tutorials/quality.md
+
+  - Interactive REPL:
+    - Introduction: repl/introduction.md
+    - Dataset Management: repl/datasets.md
+    - Operations: repl/operations.md
+    - Tips & Tricks: repl/tips.md
+
+  - Contributing:
+    - Contributing Guide: contributing.md
+    - Testing Strategy: testing.md
+    - Development Setup: development.md
+
+  - Reference:
+    - API Reference: reference.md
+    - FAQ: faq.md
+    - Troubleshooting: troubleshooting.md
+    - Changelog: changelog.md
