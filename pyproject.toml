@@ -11,7 +11,7 @@ authors = [{ name = "Alex Towell", email = "lex@metafunctor.com" }]
 requires-python = ">=3.8"
 license = "MIT"
 license-files = ["LICENSE"]
-dependencies = ["jmespath", "jsonschema"]
+dependencies = ["jmespath", "jsonschema", "prompt-toolkit>=3.0", "rich>=10.0"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
@@ -50,6 +50,7 @@ dataset = [
 
 [project.scripts]
 ja = "ja.cli:main"
+ja-shell = "ja.shell:main"
 ja-generate-dataset = "scripts.generate_dataset:main"
 
 [tool.setuptools]
