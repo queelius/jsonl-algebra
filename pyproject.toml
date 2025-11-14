@@ -51,10 +51,9 @@ dataset = [
 [project.scripts]
 ja = "ja.cli:main"
 ja-shell = "ja.shell:main"
-ja-generate-dataset = "scripts.generate_dataset:main"
 
 [tool.setuptools]
-packages = ["ja", "scripts"]
+packages = ["ja"]
 # No need for license-files here if specified under [project]
 
 [project.urls]
