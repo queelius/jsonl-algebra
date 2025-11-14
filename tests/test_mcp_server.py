@@ -271,49 +271,44 @@ class TestSortTool:
 
 
 class TestAggregateTool:
-    """Tests for jsonl_aggregate tool behavior.
-
-    Note: The current MCP server aggregate implementation has a bug where it creates
-    a list of aggregation strings but groupby_agg expects either a single string or
-    a list of tuples.
-    """
+    """Tests for jsonl_aggregate tool behavior."""
 
     @pytest.mark.skipif(not MCP_AVAILABLE, reason="MCP SDK not installed")
     @pytest.mark.asyncio
-    async def test_aggregate_implementation_bug_documented(self, server, temp_data_dir):
-        """Given current aggregate implementation, when called, then ValueError occurs (known bug)."""
+    async def test_aggregate_counts_by_group(self, server, temp_data_dir):
+        """Given aggregate with group_by and count, when executed, then groups are counted correctly."""
         args = {
             "file_path": temp_data_dir['users'],
             "group_by": "dept",
             "aggregations": {"id": "count"}
         }
 
-        # This currently fails due to incorrect agg_list format in MCP server
-        # The MCP server creates: ["count(id)"]
-        # But groupby_agg expects: "count(id)" (string) or [("count", "id")] (list of tuples)
-        with pytest.raises(ValueError):
-            await server._handle_aggregate(args)
+        result = await server._handle_aggregate(args)
 
-    @pytest.mark.skip(reason="MCP server aggregate implementation needs fixing")
-    @pytest.mark.asyncio
-    async def test_aggregate_counts_by_group_FUTURE(self, server, temp_data_dir):
-        """Test for when aggregate is fixed - groups should be counted correctly."""
-        # This test documents the expected behavior once aggregate is fixed
-        pass
+        lines = result.strip().split('\n')
+        records = [json.loads(line) for line in lines if line]
+
+        # Should have 3 departments: Engineering (2), Sales (2), Marketing (1)
+        assert len(records) == 3
+        # Each record should have the group key and the aggregation result
+        assert all("dept" in r for r in records)
+        # The aggregation field is named "count(id)" not "count_id"
+        assert all("count(id)" in r for r in records)
+
+        # Verify counts
+        dept_counts = {r['dept']: r['count(id)'] for r in records}
+        assert dept_counts.get('Engineering') == 2
+        assert dept_counts.get('Sales') == 2
+        assert dept_counts.get('Marketing') == 1
 
 
 class TestJoinTool:
-    """Tests for jsonl_join tool behavior.
-
-    Note: The current MCP server join implementation has a bug where it doesn't
-    correctly pass parameters to the join() function. These tests verify the
-    expected behavior once that's fixed.
-    """
+    """Tests for jsonl_join tool behavior."""
 
     @pytest.mark.skipif(not MCP_AVAILABLE, reason="MCP SDK not installed")
     @pytest.mark.asyncio
-    async def test_join_implementation_bug_documented(self, server, temp_data_dir):
-        """Given current join implementation, when called, then TypeError occurs (known bug)."""
+    async def test_join_inner_combines_matching_records(self, server, temp_data_dir):
+        """Given join with matching keys, when executed, then records are combined."""
         args = {
             "left_file": temp_data_dir['users'],
             "right_file": temp_data_dir['orders'],
@@ -322,18 +317,17 @@ class TestJoinTool:
             "join_type": "inner"
         }
 
-        # This currently fails due to incorrect join() call in MCP server
-        # The MCP server passes: join(left, right, left_key, right_key, join_type)
-        # But join() expects: join(left, right, on=[(left_key, right_key)])
-        with pytest.raises(TypeError):
-            await server._handle_join(args)
+        result = await server._handle_join(args)
 
-    @pytest.mark.skip(reason="MCP server join implementation needs fixing")
-    @pytest.mark.asyncio
-    async def test_join_inner_combines_matching_records_FUTURE(self, server, temp_data_dir):
-        """Test for when join is fixed - records should be combined."""
-        # This test documents the expected behavior once join is fixed
-        pass
+        lines = result.strip().split('\n')
+        records = [json.loads(line) for line in lines if line]
+
+        # Should have 5 orders joined with their users
+        assert len(records) == 5
+        # Each record should have fields from both users and orders
+        assert all("name" in r for r in records)  # From users
+        assert all("order_id" in r for r in records)  # From orders
+        assert all("amount" in r for r in records)  # From orders
 
 
 class TestSampleTool:

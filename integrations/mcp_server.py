@@ -339,29 +339,38 @@ class JSONLAlgebraServer:
 
     async def _handle_aggregate(self, args: Dict[str, Any]) -> str:
         """Group and aggregate data."""
-        group_by = args.get("group_by", [])
+        # Handle group_by which can be a string or array from MCP tool schema
+        group_by_arg = args.get("group_by", "")
+        if isinstance(group_by_arg, list):
+            # If it's a list, take the first element or use empty string
+            group_by = group_by_arg[0] if group_by_arg else ""
+        else:
+            group_by = group_by_arg
+
         aggregations = args["aggregations"]
 
         # Convert aggregations dict to the format expected by groupby_agg
-        agg_list = []
-        for field, op in aggregations.items():
-            agg_list.append(f"{op}({field})")
+        # groupby_agg expects either:
+        #   - A single string: "count(id), sum(amount)"
+        #   - A list of tuples: [("count", "id"), ("sum", "amount")]
+        # We'll use the string format (comma-separated)
+        agg_list = [f"{op}({field})" for field, op in aggregations.items()]
+        agg_str = ", ".join(agg_list)
 
         data = self._read_jsonl_file(args["file_path"])
-        data = groupby_agg(data, group_by, agg_list)
+        data = groupby_agg(data, group_by, agg_str)
         return self._jsonl_to_string(data)
 
     async def _handle_join(self, args: Dict[str, Any]) -> str:
         """Join two JSONL files."""
         left_data = self._read_jsonl_file(args["left_file"])
         right_data = self._read_jsonl_file(args["right_file"])
-        join_type = args.get("join_type", "inner")
+        # Note: join_type parameter is not used by the current join() implementation
+        # The join() function only supports inner join
         data = join(
             left_data,
             right_data,
-            args["left_key"],
-            args["right_key"],
-            join_type
+            on=[(args["left_key"], args["right_key"])]
         )
         return self._jsonl_to_string(data)
 
