@@ -997,6 +997,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#window-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Window Functions
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#aggregation-grouping" class="md-nav__link">
     <span class="md-ellipsis">
       Aggregation &amp; Grouping
@@ -2972,6 +2981,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#window-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Window Functions
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#aggregation-grouping" class="md-nav__link">
     <span class="md-ellipsis">
       Aggregation &amp; Grouping
@@ -3510,6 +3528,131 @@
 </tr>
 </tbody>
 </table>
+<h4 id="join-types">Join Types<a class="headerlink" href="#join-types" title="Permanent link">&para;</a></h4>
+<p>The <code>join</code> command supports multiple join types via the <code>--how</code> flag:</p>
+<table>
+<thead>
+<tr>
+<th>Join Type</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>inner</strong> (default)</td>
+<td>Only matching rows from both sides</td>
+<td><code>ja join a.jsonl b.jsonl --on id</code></td>
+</tr>
+<tr>
+<td><strong>left</strong></td>
+<td>All rows from left, matching from right</td>
+<td><code>ja join a.jsonl b.jsonl --on id --how left</code></td>
+</tr>
+<tr>
+<td><strong>right</strong></td>
+<td>All rows from right, matching from left</td>
+<td><code>ja join a.jsonl b.jsonl --on id --how right</code></td>
+</tr>
+<tr>
+<td><strong>outer</strong></td>
+<td>All rows from both sides</td>
+<td><code>ja join a.jsonl b.jsonl --on id --how outer</code></td>
+</tr>
+<tr>
+<td><strong>cross</strong></td>
+<td>Cartesian product (no key needed)</td>
+<td><code>ja join a.jsonl b.jsonl --how cross</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="window-functions">Window Functions<a class="headerlink" href="#window-functions" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Purpose</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>window</strong></td>
+<td>Apply SQL-style window functions</td>
+<td><code>ja window row_number --partition-by dept file.jsonl</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="available-window-functions">Available Window Functions<a class="headerlink" href="#available-window-functions" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Function</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>row_number</strong></td>
+<td>Sequential row number within partition</td>
+<td><code>ja window row_number --partition-by dept</code></td>
+</tr>
+<tr>
+<td><strong>rank</strong></td>
+<td>Rank with gaps for ties</td>
+<td><code>ja window rank --partition-by dept --order-by salary</code></td>
+</tr>
+<tr>
+<td><strong>dense_rank</strong></td>
+<td>Rank without gaps</td>
+<td><code>ja window dense_rank --partition-by dept --order-by salary</code></td>
+</tr>
+<tr>
+<td><strong>lag</strong></td>
+<td>Value from previous row</td>
+<td><code>ja window lag --field price --offset 1</code></td>
+</tr>
+<tr>
+<td><strong>lead</strong></td>
+<td>Value from next row</td>
+<td><code>ja window lead --field price --offset 1</code></td>
+</tr>
+<tr>
+<td><strong>first_value</strong></td>
+<td>First value in partition</td>
+<td><code>ja window first_value --field name --partition-by dept</code></td>
+</tr>
+<tr>
+<td><strong>last_value</strong></td>
+<td>Last value in partition</td>
+<td><code>ja window last_value --field name --partition-by dept</code></td>
+</tr>
+<tr>
+<td><strong>ntile</strong></td>
+<td>Divide into N buckets</td>
+<td><code>ja window ntile --n 4 --partition-by region</code></td>
+</tr>
+<tr>
+<td><strong>percent_rank</strong></td>
+<td>Percentile rank (0-1)</td>
+<td><code>ja window percent_rank --order-by score</code></td>
+</tr>
+<tr>
+<td><strong>cume_dist</strong></td>
+<td>Cumulative distribution</td>
+<td><code>ja window cume_dist --order-by score</code></td>
+</tr>
+</tbody>
+</table>
+<p>Window function options:
+- <code>--partition-by</code>, <code>-p</code>: Field(s) to partition by (comma-separated)
+- <code>--order-by</code>, <code>-o</code>: Field(s) to order by within partition
+- <code>--field</code>, <code>-f</code>: Field to operate on (for lag, lead, first_value, last_value)
+- <code>--offset</code>: Offset for lag/lead (default: 1)
+- <code>--default</code>: Default value when no row exists (lag/lead)
+- <code>--n</code>: Number of buckets (ntile)
+- <code>--output-field</code>: Custom name for output field</p>
 <h3 id="aggregation-grouping">Aggregation &amp; Grouping<a class="headerlink" href="#aggregation-grouping" title="Permanent link">&para;</a></h3>
 <table>
 <thead>

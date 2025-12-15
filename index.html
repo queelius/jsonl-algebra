@@ -2901,6 +2901,12 @@
 <td>Remove duplicates</td>
 <td><code>ja distinct</code></td>
 </tr>
+<tr>
+<td><strong>window</strong></td>
+<td>ω</td>
+<td>Window functions</td>
+<td><code>ja window rank --partition-by dept</code></td>
+</tr>
 </tbody>
 </table>
 <h3 id="the-philosophy">The Philosophy<a class="headerlink" href="#the-philosophy" title="Permanent link">&para;</a></h3>
@@ -2960,10 +2966,13 @@
 <h2 id="key-features">Key Features<a class="headerlink" href="#key-features" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>Relational Operations</strong>: select, project, join, union, intersection, difference, distinct, and more</li>
+<li><strong>Multiple Join Types</strong>: inner, left, right, outer, and cross joins via <code>--how</code> flag</li>
+<li><strong>Window Functions</strong>: 10 SQL-style window functions (row_number, rank, dense_rank, lag, lead, first_value, last_value, ntile, percent_rank, cume_dist)</li>
 <li><strong>Chained Grouping</strong>: Multi-level grouping that preserves composability</li>
 <li><strong>Nested Data Support</strong>: Access and manipulate nested fields using intuitive dot notation</li>
 <li><strong>Streaming Architecture</strong>: Process large datasets without loading into memory</li>
 <li><strong>Expression Language</strong>: Safe and expressive filtering with ExprEval</li>
+<li><strong>Interactive Shell</strong>: Navigate JSON/JSONL like a filesystem with <code>ja-shell</code></li>
 <li><strong>Interactive REPL</strong>: Build data pipelines step-by-step interactively</li>
 <li><strong>Format Conversion</strong>: Import/export CSV, JSON arrays, and directory structures</li>
 <li><strong>Unix Philosophy</strong>: Designed for pipes and command composition</li>

@@ -1540,9 +1540,27 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#searching-filtering" class="md-nav__link">
+    <span class="md-ellipsis">
+      Searching &amp; Filtering
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#utility" class="md-nav__link">
     <span class="md-ellipsis">
       Utility
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#search-filter-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      Search &amp; Filter Examples
     </span>
   </a>
   
@@ -3194,9 +3212,27 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#searching-filtering" class="md-nav__link">
+    <span class="md-ellipsis">
+      Searching &amp; Filtering
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#utility" class="md-nav__link">
     <span class="md-ellipsis">
       Utility
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#search-filter-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      Search &amp; Filter Examples
     </span>
   </a>
   
@@ -3781,6 +3817,43 @@
 <td>Show metadata</td>
 <td><code>stat users.jsonl</code></td>
 </tr>
+<tr>
+<td><code>head [n] [path]</code></td>
+<td>Show first N records (default: 10)</td>
+<td><code>head 5 users.jsonl</code></td>
+</tr>
+<tr>
+<td><code>tail [n] [path]</code></td>
+<td>Show last N records (default: 10)</td>
+<td><code>tail 5 users.jsonl</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="searching-filtering">Searching &amp; Filtering<a class="headerlink" href="#searching-filtering" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>count [path]</code></td>
+<td>Count records in JSONL file</td>
+<td><code>count users.jsonl</code></td>
+</tr>
+<tr>
+<td><code>grep &lt;pattern&gt; [path] [--field &lt;f&gt;]</code></td>
+<td>Search for pattern in records</td>
+<td><code>grep "error" logs.jsonl</code></td>
+</tr>
+<tr>
+<td><code>select &lt;expr&gt; [path]</code></td>
+<td>Filter records with expression</td>
+<td><code>select "age &gt; 25" users.jsonl</code></td>
+</tr>
 </tbody>
 </table>
 <h3 id="utility">Utility<a class="headerlink" href="#utility" title="Permanent link">&para;</a></h3>
@@ -3805,15 +3878,37 @@
 </tr>
 </tbody>
 </table>
+<h3 id="search-filter-examples">Search &amp; Filter Examples<a class="headerlink" href="#search-filter-examples" title="Permanent link">&para;</a></h3>
+<h4 id="grep-search-records">grep - Search Records<a class="headerlink" href="#grep-search-records" title="Permanent link">&para;</a></h4>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>ja:/$ grep &quot;admin&quot; users.jsonl
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a># Searches all fields for &quot;admin&quot;
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>ja:/$ grep &quot;error&quot; logs.jsonl --field message
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a># Searches only the &quot;message&quot; field
+</span></code></pre></div>
+<h4 id="select-filter-with-expressions">select - Filter with Expressions<a class="headerlink" href="#select-filter-with-expressions" title="Permanent link">&para;</a></h4>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>ja:/$ select &quot;age &gt; 30&quot; users.jsonl
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a># Show users older than 30
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>ja:/$ select &quot;status == &#39;active&#39; and role == &#39;admin&#39;&quot; users.jsonl
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a># Combine multiple conditions
+</span></code></pre></div>
+<h4 id="head-tail-quick-preview">head &amp; tail - Quick Preview<a class="headerlink" href="#head-tail-quick-preview" title="Permanent link">&para;</a></h4>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>ja:/$ head 3 users.jsonl
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a># First 3 records
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>ja:/$ tail 5 logs.jsonl
+</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a># Last 5 records
+</span></code></pre></div>
 <h2 id="path-syntax">Path Syntax<a class="headerlink" href="#path-syntax" title="Permanent link">&para;</a></h2>
 <h3 id="absolute-paths">Absolute Paths<a class="headerlink" href="#absolute-paths" title="Permanent link">&para;</a></h3>
 <p>Start with <code>/</code> to navigate from root:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>/users.jsonl/<span class="o">[</span><span class="m">0</span><span class="o">]</span>/address/city
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>/users.jsonl/<span class="o">[</span><span class="m">0</span><span class="o">]</span>/address/city
 </span></code></pre></div>
 <h3 id="relative-paths">Relative Paths<a class="headerlink" href="#relative-paths" title="Permanent link">&para;</a></h3>
 <p>Navigate from current location:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>address/city<span class="w">        </span><span class="c1"># Go into address, then city</span>
-</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>../orders<span class="w">           </span><span class="c1"># Go up one level, then into orders</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>address/city<span class="w">        </span><span class="c1"># Go into address, then city</span>
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>../orders<span class="w">           </span><span class="c1"># Go up one level, then into orders</span>
 </span></code></pre></div>
 <h3 id="special-paths">Special Paths<a class="headerlink" href="#special-paths" title="Permanent link">&para;</a></h3>
 <ul>
@@ -3823,42 +3918,42 @@
 </ul>
 <h3 id="jsonl-records">JSONL Records<a class="headerlink" href="#jsonl-records" title="Permanent link">&para;</a></h3>
 <p>Access by index in square brackets:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="o">[</span><span class="m">0</span><span class="o">]</span><span class="w">     </span><span class="c1"># First record</span>
-</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="o">[</span><span class="m">1</span><span class="o">]</span><span class="w">     </span><span class="c1"># Second record</span>
-</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="o">[</span><span class="m">42</span><span class="o">]</span><span class="w">    </span><span class="c1"># 43rd record</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="o">[</span><span class="m">0</span><span class="o">]</span><span class="w">     </span><span class="c1"># First record</span>
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="o">[</span><span class="m">1</span><span class="o">]</span><span class="w">     </span><span class="c1"># Second record</span>
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="o">[</span><span class="m">42</span><span class="o">]</span><span class="w">    </span><span class="c1"># 43rd record</span>
 </span></code></pre></div>
 <h3 id="object-keys">Object Keys<a class="headerlink" href="#object-keys" title="Permanent link">&para;</a></h3>
 <p>Just use the key name:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>name
-</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>address
-</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>user_id
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>name
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>address
+</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>user_id
 </span></code></pre></div>
 <h3 id="nested-navigation">Nested Navigation<a class="headerlink" href="#nested-navigation" title="Permanent link">&para;</a></h3>
 <p>Use <code>/</code> to go deeper:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>address/city
-</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>user/profile/email
-</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>data/results/<span class="o">[</span><span class="m">0</span><span class="o">]</span>/score
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>address/city
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>user/profile/email
+</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>data/results/<span class="o">[</span><span class="m">0</span><span class="o">]</span>/score
 </span></code></pre></div>
 <h2 id="tips-tricks">Tips &amp; Tricks<a class="headerlink" href="#tips-tricks" title="Permanent link">&para;</a></h2>
 <h3 id="1-tab-completion-is-your-friend">1. Tab Completion is Your Friend<a class="headerlink" href="#1-tab-completion-is-your-friend" title="Permanent link">&para;</a></h3>
 <p>Press <span class="keys"><kbd class="key-tab">Tab</kbd></span> to auto-complete:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>ja:/$ cd us&lt;TAB&gt;
-</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a># Completes to: cd users.jsonl
-</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>
-</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>ja:/users.jsonl$ cd [0]/ad&lt;TAB&gt;
-</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a># Completes to: cd [0]/address
+<div class="language-text highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>ja:/$ cd us&lt;TAB&gt;
+</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a># Completes to: cd users.jsonl
+</span><span id="__span-18-3"><a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a>
+</span><span id="__span-18-4"><a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a>ja:/users.jsonl$ cd [0]/ad&lt;TAB&gt;
+</span><span id="__span-18-5"><a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a># Completes to: cd [0]/address
 </span></code></pre></div>
 <h3 id="2-use-tree-for-quick-overview">2. Use Tree for Quick Overview<a class="headerlink" href="#2-use-tree-for-quick-overview" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>ja:/$ tree users.jsonl 2
-</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a># See structure at a glance without cd-ing around
+<div class="language-text highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>ja:/$ tree users.jsonl 2
+</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a># See structure at a glance without cd-ing around
 </span></code></pre></div>
 <h3 id="3-jump-with-absolute-paths">3. Jump with Absolute Paths<a class="headerlink" href="#3-jump-with-absolute-paths" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>ja:/users.jsonl/[5]/address$ cd /config.json
-</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a># Jump directly instead of cd ../../..
+<div class="language-text highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>ja:/users.jsonl/[5]/address$ cd /config.json
+</span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a># Jump directly instead of cd ../../..
 </span></code></pre></div>
 <h3 id="4-cat-works-on-directories-too">4. Cat Works on Directories Too<a class="headerlink" href="#4-cat-works-on-directories-too" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>ja:/users.jsonl$ cat [0]
-</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a># Shows entire record as pretty JSON
+<div class="language-text highlight"><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>ja:/users.jsonl$ cat [0]
+</span><span id="__span-21-2"><a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a># Shows entire record as pretty JSON
 </span></code></pre></div>
 <h3 id="5-command-history">5. Command History<a class="headerlink" href="#5-command-history" title="Permanent link">&para;</a></h3>
 <ul>
@@ -3922,27 +4017,27 @@
 </table>
 <h2 id="architecture">Architecture<a class="headerlink" href="#architecture" title="Permanent link">&para;</a></h2>
 <p>How ja-shell works under the hood:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>┌─────────────────────────────────┐
-</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>│  JAShell (UI Layer)             │
-</span><span id="__span-19-3"><a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a>│  - prompt_toolkit input         │
-</span><span id="__span-19-4"><a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a>│  - rich output                  │
-</span><span id="__span-19-5"><a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a>│  - Command handlers             │
-</span><span id="__span-19-6"><a id="__codelineno-19-6" name="__codelineno-19-6" href="#__codelineno-19-6"></a>└────────────┬────────────────────┘
-</span><span id="__span-19-7"><a id="__codelineno-19-7" name="__codelineno-19-7" href="#__codelineno-19-7"></a>             │
-</span><span id="__span-19-8"><a id="__codelineno-19-8" name="__codelineno-19-8" href="#__codelineno-19-8"></a>┌────────────▼────────────────────┐
-</span><span id="__span-19-9"><a id="__codelineno-19-9" name="__codelineno-19-9" href="#__codelineno-19-9"></a>│  JSONPath (VFS Layer)           │
-</span><span id="__span-19-10"><a id="__codelineno-19-10" name="__codelineno-19-10" href="#__codelineno-19-10"></a>│  - Path parsing &amp; resolution    │
-</span><span id="__span-19-11"><a id="__codelineno-19-11" name="__codelineno-19-11" href="#__codelineno-19-11"></a>│  - Navigation (cd, ls)          │
-</span><span id="__span-19-12"><a id="__codelineno-19-12" name="__codelineno-19-12" href="#__codelineno-19-12"></a>│  - Data access (cat, stat)      │
-</span><span id="__span-19-13"><a id="__codelineno-19-13" name="__codelineno-19-13" href="#__codelineno-19-13"></a>│  - Lazy JSONL loading           │
-</span><span id="__span-19-14"><a id="__codelineno-19-14" name="__codelineno-19-14" href="#__codelineno-19-14"></a>└────────────┬────────────────────┘
-</span><span id="__span-19-15"><a id="__codelineno-19-15" name="__codelineno-19-15" href="#__codelineno-19-15"></a>             │
-</span><span id="__span-19-16"><a id="__codelineno-19-16" name="__codelineno-19-16" href="#__codelineno-19-16"></a>┌────────────▼────────────────────┐
-</span><span id="__span-19-17"><a id="__codelineno-19-17" name="__codelineno-19-17" href="#__codelineno-19-17"></a>│  Storage Layer                  │
-</span><span id="__span-19-18"><a id="__codelineno-19-18" name="__codelineno-19-18" href="#__codelineno-19-18"></a>│  - LazyJSONL streaming          │
-</span><span id="__span-19-19"><a id="__codelineno-19-19" name="__codelineno-19-19" href="#__codelineno-19-19"></a>│  - File caching                 │
-</span><span id="__span-19-20"><a id="__codelineno-19-20" name="__codelineno-19-20" href="#__codelineno-19-20"></a>│  - JSON parsing                 │
-</span><span id="__span-19-21"><a id="__codelineno-19-21" name="__codelineno-19-21" href="#__codelineno-19-21"></a>└─────────────────────────────────┘
+<div class="language-text highlight"><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>┌─────────────────────────────────┐
+</span><span id="__span-22-2"><a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>│  JAShell (UI Layer)             │
+</span><span id="__span-22-3"><a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a>│  - prompt_toolkit input         │
+</span><span id="__span-22-4"><a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a>│  - rich output                  │
+</span><span id="__span-22-5"><a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a>│  - Command handlers             │
+</span><span id="__span-22-6"><a id="__codelineno-22-6" name="__codelineno-22-6" href="#__codelineno-22-6"></a>└────────────┬────────────────────┘
+</span><span id="__span-22-7"><a id="__codelineno-22-7" name="__codelineno-22-7" href="#__codelineno-22-7"></a>             │
+</span><span id="__span-22-8"><a id="__codelineno-22-8" name="__codelineno-22-8" href="#__codelineno-22-8"></a>┌────────────▼────────────────────┐
+</span><span id="__span-22-9"><a id="__codelineno-22-9" name="__codelineno-22-9" href="#__codelineno-22-9"></a>│  JSONPath (VFS Layer)           │
+</span><span id="__span-22-10"><a id="__codelineno-22-10" name="__codelineno-22-10" href="#__codelineno-22-10"></a>│  - Path parsing &amp; resolution    │
+</span><span id="__span-22-11"><a id="__codelineno-22-11" name="__codelineno-22-11" href="#__codelineno-22-11"></a>│  - Navigation (cd, ls)          │
+</span><span id="__span-22-12"><a id="__codelineno-22-12" name="__codelineno-22-12" href="#__codelineno-22-12"></a>│  - Data access (cat, stat)      │
+</span><span id="__span-22-13"><a id="__codelineno-22-13" name="__codelineno-22-13" href="#__codelineno-22-13"></a>│  - Lazy JSONL loading           │
+</span><span id="__span-22-14"><a id="__codelineno-22-14" name="__codelineno-22-14" href="#__codelineno-22-14"></a>└────────────┬────────────────────┘
+</span><span id="__span-22-15"><a id="__codelineno-22-15" name="__codelineno-22-15" href="#__codelineno-22-15"></a>             │
+</span><span id="__span-22-16"><a id="__codelineno-22-16" name="__codelineno-22-16" href="#__codelineno-22-16"></a>┌────────────▼────────────────────┐
+</span><span id="__span-22-17"><a id="__codelineno-22-17" name="__codelineno-22-17" href="#__codelineno-22-17"></a>│  Storage Layer                  │
+</span><span id="__span-22-18"><a id="__codelineno-22-18" name="__codelineno-22-18" href="#__codelineno-22-18"></a>│  - LazyJSONL streaming          │
+</span><span id="__span-22-19"><a id="__codelineno-22-19" name="__codelineno-22-19" href="#__codelineno-22-19"></a>│  - File caching                 │
+</span><span id="__span-22-20"><a id="__codelineno-22-20" name="__codelineno-22-20" href="#__codelineno-22-20"></a>│  - JSON parsing                 │
+</span><span id="__span-22-21"><a id="__codelineno-22-21" name="__codelineno-22-21" href="#__codelineno-22-21"></a>└─────────────────────────────────┘
 </span></code></pre></div>
 <h2 id="performance">Performance<a class="headerlink" href="#performance" title="Permanent link">&para;</a></h2>
 <h3 id="lazy-loading">Lazy Loading<a class="headerlink" href="#lazy-loading" title="Permanent link">&para;</a></h3>
@@ -3999,28 +4094,28 @@
 <h2 id="future-features">Future Features<a class="headerlink" href="#future-features" title="Permanent link">&para;</a></h2>
 <h3 id="query-based-navigation-coming-soon">Query-Based Navigation (Coming Soon)<a class="headerlink" href="#query-based-navigation-coming-soon" title="Permanent link">&para;</a></h3>
 <p>Filter records as you navigate:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>ja:/users.jsonl$ cd @[age&gt;30]
-</span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>ja:/users.jsonl/@[age&gt;30]$ ls
-</span><span id="__span-20-3"><a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a>📁 [0]  # Alice (age: 30)
-</span><span id="__span-20-4"><a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a>📁 [1]  # Charlie (age: 35)
+<div class="language-text highlight"><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a>ja:/users.jsonl$ cd @[age&gt;30]
+</span><span id="__span-23-2"><a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a>ja:/users.jsonl/@[age&gt;30]$ ls
+</span><span id="__span-23-3"><a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a>📁 [0]  # Alice (age: 30)
+</span><span id="__span-23-4"><a id="__codelineno-23-4" name="__codelineno-23-4" href="#__codelineno-23-4"></a>📁 [1]  # Charlie (age: 35)
 </span></code></pre></div>
 <h3 id="write-operations-planned">Write Operations (Planned)<a class="headerlink" href="#write-operations-planned" title="Permanent link">&para;</a></h3>
 <p>Edit data in-place:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>ja:/users.jsonl/[0]$ echo &quot;Bob&quot; &gt; name
-</span><span id="__span-21-2"><a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a># Changes Alice&#39;s name to Bob
+<div class="language-text highlight"><pre><span></span><code><span id="__span-24-1"><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a>ja:/users.jsonl/[0]$ echo &quot;Bob&quot; &gt; name
+</span><span id="__span-24-2"><a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a># Changes Alice&#39;s name to Bob
 </span></code></pre></div>
 <h3 id="export-filtered-data-planned">Export Filtered Data (Planned)<a class="headerlink" href="#export-filtered-data-planned" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>ja:/users.jsonl/@[age&gt;30]$ export &gt; filtered.jsonl
-</span><span id="__span-22-2"><a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a># Save filtered view to file
+<div class="language-text highlight"><pre><span></span><code><span id="__span-25-1"><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a>ja:/users.jsonl/@[age&gt;30]$ export &gt; filtered.jsonl
+</span><span id="__span-25-2"><a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a># Save filtered view to file
 </span></code></pre></div>
 <h3 id="fuse-filesystem-future">FUSE Filesystem (Future)<a class="headerlink" href="#fuse-filesystem-future" title="Permanent link">&para;</a></h3>
 <p>Mount JSON as a real filesystem:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a>ja-mount<span class="w"> </span>~/data<span class="w"> </span>/mnt/json
-</span><span id="__span-23-2"><a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a>
-</span><span id="__span-23-3"><a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a><span class="c1"># Now ANY program can access it!</span>
-</span><span id="__span-23-4"><a id="__codelineno-23-4" name="__codelineno-23-4" href="#__codelineno-23-4"></a><span class="nb">cd</span><span class="w"> </span>/mnt/json/users.jsonl/<span class="o">[</span><span class="m">0</span><span class="o">]</span>/address
-</span><span id="__span-23-5"><a id="__codelineno-23-5" name="__codelineno-23-5" href="#__codelineno-23-5"></a>cat<span class="w"> </span>city<span class="w">  </span><span class="c1"># Works with standard cat!</span>
-</span><span id="__span-23-6"><a id="__codelineno-23-6" name="__codelineno-23-6" href="#__codelineno-23-6"></a>vim<span class="w"> </span>name<span class="w">  </span><span class="c1"># Edit with vim!</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-26-1"><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a>ja-mount<span class="w"> </span>~/data<span class="w"> </span>/mnt/json
+</span><span id="__span-26-2"><a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a>
+</span><span id="__span-26-3"><a id="__codelineno-26-3" name="__codelineno-26-3" href="#__codelineno-26-3"></a><span class="c1"># Now ANY program can access it!</span>
+</span><span id="__span-26-4"><a id="__codelineno-26-4" name="__codelineno-26-4" href="#__codelineno-26-4"></a><span class="nb">cd</span><span class="w"> </span>/mnt/json/users.jsonl/<span class="o">[</span><span class="m">0</span><span class="o">]</span>/address
+</span><span id="__span-26-5"><a id="__codelineno-26-5" name="__codelineno-26-5" href="#__codelineno-26-5"></a>cat<span class="w"> </span>city<span class="w">  </span><span class="c1"># Works with standard cat!</span>
+</span><span id="__span-26-6"><a id="__codelineno-26-6" name="__codelineno-26-6" href="#__codelineno-26-6"></a>vim<span class="w"> </span>name<span class="w">  </span><span class="c1"># Edit with vim!</span>
 </span></code></pre></div>
 <h2 id="limitations">Limitations<a class="headerlink" href="#limitations" title="Permanent link">&para;</a></h2>
 <p>Current limitations to be aware of:</p>
@@ -4033,7 +4128,7 @@
 <h2 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">&para;</a></h2>
 <h3 id="tab-completion-not-working">Tab Completion Not Working<a class="headerlink" href="#tab-completion-not-working" title="Permanent link">&para;</a></h3>
 <p>Make sure <code>prompt-toolkit</code> is installed:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-24-1"><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a>pip<span class="w"> </span>install<span class="w"> </span>prompt-toolkit
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-27-1"><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a>pip<span class="w"> </span>install<span class="w"> </span>prompt-toolkit
 </span></code></pre></div>
 <h3 id="colors-look-wrong">Colors Look Wrong<a class="headerlink" href="#colors-look-wrong" title="Permanent link">&para;</a></h3>
 <p>Your terminal may not support true color. Try a modern terminal:</p>
@@ -4044,8 +4139,8 @@
 </ul>
 <h3 id="cant-navigate-into-jsonl-file">Can't Navigate into .jsonl File<a class="headerlink" href="#cant-navigate-into-jsonl-file" title="Permanent link">&para;</a></h3>
 <p>Ensure the file contains valid JSONL (one JSON object per line):</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-25-1"><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="c1"># Check file format</span>
-</span><span id="__span-25-2"><a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a>head<span class="w"> </span>-1<span class="w"> </span>users.jsonl<span class="w"> </span><span class="p">|</span><span class="w"> </span>python3<span class="w"> </span>-m<span class="w"> </span>json.tool
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-28-1"><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a><span class="c1"># Check file format</span>
+</span><span id="__span-28-2"><a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a>head<span class="w"> </span>-1<span class="w"> </span>users.jsonl<span class="w"> </span><span class="p">|</span><span class="w"> </span>python3<span class="w"> </span>-m<span class="w"> </span>json.tool
 </span></code></pre></div>
 <h3 id="performance-is-slow">Performance is Slow<a class="headerlink" href="#performance-is-slow" title="Permanent link">&para;</a></h3>
 <p>For very large files, first access may be slow. Subsequent access is cached and fast.</p>
@@ -4065,7 +4160,7 @@
 </ul>
 <div class="admonition tip">
 <p class="admonition-title">Try It Now!</p>
-<p><div class="language-bash highlight"><pre><span></span><code><span id="__span-26-1"><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a>ja-shell
+<p><div class="language-bash highlight"><pre><span></span><code><span id="__span-29-1"><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a>ja-shell
 </span></code></pre></div>
 Start exploring your data immediately!</p>
 </div>
