@@ -191,6 +191,125 @@ class TestCoreFunctions(unittest.TestCase):
             joined_collision[0], {"id": 1, "name": "Alice", "detail": "L_detail"}
         )
 
+    def test_join_left(self):
+        """Left join preserves all left rows, nulls for unmatched right."""
+        left: Relation = [
+            {"id": 1, "name": "Alice"},
+            {"id": 2, "name": "Bob"},
+            {"id": 3, "name": "Charlie"},
+        ]
+        right: Relation = [
+            {"user_id": 1, "order": "Book"},
+            {"user_id": 1, "order": "Pen"},
+        ]
+        result = join(left, right, [("id", "user_id")], how="left")
+
+        # Should have 4 rows: 2 for Alice (matched), 1 for Bob (unmatched), 1 for Charlie (unmatched)
+        self.assertEqual(len(result), 4)
+
+        # Alice has matches
+        alice_rows = [r for r in result if r["name"] == "Alice"]
+        self.assertEqual(len(alice_rows), 2)
+        self.assertIn({"id": 1, "name": "Alice", "order": "Book"}, alice_rows)
+        self.assertIn({"id": 1, "name": "Alice", "order": "Pen"}, alice_rows)
+
+        # Bob and Charlie have no matches - should have null for 'order'
+        bob_row = next(r for r in result if r["name"] == "Bob")
+        self.assertEqual(bob_row["order"], None)
+        charlie_row = next(r for r in result if r["name"] == "Charlie")
+        self.assertEqual(charlie_row["order"], None)
+
+    def test_join_right(self):
+        """Right join preserves all right rows, nulls for unmatched left."""
+        left: Relation = [
+            {"id": 1, "name": "Alice"},
+        ]
+        right: Relation = [
+            {"user_id": 1, "order": "Book"},
+            {"user_id": 2, "order": "Pen"},
+            {"user_id": 3, "order": "Paper"},
+        ]
+        result = join(left, right, [("id", "user_id")], how="right")
+
+        # Should have 3 rows: 1 matched, 2 unmatched
+        self.assertEqual(len(result), 3)
+
+        # Alice's order is matched
+        matched = next(r for r in result if r.get("name") == "Alice")
+        self.assertEqual(matched["order"], "Book")
+
+        # Pen and Paper orders have no left match
+        unmatched = [r for r in result if r.get("name") is None]
+        self.assertEqual(len(unmatched), 2)
+        orders = {r["order"] for r in unmatched}
+        self.assertEqual(orders, {"Pen", "Paper"})
+
+    def test_join_outer(self):
+        """Outer join preserves all rows from both sides."""
+        left: Relation = [
+            {"id": 1, "name": "Alice"},
+            {"id": 2, "name": "Bob"},
+        ]
+        right: Relation = [
+            {"user_id": 1, "order": "Book"},
+            {"user_id": 3, "order": "Pen"},
+        ]
+        result = join(left, right, [("id", "user_id")], how="outer")
+
+        # Should have 3 rows: Alice matched, Bob unmatched left, user_id=3 unmatched right
+        self.assertEqual(len(result), 3)
+
+        # Alice matched
+        alice = next(r for r in result if r.get("name") == "Alice")
+        self.assertEqual(alice["order"], "Book")
+
+        # Bob unmatched (no order)
+        bob = next(r for r in result if r.get("name") == "Bob")
+        self.assertEqual(bob["order"], None)
+
+        # User 3 unmatched (no name)
+        user3 = next(r for r in result if r.get("order") == "Pen")
+        self.assertEqual(user3["name"], None)
+
+    def test_join_cross(self):
+        """Cross join produces cartesian product."""
+        left: Relation = [{"a": 1}, {"a": 2}]
+        right: Relation = [{"b": "x"}, {"b": "y"}]
+        result = join(left, right, [], how="cross")
+
+        # Should have 2 * 2 = 4 rows
+        self.assertEqual(len(result), 4)
+
+        # Verify all combinations exist
+        combinations = [(r["a"], r["b"]) for r in result]
+        self.assertIn((1, "x"), combinations)
+        self.assertIn((1, "y"), combinations)
+        self.assertIn((2, "x"), combinations)
+        self.assertIn((2, "y"), combinations)
+
+    def test_join_invalid_type_raises(self):
+        """Invalid join type raises ValueError."""
+        left: Relation = [{"id": 1}]
+        right: Relation = [{"id": 1}]
+        with self.assertRaises(ValueError) as ctx:
+            join(left, right, [("id", "id")], how="invalid")
+        self.assertIn("invalid", str(ctx.exception).lower())
+        self.assertIn("inner", str(ctx.exception))
+
+    def test_join_case_insensitive_type(self):
+        """Join type parameter is case-insensitive."""
+        left: Relation = [{"id": 1, "name": "Alice"}]
+        right: Relation = [{"user_id": 1, "order": "Book"}]
+
+        # All these should work
+        result_lower = join(left, right, [("id", "user_id")], how="left")
+        result_upper = join(left, right, [("id", "user_id")], how="LEFT")
+        result_mixed = join(left, right, [("id", "user_id")], how="Left")
+
+        self.assertEqual(len(result_lower), 1)
+        self.assertEqual(len(result_upper), 1)
+        self.assertEqual(len(result_mixed), 1)
+
     def test_rename(self):
         data: Relation = [
             {"id": 1, "name": "Alice", "age": 30},
@@ -509,6 +628,85 @@ class TestCoreFunctions(unittest.TestCase):
         self.assertEqual(
             joined_right_nested[0], {"id": 1, "name": "Alice", "score": 95}
         )
+
+    def test_select_with_and(self):
+        """Test select with 'and' operator."""
+        data: Relation = [
+            {"name": "Alice", "age": 30, "status": "active"},
+            {"name": "Bob", "age": 25, "status": "active"},
+            {"name": "Charlie", "age": 30, "status": "inactive"},
+            {"name": "Diana", "age": 25, "status": "inactive"},
+        ]
+
+        # Select where age > 26 AND status == 'active'
+        result = select(data, "age > 26 and status == 'active'")
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0]["name"], "Alice")
+
+        # Multiple and conditions
+        result2 = select(data, "age >= 25 and status == 'active' and name != 'Alice'")
+        self.assertEqual(len(result2), 1)
+        self.assertEqual(result2[0]["name"], "Bob")
+
+    def test_select_with_or(self):
+        """Test select with 'or' operator."""
+        data: Relation = [
+            {"name": "Alice", "age": 30, "status": "active"},
+            {"name": "Bob", "age": 25, "status": "active"},
+            {"name": "Charlie", "age": 30, "status": "inactive"},
+            {"name": "Diana", "age": 20, "status": "inactive"},
+        ]
+
+        # Select where age > 28 OR name == 'Bob'
+        result = select(data, "age > 28 or name == 'Bob'")
+        self.assertEqual(len(result), 3)
+        names = {r["name"] for r in result}
+        self.assertEqual(names, {"Alice", "Bob", "Charlie"})
+
+
+class TestCollectFunction(unittest.TestCase):
+    """Tests for the collect function."""
+
+    def test_collect_empty_data(self):
+        """Test collect with empty data."""
+        from ja.core import collect
+        result = collect([])
+        self.assertEqual(result, [])
+
+    def test_collect_without_metadata(self):
+        """Test collect on data without grouping metadata."""
+        from ja.core import collect
+        data = [{"id": 1, "name": "Alice"}, {"id": 2, "name": "Bob"}]
+        result = collect(data)
+        self.assertEqual(len(result), 1)
+        self.assertIn("_rows", result[0])
+        self.assertEqual(result[0]["_rows"], data)
+
+    def test_collect_with_metadata(self):
+        """Test collect on data with _groups metadata."""
+        from ja.core import collect
+        data = [
+            {"id": 1, "region": "North", "_groups": [{"field": "region", "value": "North"}], "_group_size": 2},
+            {"id": 2, "region": "North", "_groups": [{"field": "region", "value": "North"}], "_group_size": 2},
+            {"id": 3, "region": "South", "_groups": [{"field": "region", "value": "South"}], "_group_size": 1},
+        ]
+        result = collect(data)
+
+        # Should have 2 groups
+        self.assertEqual(len(result), 2)
+
+        # Find the North group
+        north_group = next(g for g in result if g.get("region") == "North")
+        self.assertEqual(len(north_group["_rows"]), 2)
+
+        # Find the South group
+        south_group = next(g for g in result if g.get("region") == "South")
+        self.assertEqual(len(south_group["_rows"]), 1)
+
+        # Rows should not have metadata
+        for row in north_group["_rows"]:
+            self.assertNotIn("_groups", row)
+            self.assertNotIn("_group_size", row)
 
 
 if __name__ == "__main__":

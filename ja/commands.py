@@ -26,6 +26,18 @@ from .core import (
     sort_by,
     union,
 )
+from .window import (
+    row_number,
+    rank,
+    dense_rank,
+    lag,
+    lead,
+    first_value,
+    last_value,
+    ntile,
+    percent_rank,
+    cume_dist,
+)
 from .group import (
     groupby_agg,
     groupby_chained,
@@ -137,7 +149,8 @@ def handle_join(args):
     lcol = lcol_str.strip()
     rcol = rcol_str.strip()
 
-    result = join(left, right, [(lcol, rcol)])
+    how = getattr(args, "how", "inner")
+    result = join(left, right, [(lcol, rcol)], how=how)
     write_jsonl(result)
 
 
@@ -453,3 +466,84 @@ def handle_collect(args):
         # Collect all data at once
         result = collect(data)
         write_jsonl(result)
+
+
+def handle_window(args):
+    """Handle window function command."""
+    with get_input_stream(args.file) as f:
+        data = read_jsonl(f)
+
+    if not data:
+        write_jsonl([])
+        return
+
+    func_name = args.function
+    partition_by = getattr(args, "partition_by", None)
+    order_by = getattr(args, "order_by", None)
+    output_field = getattr(args, "output_field", None)
+
+    # Map function names to implementations
+    window_funcs = {
+        "row_number": row_number,
+        "rank": rank,
+        "dense_rank": dense_rank,
+        "percent_rank": percent_rank,
+        "cume_dist": cume_dist,
+    }
+
+    # Functions that need a field parameter
+    field_funcs = {
+        "lag": lag,
+        "lead": lead,
+        "first_value": first_value,
+        "last_value": last_value,
+    }
+
+    if func_name in window_funcs:
+        kwargs = {"partition_by": partition_by, "order_by": order_by}
+        if output_field:
+            kwargs["output_field"] = output_field
+        result = window_funcs[func_name](data, **kwargs)
+
+    elif func_name in field_funcs:
+        field = getattr(args, "field", None)
+        if not field:
+            json_error("MissingArgument", f"{func_name} requires --field argument")
+            return
+
+        kwargs = {
+            "field": field,
+            "partition_by": partition_by,
+            "order_by": order_by,
+        }
+        if output_field:
+            kwargs["output_field"] = output_field
+
+        if func_name in ("lag", "lead"):
+            kwargs["offset"] = getattr(args, "offset", 1)
+            default = getattr(args, "default", None)
+            if default is not None:
+                # Try to parse as JSON, fall back to string
+                try:
+                    kwargs["default"] = json.loads(default)
+                except json.JSONDecodeError:
+                    kwargs["default"] = default
+
+        result = field_funcs[func_name](data, **kwargs)
+
+    elif func_name == "ntile":
+        n = getattr(args, "n", None)
+        if not n:
+            json_error("MissingArgument", "ntile requires --n argument")
+            return
+
+        kwargs = {"n": n, "partition_by": partition_by, "order_by": order_by}
+        if output_field:
+            kwargs["output_field"] = output_field
+        result = ntile(data, **kwargs)
+
+    else:
+        json_error("UnknownFunction", f"Unknown window function: {func_name}")
+        return
+
+    write_jsonl(result)

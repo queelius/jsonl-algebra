@@ -18,13 +18,29 @@ Relation = List[Row]
 # AGGREGATION FUNCTIONS
 # ============================================================================
 
-def _agg_numeric_values(values: List[Any]) -> List[float]:
-    """Convert values to floats, skipping None."""
+def _agg_numeric_values(values: List[Any], strict: bool = True) -> List[float]:
+    """Convert values to floats, skipping None.
+
+    Args:
+        values: List of values to convert
+        strict: If True, raise ValueError for non-convertible values
+
+    Returns:
+        List of float values
+
+    Raises:
+        ValueError: If strict=True and a value cannot be converted to float
+    """
     numeric_values = []
     for v in values:
         if v is None:
             continue
-        numeric_values.append(float(v))
+        try:
+            numeric_values.append(float(v))
+        except (ValueError, TypeError) as e:
+            if strict:
+                raise ValueError(f"Cannot convert value to number: {v!r}") from e
+            # Skip non-convertible values in non-strict mode
     return numeric_values
 
 
@@ -180,11 +196,14 @@ def apply_single_agg(spec: Tuple[str, str], data: Relation) -> Dict[str, Any]:
                 if val is not None:
                     values.append(val)
             
-            # Apply aggregation functionsum(_agg_numeric_values(values))
+            # Apply aggregation function
             result = AGGREGATION_FUNCTIONS[func_name](values)
             return {name: result}
 
-    return {name: None}
+    # Unknown aggregation function
+    known_funcs = ["count"] + list(AGGREGATION_FUNCTIONS.keys())
+    raise ValueError(f"Unknown aggregation function: '{func_name}'. "
+                    f"Supported functions: {', '.join(sorted(known_funcs))}")
 
 
 def aggregate_single_group(data: Relation, agg_spec: str) -> Dict[str, Any]:

@@ -246,6 +246,16 @@ ja:/logs.jsonl/[0]$ cat timestamp
 | `cat <path>` | Display content | `cat name`, `cat [0]` |
 | `tree [path] [depth]` | Show tree structure | `tree users.jsonl 2` |
 | `stat <path>` | Show metadata | `stat users.jsonl` |
+| `head [n] [path]` | Show first N records (default: 10) | `head 5 users.jsonl` |
+| `tail [n] [path]` | Show last N records (default: 10) | `tail 5 users.jsonl` |
+
+### Searching & Filtering
+
+| Command | Description | Example |
+|---------|-------------|---------|
+| `count [path]` | Count records in JSONL file | `count users.jsonl` |
+| `grep <pattern> [path] [--field <f>]` | Search for pattern in records | `grep "error" logs.jsonl` |
+| `select <expr> [path]` | Filter records with expression | `select "age > 25" users.jsonl` |
 
 ### Utility
 
@@ -253,6 +263,38 @@ ja:/logs.jsonl/[0]$ cat timestamp
 |---------|-------------|---------|
 | `help` | Show help | `help` |
 | `exit` / `quit` | Exit shell | `exit` |
+
+### Search & Filter Examples
+
+#### grep - Search Records
+
+```
+ja:/$ grep "admin" users.jsonl
+# Searches all fields for "admin"
+
+ja:/$ grep "error" logs.jsonl --field message
+# Searches only the "message" field
+```
+
+#### select - Filter with Expressions
+
+```
+ja:/$ select "age > 30" users.jsonl
+# Show users older than 30
+
+ja:/$ select "status == 'active' and role == 'admin'" users.jsonl
+# Combine multiple conditions
+```
+
+#### head & tail - Quick Preview
+
+```
+ja:/$ head 3 users.jsonl
+# First 3 records
+
+ja:/$ tail 5 logs.jsonl
+# Last 5 records
+```
 
 ## Path Syntax
 

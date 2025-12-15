@@ -69,6 +69,19 @@ from .compose import (
     Filter,
     Batch,
 )
+# Import window functions
+from .window import (
+    row_number,
+    rank,
+    dense_rank,
+    lag,
+    lead,
+    first_value,
+    last_value,
+    ntile,
+    percent_rank,
+    cume_dist,
+)
 
 __all__ = [
     # Core types
@@ -111,6 +124,17 @@ __all__ = [
     "Map",
     "Filter",
     "Batch",
+    # Window functions
+    "row_number",
+    "rank",
+    "dense_rank",
+    "lag",
+    "lead",
+    "first_value",
+    "last_value",
+    "ntile",
+    "percent_rank",
+    "cume_dist",
 ]
 
-__version__ = "0.1.0"
+__version__ = "1.03"

@@ -147,8 +147,9 @@ class JSONLAlgebraServer:
                             "right_key": {"type": "string"},
                             "join_type": {
                                 "type": "string",
-                                "enum": ["inner", "left", "right", "outer"],
-                                "default": "inner"
+                                "enum": ["inner", "left", "right", "outer", "cross"],
+                                "default": "inner",
+                                "description": "Join type: inner, left, right, outer, or cross"
                             }
                         },
                         "required": ["left_file", "right_file", "left_key", "right_key"]
@@ -365,12 +366,12 @@ class JSONLAlgebraServer:
         """Join two JSONL files."""
         left_data = self._read_jsonl_file(args["left_file"])
         right_data = self._read_jsonl_file(args["right_file"])
-        # Note: join_type parameter is not used by the current join() implementation
-        # The join() function only supports inner join
+        join_type = args.get("join_type", "inner")
         data = join(
             left_data,
             right_data,
-            on=[(args["left_key"], args["right_key"])]
+            on=[(args["left_key"], args["right_key"])],
+            how=join_type
         )
         return self._jsonl_to_string(data)
 

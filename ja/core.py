@@ -160,32 +160,119 @@ def project(
 # --- join --------------------------------------------------------------------
 def join(left: Relation,
          right: Relation,
-         on: List[Tuple[str, str]]) -> Relation:
-    """Inner join with nested-key support."""
+         on: List[Tuple[str, str]],
+         how: str = "inner") -> Relation:
+    """Join two relations with support for multiple join types.
+
+    Args:
+        left: Left relation (list of dictionaries)
+        right: Right relation (list of dictionaries)
+        on: List of (left_key, right_key) tuples specifying join columns
+        how: Join type - "inner", "left", "right", "outer", or "cross"
+            - inner: Only matching rows from both sides (default)
+            - left: All rows from left, matching rows from right (nulls if no match)
+            - right: All rows from right, matching rows from left (nulls if no match)
+            - outer: All rows from both sides (nulls where no match)
+            - cross: Cartesian product (ignores 'on' parameter)
+
+    Returns:
+        Joined relation as list of dictionaries
+
+    Examples:
+        >>> left = [{"id": 1, "name": "Alice"}, {"id": 2, "name": "Bob"}]
+        >>> right = [{"user_id": 1, "order": "Book"}]
+        >>> join(left, right, [("id", "user_id")], how="left")
+        [{"id": 1, "name": "Alice", "order": "Book"},
+         {"id": 2, "name": "Bob", "order": None}]
+    """
+    how = how.lower()
+    valid_types = {"inner", "left", "right", "outer", "cross"}
+    if how not in valid_types:
+        raise ValueError(f"Invalid join type '{how}'. Must be one of: {', '.join(sorted(valid_types))}")
+
+    # Cross join is special - no key matching
+    if how == "cross":
+        return product(left, right)
+
     parser = ExprEval()
 
-    # index right side
+    # Index right side by join keys
     right_index: Dict[Tuple[Any, ...], List[Row]] = defaultdict(list)
     for r in right:
         key = tuple(parser.get_field_value(r, rk) for _, rk in on)
         if all(v is not None for v in key):
             right_index[key].append(r)
 
-    # roots of every RHS join path (e.g. 'user.id' → 'user')
+    # Roots of every RHS join path (e.g. 'user.id' → 'user')
     rhs_roots = {re.split(r"[.\[]", rk, 1)[0] for _, rk in on}
 
+    # Get all right-side field names for null placeholders
+    right_fields = set()
+    for r in right:
+        right_fields.update(r.keys())
+    # Remove join key roots from right fields
+    right_fields -= rhs_roots
+
+    # Get all left-side field names for null placeholders
+    left_fields = set()
+    for l in left:
+        left_fields.update(l.keys())
+
+    def merge_rows(l_row: Optional[Row], r_row: Optional[Row]) -> Row:
+        """Merge left and right rows, handling nulls."""
+        merged = {}
+
+        if r_row is not None:
+            for k, v in r_row.items():
+                # Skip right-side join key roots
+                root = re.split(r"[.\[]", k, 1)[0]
+                if root not in rhs_roots:
+                    merged[k] = v
+        else:
+            # No right match - add null placeholders for right fields
+            for field in right_fields:
+                merged[field] = None
+
+        if l_row is not None:
+            merged.update(l_row)  # Left wins on collision
+        else:
+            # No left match - add null placeholders for left fields
+            for field in left_fields:
+                merged[field] = None
+
+        return merged
+
     joined: Relation = []
+    matched_right_keys: set = set()
+
+    # Process left side
     for l in left:
         l_key = tuple(parser.get_field_value(l, lk) for lk, _ in on)
+
+        # Skip rows with null join keys for inner join
         if not all(v is not None for v in l_key):
+            if how in ("left", "outer"):
+                # Include unmatched left rows for left/outer joins
+                joined.append(merge_rows(l, None))
             continue
-        for r in right_index.get(l_key, []):
-            merged = r.copy()
-            merged.update(l)          # left wins
-            # drop right-side join columns
-            for root in rhs_roots:
-                merged.pop(root, None)
-            joined.append(merged)
+
+        matches = right_index.get(l_key, [])
+
+        if matches:
+            matched_right_keys.add(l_key)
+            for r in matches:
+                joined.append(merge_rows(l, r))
+        elif how in ("left", "outer"):
+            # No match but include left row for left/outer joins
+            joined.append(merge_rows(l, None))
+
+    # For right and outer joins, add unmatched right rows
+    if how in ("right", "outer"):
+        for r in right:
+            r_key = tuple(parser.get_field_value(r, rk) for _, rk in on)
+            if all(v is not None for v in r_key) and r_key not in matched_right_keys:
+                joined.append(merge_rows(None, r))
+
     return joined
 
 

@@ -42,6 +42,7 @@ cat orders.jsonl \
 | **groupby** | γ | Group rows | `ja groupby department` |
 | **union** | ∪ | Combine all rows | `ja union file1.jsonl file2.jsonl` |
 | **distinct** | δ | Remove duplicates | `ja distinct` |
+| **window** | ω | Window functions | `ja window rank --partition-by dept` |
 
 ### The Philosophy
 
@@ -134,10 +135,13 @@ This produces results like:
 ## Key Features
 
 - **Relational Operations**: select, project, join, union, intersection, difference, distinct, and more
+- **Multiple Join Types**: inner, left, right, outer, and cross joins via `--how` flag
+- **Window Functions**: 10 SQL-style window functions (row_number, rank, dense_rank, lag, lead, first_value, last_value, ntile, percent_rank, cume_dist)
 - **Chained Grouping**: Multi-level grouping that preserves composability
 - **Nested Data Support**: Access and manipulate nested fields using intuitive dot notation
 - **Streaming Architecture**: Process large datasets without loading into memory
 - **Expression Language**: Safe and expressive filtering with ExprEval
+- **Interactive Shell**: Navigate JSON/JSONL like a filesystem with `ja-shell`
 - **Interactive REPL**: Build data pipelines step-by-step interactively
 - **Format Conversion**: Import/export CSV, JSON arrays, and directory structures
 - **Unix Philosophy**: Designed for pipes and command composition

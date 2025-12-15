@@ -164,13 +164,9 @@ All tests follow TDD best practices (see `TESTING_STRATEGY.md`):
 - Meaningful names describing behavior and outcome
 - Independent, repeatable tests
 
-### Known Issues
+### Test Status
 
-See `TEST_FINDINGS.md` for documented bugs:
-1. MCP Join Tool - incorrect function signature
-2. MCP Aggregate Tool - incorrect parameter format
-
-Tests for these are in `tests/test_mcp_server.py` marked with `@pytest.mark.skip`.
+All tests passing. See `TEST_FINDINGS.md` for historical bug documentation and fixes applied.
 
 ## Integration Development
 

@@ -35,6 +35,7 @@ from .commands import (
     handle_to_csv,
     handle_to_jsonl,
     handle_union,
+    handle_window,
 )
 from .repl import repl
 
@@ -195,6 +196,12 @@ def main():
             "--on",
             required=True,
             help="Join key: left_col=right_col. Supports dot notation for nested fields (e.g., user.id=customer.id).",
+        )
+        sp_join.add_argument(
+            "--how",
+            choices=["inner", "left", "right", "outer", "cross"],
+            default="inner",
+            help="Join type: inner (default), left, right, outer, or cross",
         )
 
         # product
@@ -447,6 +454,54 @@ Available functions: count, sum, avg, min, max, list, first, last.""",
         )
         parser_collect.set_defaults(func=handle_collect)
 
+        # Window function command
+        sp_window = subparsers.add_parser(
+            "window",
+            help="Apply window functions (row_number, rank, lag, lead, etc.)",
+            description="Apply SQL-style window functions to JSONL data",
+        )
+        sp_window.add_argument(
+            "function",
+            choices=["row_number", "rank", "dense_rank", "lag", "lead",
+                     "first_value", "last_value", "ntile", "percent_rank", "cume_dist"],
+            help="Window function to apply",
+        )
+        sp_window.add_argument(
+            "file", nargs="?", help="Input JSONL file (default: stdin)"
+        )
+        sp_window.add_argument(
+            "--partition-by", "-p",
+            help="Field(s) to partition by (comma-separated)",
+        )
+        sp_window.add_argument(
+            "--order-by", "-o",
+            help="Field(s) to order by within partition (comma-separated)",
+        )
+        sp_window.add_argument(
+            "--field", "-f",
+            help="Field to operate on (for lag, lead, first_value, last_value)",
+        )
+        sp_window.add_argument(
+            "--offset",
+            type=int,
+            default=1,
+            help="Offset for lag/lead (default: 1)",
+        )
+        sp_window.add_argument(
+            "--default",
+            help="Default value for lag/lead when no row exists",
+        )
+        sp_window.add_argument(
+            "--n",
+            type=int,
+            help="Number of buckets for ntile",
+        )
+        sp_window.add_argument(
+            "--output-field",
+            help="Custom name for output field",
+        )
+        sp_window.set_defaults(func=handle_window)
+
         args = parser.parse_args()
 
 
@@ -483,7 +538,8 @@ Available functions: count, sum, avg, min, max, list, first, last.""",
             "repl": lambda args: repl(args),
             "export": handle_export_command_group,
             "import": handle_import_command_group,
-            "agg": handle_agg
+            "agg": handle_agg,
+            "window": handle_window,
         }
 
         handler = command_handlers.get(args.cmd)

@@ -38,40 +38,30 @@ def groupby_with_metadata(data: Relation, group_key: str) -> Relation:
     groups = defaultdict(list)
     for row in data:
         try:
-            # print(row, file=sys.stderr)
             key_value = parser.get_field_value(row, group_key)
             groups[key_value].append(row)
-        except Exception as e:
+        except Exception:
             key_value = json.dumps(key_value, ensure_ascii=False, sort_keys=True)
             groups[key_value].append(row)
 
-    # Second pass: add metadata to each row
     # Second pass: add metadata and flatten
     result = []
-    last_index = len(groups) - 1
 
     for i, (group_value, group_rows) in enumerate(groups.items()):
-        print("Processing group:", group_value, "Size:", len(group_rows), "Index:", i,   "Last Index:", last_index, file=sys.stderr)
         group_size = len(group_rows)
         for index, row in enumerate(group_rows):
             # Create new row with metadata
             new_row = row.copy()
-            # check if group_value is a serialized json value
+            # Check if group_value is a serialized json value
             if isinstance(group_value, str):
                 try:
                     group_value = json.loads(group_value)
-                    # print(group_value)
-                    # print("Deserialized group value:", group_value)
                 except json.JSONDecodeError:
                     pass
-                    # print({"Huh?"})
-            # print("Processing group:", group_value, "Size:", group_size)
             new_row["_groups"] = [{"field": group_key, "value": group_value}]
             new_row["_group_size"] = group_size
             new_row["_group_index"] = index
             result.append(new_row)
-
-    print("Done processing groups", file=sys.stderr)
 
     return result
 
@@ -94,58 +84,38 @@ def groupby_chained(grouped_data: Relation, new_group_key: str) -> Relation:
     # Group within existing groups
     nested_groups = defaultdict(list)
 
-    import sys
-    print("hi", file=sys.stderr)
-
     for row in grouped_data:
         # Get existing groups
         existing_groups = row.get("_groups", [])
-        try:
-            # print(row, file=sys.stderr)
-            key_value = parser.get_field_value(row, new_group_key)
-            nested_groups[key_value].append(row)
-        except Exception as e:
-            key_value = json.dumps(key_value, ensure_ascii=False, sort_keys=True)
-            nested_groups[key_value].append(row)
-        
         new_key_value = parser.get_field_value(row, new_group_key)
 
-        print("Processing row:", row, "New group key:", new_group_key, "Value:", new_key_value, file=sys.stderr)
-        
         # Create a tuple key for grouping (for internal use only)
-
         group_tuple = tuple((g["field"], g["value"]) for g in existing_groups)
         group_tuple += ((new_group_key, new_key_value),)
-        
-        print("Hmm...", file=sys.stderr)
+
         try:
-            
             nested_groups[group_tuple].append(row)
-        except Exception as e:
-            # make group_tuple hashable
-            # here is how to do it: 
+        except Exception:
+            # Make group_tuple hashable
             group_tuple = tuple(map(str, group_tuple))
             nested_groups[group_tuple].append(row)
 
-    import sys
-    print("hi", file=sys.stderr)
     # Add new metadata
     result = []
     for group_tuple, group_rows in nested_groups.items():
         group_size = len(group_rows)
-        
+
         for index, row in enumerate(group_rows):
             new_row = row.copy()
-
             value = parser.get_field_value(row, new_group_key)
-            
+
             # Extend the groups list
             new_row["_groups"] = row.get("_groups", []).copy()
             new_row["_groups"].append({
                 "field": new_group_key,
                 "value": value
             })
-            
+
             new_row["_group_size"] = group_size
             new_row["_group_index"] = index
             result.append(new_row)
@@ -183,12 +153,16 @@ def groupby_agg(data: Relation, group_key: str, agg_spec: Union[str, List[Tuple[
         agg_specs = parse_agg_specs(agg_spec)
     else:
         # Convert old list format to new format
+        supported_funcs = ["count", "sum", "avg", "min", "max", "first", "last", "list"]
         agg_specs = []
         for name, field in agg_spec:
             if name == "count":
                 agg_specs.append(("count", "count"))
-            elif name in ["sum", "avg", "min", "max"]:
+            elif name in ["sum", "avg", "min", "max", "first", "last", "list"]:
                 agg_specs.append((f"{name}_{field}", f"{name}({field})"))
+            else:
+                raise ValueError(f"Unknown aggregation function: '{name}'. "
+                               f"Supported functions: {', '.join(sorted(supported_funcs))}")
     
     for key, group_rows in groups.items():
         row_result = {group_key: key}

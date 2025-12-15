@@ -50,6 +50,48 @@ ja select 'age > 30' --output filtered.jsonl users.jsonl
 | **difference** | Find unique rows | `ja difference file1.jsonl file2.jsonl` |
 | **product** | Cartesian product | `ja product file1.jsonl file2.jsonl` |
 
+#### Join Types
+
+The `join` command supports multiple join types via the `--how` flag:
+
+| Join Type | Description | Example |
+|-----------|-------------|---------|
+| **inner** (default) | Only matching rows from both sides | `ja join a.jsonl b.jsonl --on id` |
+| **left** | All rows from left, matching from right | `ja join a.jsonl b.jsonl --on id --how left` |
+| **right** | All rows from right, matching from left | `ja join a.jsonl b.jsonl --on id --how right` |
+| **outer** | All rows from both sides | `ja join a.jsonl b.jsonl --on id --how outer` |
+| **cross** | Cartesian product (no key needed) | `ja join a.jsonl b.jsonl --how cross` |
+
+### Window Functions
+
+| Command | Purpose | Example |
+|---------|---------|---------|
+| **window** | Apply SQL-style window functions | `ja window row_number --partition-by dept file.jsonl` |
+
+#### Available Window Functions
+
+| Function | Description | Example |
+|----------|-------------|---------|
+| **row_number** | Sequential row number within partition | `ja window row_number --partition-by dept` |
+| **rank** | Rank with gaps for ties | `ja window rank --partition-by dept --order-by salary` |
+| **dense_rank** | Rank without gaps | `ja window dense_rank --partition-by dept --order-by salary` |
+| **lag** | Value from previous row | `ja window lag --field price --offset 1` |
+| **lead** | Value from next row | `ja window lead --field price --offset 1` |
+| **first_value** | First value in partition | `ja window first_value --field name --partition-by dept` |
+| **last_value** | Last value in partition | `ja window last_value --field name --partition-by dept` |
+| **ntile** | Divide into N buckets | `ja window ntile --n 4 --partition-by region` |
+| **percent_rank** | Percentile rank (0-1) | `ja window percent_rank --order-by score` |
+| **cume_dist** | Cumulative distribution | `ja window cume_dist --order-by score` |
+
+Window function options:
+- `--partition-by`, `-p`: Field(s) to partition by (comma-separated)
+- `--order-by`, `-o`: Field(s) to order by within partition
+- `--field`, `-f`: Field to operate on (for lag, lead, first_value, last_value)
+- `--offset`: Offset for lag/lead (default: 1)
+- `--default`: Default value when no row exists (lag/lead)
+- `--n`: Number of buckets (ntile)
+- `--output-field`: Custom name for output field
+
 ### Aggregation & Grouping
 
 | Command | Purpose | Example |
