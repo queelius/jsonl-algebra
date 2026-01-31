@@ -5,7 +5,7 @@ functional programming principles for elegant data transformations.
 """
 
 from typing import Callable, TypeVar, Iterator, Any, List, Optional, Union
-from functools import reduce, partial, wraps
+from functools import reduce
 import itertools
 
 from .core import Row, Relation
@@ -321,7 +321,7 @@ class Batch(Operation):
     def __init__(self, size: int):
         self.size = size
 
-    def __call__(self, data: Union[Relation, Iterator[Row]]) -> Iterator[List[Row]]:
+    def __call__(self, data: Union[Relation, Iterator[Row]]) -> Iterator[List[Row]]:  # type: ignore[override]
         """Returns an iterator of batches."""
         iterator = iter(data)
         while True:

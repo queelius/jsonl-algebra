@@ -107,67 +107,27 @@ nav:
     - Quick Start: getting-started/quickstart.md
     - Core Concepts: getting-started/concepts.md
 
-  - Core Concepts:
-    - Relational Algebra: concepts/relational-algebra.md
-    - Dot Notation: concepts/dotnotation.md
-    - Streaming & Piping: concepts/streaming.md
-    - Expression Language: concepts/expressions.md
-
   - CLI Reference:
     - Overview: cli/overview.md
-    - Commands:
-      - select (Filter): cli/commands/select.md
-      - project (Choose Fields): cli/commands/project.md
-      - join (Combine): cli/commands/join.md
-      - groupby (Group): cli/commands/groupby.md
-      - sort (Order): cli/commands/sort.md
-      - union (Merge): cli/commands/union.md
-      - distinct (Deduplicate): cli/commands/distinct.md
-      - rename (Transform): cli/commands/rename.md
-      - All Commands: cli/commands.md
-    - Examples & Patterns: cli/examples.md
 
   - ja-shell:
     - Introduction: shell/introduction.md
-    - Getting Started Tutorial: shell/tutorial.md
-    - Command Reference: shell/commands.md
-    - Advanced Features: shell/advanced.md
-    - Use Cases: shell/use-cases.md
-
-  - Library API:
-    - Core Operations: api/core.md
-    - Composability & Pipelines: api/composability.md
-    - Virtual Filesystem: api/vfs.md
-    - Schema & Validation: api/schema.md
-    - Import & Export: api/import-export.md
 
   - Integrations:
     - Overview: integrations/overview.md
-    - MCP Server: integrations/mcp.md
-    - Log Analyzer: integrations/log-analyzer.md
-    - Data Explorer: integrations/data-explorer.md
-    - ML Pipeline: integrations/ml-pipeline.md
 
   - Tutorials:
     - Analyzing Log Files: tutorials/data-analysis.md
-    - Building ETL Pipelines: tutorials/etl.md
-    - Exploring Unfamiliar JSON: tutorials/json-exploration.md
-    - Real-time Monitoring: tutorials/monitoring.md
-    - Data Quality Checks: tutorials/quality.md
 
   - Interactive REPL:
-    - Introduction: repl/introduction.md
-    - Dataset Management: repl/datasets.md
-    - Operations: repl/operations.md
-    - Tips & Tricks: repl/tips.md
+    - Introduction: guide/repl/introduction.md
+    - Dataset Management: guide/repl/datasets.md
+    - Operations: guide/repl/operations.md
 
-  - Contributing:
-    - Contributing Guide: contributing.md
-    - Testing Strategy: testing.md
-    - Development Setup: development.md
+  - Contributing: contributing.md
 
   - Reference:
     - API Reference: reference.md
     - FAQ: faq.md
-    - Troubleshooting: troubleshooting.md
+    - Future Plans: future-plans.md
     - Changelog: changelog.md

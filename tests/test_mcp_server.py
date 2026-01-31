@@ -15,9 +15,7 @@ We test the handler methods directly to verify behavior.
 import pytest
 import json
 import tempfile
-import asyncio
 from pathlib import Path
-from typing import List, Dict, Any
 
 # Import the server components (will handle missing MCP SDK gracefully)
 try:

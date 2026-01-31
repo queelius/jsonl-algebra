@@ -137,4 +137,4 @@ __all__ = [
     "cume_dist",
 ]
 
-__version__ = "1.03"
+__version__ = "1.04"

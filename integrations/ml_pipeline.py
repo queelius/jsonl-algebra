@@ -27,14 +27,11 @@ import json
 import pickle
 import argparse
 import numpy as np
-from pathlib import Path
-from typing import Dict, List, Tuple, Any, Optional
+from typing import Dict, List, Tuple
 from datetime import datetime
 
 from ja import (
-    select, project, groupby_agg, sort_by,
-    Pipeline, Select, Project, Map, Filter,
-    compose, pipe
+    project, groupby_agg, Pipeline, Project, Map, Sort
 )
 from ja.commands import read_jsonl
 from ja.expr import ExprEval
@@ -162,7 +159,6 @@ class FeatureEngineer:
             grouped = groupby_agg(data, group_field, ",".join(agg_spec))
 
             # Join back to original data
-            from ja import join
             enriched = data
             # Note: join implementation would need adjustment for this use case
             # For now, we'll simulate by adding group stats to each row
@@ -230,11 +226,11 @@ class FeatureEngineer:
                             row[f"{field}_day"] = dt.day
                             row[f"{field}_hour"] = dt.hour
                             row[f"{field}_weekday"] = dt.weekday()
-                        except:
+                        except (ValueError, TypeError, AttributeError):
                             pass
                     enriched.append(row)
                 data = enriched
-            except:
+            except Exception:
                 pass
 
         return data
@@ -467,7 +463,7 @@ class MLPipeline:
         mae = mean_absolute_error(y_test, y_pred)
         r2 = r2_score(y_test, y_pred)
 
-        print(f"\nTest Set Evaluation:")
+        print("\nTest Set Evaluation:")
         print(f"  MSE: {mse:.4f}")
         print(f"  MAE: {mae:.4f}")
         print(f"  R2 Score: {r2:.4f}")
@@ -484,7 +480,7 @@ class MLPipeline:
         # Analyze errors
         error_pipeline = Pipeline(
             Project(['error', 'actual', 'prediction']),
-            Map(lambda x: {...x, 'abs_error': abs(x['error'])}),
+            Map(lambda x: {**x, 'abs_error': abs(x['error'])}),
             Sort('abs_error', descending=True)
         )
 

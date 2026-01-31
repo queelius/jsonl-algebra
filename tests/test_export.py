@@ -1,5 +1,4 @@
 import json
-import os
 import shutil
 import unittest
 from pathlib import Path
@@ -73,7 +72,7 @@ class TestExport(unittest.TestCase):
         lines = list(dir_to_jsonl(str(self.test_dir), recursive=True))
         self.assertEqual(len(lines), 2)
         # Order is not guaranteed, so check for presence
-        results = [json.loads(l) for l in lines]
+        results = [json.loads(line) for line in lines]
         self.assertIn({"a": 1}, results)
         self.assertIn({"b": 2}, results)
 

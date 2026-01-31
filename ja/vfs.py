@@ -11,7 +11,7 @@ JSON and JSONL data structures. It treats:
 """
 
 import json
-import os
+from collections import OrderedDict
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union, Tuple
 from dataclasses import dataclass
@@ -94,11 +94,11 @@ class LazyJSONL:
 
     def __init__(self, file_path: Path):
         self.file_path = file_path
-        self.index = None  # Will build index on first access
-        self._cache = {}   # Cache for recently accessed records
+        self.index: Optional[List[int]] = None  # Will build index on first access
+        self._cache: OrderedDict[int, dict] = OrderedDict()  # LRU cache for records
         self._max_cache = 100
 
-    def _build_index(self):
+    def _build_index(self) -> None:
         """Build an index of record positions in the file."""
         if self.index is not None:
             return
@@ -113,17 +113,20 @@ class LazyJSONL:
                 self.index.append(pos)
                 pos = f.tell()
 
-    def __len__(self):
+    def __len__(self) -> int:
         """Return number of records."""
         self._build_index()
+        assert self.index is not None
         return len(self.index)
 
     def __getitem__(self, idx: int) -> dict:
         """Get a record by index."""
         if idx in self._cache:
+            self._cache.move_to_end(idx)
             return self._cache[idx]
 
         self._build_index()
+        assert self.index is not None
         if idx < 0 or idx >= len(self.index):
             raise IndexError(f"Record index {idx} out of range")
 
@@ -131,12 +134,11 @@ class LazyJSONL:
         with open(self.file_path, 'r') as f:
             f.seek(self.index[idx])
             line = f.readline()
-            record = json.loads(line)
+            record: dict = json.loads(line)
 
-        # Cache it
+        # Cache with LRU eviction
         if len(self._cache) >= self._max_cache:
-            # Simple LRU: remove first item
-            self._cache.pop(next(iter(self._cache)))
+            self._cache.popitem(last=False)
         self._cache[idx] = record
 
         return record
@@ -165,7 +167,7 @@ class JSONPath:
         """
         self.root_dir = Path(root_dir).resolve()
         self.current_path = "/"
-        self._file_cache = {}  # Cache loaded files
+        self._file_cache: Dict[str, Any] = {}  # Cache loaded files
 
     def _parse_path(self, path: str) -> List[PathSegment]:
         """
@@ -260,7 +262,7 @@ class JSONPath:
             raise ValueError(f"Unsupported file type: {file_path.suffix}")
 
         # Navigate through remaining segments
-        current_data = data
+        current_data: Any = data
         current_path = f"/{first_seg.name}"
 
         for seg in segments[1:]:
@@ -276,6 +278,7 @@ class JSONPath:
 
             if seg.is_filter:
                 # Apply filter
+                assert seg.filter_expr is not None
                 current_data = self._apply_filter(current_data, seg.filter_expr)
                 node = VFSNode(
                     path=current_path,
@@ -328,7 +331,7 @@ class JSONPath:
         else:
             return NodeType.VALUE
 
-    def _load_jsonl(self, file_path: Path) -> LazyJSONL:
+    def _load_jsonl(self, file_path: Path) -> Any:
         """Load a JSONL file lazily."""
         if str(file_path) not in self._file_cache:
             self._file_cache[str(file_path)] = LazyJSONL(file_path)
@@ -358,7 +361,7 @@ class JSONPath:
     def _normalize_path(self, path: str) -> str:
         """Normalize a path (resolve . and ..)."""
         segments = path.split('/')
-        normalized = []
+        normalized: List[str] = []
 
         for seg in segments:
             if seg == '..':
@@ -454,7 +457,7 @@ class JSONPath:
         """Get information about a path."""
         node, data = self._resolve_path(path)
 
-        info = {
+        info: Dict[str, Any] = {
             'path': node.path,
             'type': node.node_type.value,
             'is_directory': node.is_directory(),

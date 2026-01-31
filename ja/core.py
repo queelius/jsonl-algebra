@@ -7,14 +7,14 @@ JSONL data.
 """
 
 from collections import defaultdict
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 import re
 
 import jmespath
 
 from .expr import ExprEval
 
-Row = Dict[str, any]
+Row = Dict[str, Any]
 Relation = List[Row]
 
 
@@ -46,7 +46,7 @@ def _row_to_hashable_key(row: Row) -> tuple:
 
     try:
         # We are converting the whole row dict into a hashable tuple of items.
-        return to_hashable(row)
+        return to_hashable(row)  # type: ignore[no-any-return]
     except TypeError as e:
         # Find the problematic item to create a better error message
         for k, v in row.items():
@@ -106,7 +106,7 @@ def select(
 
 
 def project(
-    data: Relation, fields: List[str] | str, use_jmespath: bool = False
+    data: Relation, fields: Union[List[str], str], use_jmespath: bool = False
 ) -> Relation:
     """Project specific fields from each row.
 
@@ -207,16 +207,16 @@ def join(left: Relation,
     rhs_roots = {re.split(r"[.\[]", rk, 1)[0] for _, rk in on}
 
     # Get all right-side field names for null placeholders
-    right_fields = set()
+    right_fields: set[str] = set()
     for r in right:
         right_fields.update(r.keys())
     # Remove join key roots from right fields
     right_fields -= rhs_roots
 
     # Get all left-side field names for null placeholders
-    left_fields = set()
-    for l in left:
-        left_fields.update(l.keys())
+    left_fields: set[str] = set()
+    for left_row in left:
+        left_fields.update(left_row.keys())
 
     def merge_rows(l_row: Optional[Row], r_row: Optional[Row]) -> Row:
         """Merge left and right rows, handling nulls."""
@@ -246,14 +246,14 @@ def join(left: Relation,
     matched_right_keys: set = set()
 
     # Process left side
-    for l in left:
-        l_key = tuple(parser.get_field_value(l, lk) for lk, _ in on)
+    for left_row in left:
+        l_key = tuple(parser.get_field_value(left_row, lk) for lk, _ in on)
 
         # Skip rows with null join keys for inner join
         if not all(v is not None for v in l_key):
             if how in ("left", "outer"):
                 # Include unmatched left rows for left/outer joins
-                joined.append(merge_rows(l, None))
+                joined.append(merge_rows(left_row, None))
             continue
 
         matches = right_index.get(l_key, [])
@@ -261,10 +261,10 @@ def join(left: Relation,
         if matches:
             matched_right_keys.add(l_key)
             for r in matches:
-                joined.append(merge_rows(l, r))
+                joined.append(merge_rows(left_row, r))
         elif how in ("left", "outer"):
             # No match but include left row for left/outer joins
-            joined.append(merge_rows(l, None))
+            joined.append(merge_rows(left_row, None))
 
     # For right and outer joins, add unmatched right rows
     if how in ("right", "outer"):
@@ -280,9 +280,9 @@ def join(left: Relation,
 def product(left: Relation, right: Relation) -> Relation:
     """Cartesian product; colliding keys from *right* are prefixed with ``b_``."""
     result: Relation = []
-    for l in left:
+    for left_row in left:
         for r in right:
-            merged = l.copy()
+            merged = left_row.copy()
             for k, v in r.items():
                 if k in merged:
                     merged[f"b_{k}"] = v
@@ -327,6 +327,11 @@ def union(
     return left + right
 
 
+def _row_set(data: Relation) -> set:
+    """Convert a relation to a set of hashable row tuples for set operations."""
+    return {tuple(sorted(row.items())) for row in data}
+
+
 def intersection(
     left: Relation, right: Relation
 ) -> Relation:
@@ -339,8 +344,7 @@ def intersection(
     Returns:
         Intersection of the two collections
     """
-    # Convert right to a set of tuples for efficient lookup
-    right_set = {tuple(sorted(row.items())) for row in right}
+    right_set = _row_set(right)
 
     result = []
     for row in left:
@@ -362,8 +366,7 @@ def difference(
     Returns:
         Elements in left but not in right
     """
-    # Convert right to a set of tuples for efficient lookup
-    right_set = {tuple(sorted(row.items())) for row in right}
+    right_set = _row_set(right)
 
     result = []
     for row in left:

@@ -11,15 +11,13 @@ import asyncio
 import json
 import sys
 import os
-import tempfile
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
-from contextlib import contextmanager
+from typing import Any, Dict, List, Optional
 
 # Add parent directory to path to import ja
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from ja import project, select, sort_by, groupby_agg, join, union, read_jsonl
+from ja import project, select, sort_by, groupby_agg, join, read_jsonl
 import random
 import itertools
 
@@ -305,7 +303,7 @@ class JSONLAlgebraServer:
                             mimeType="application/jsonlines",
                             text=f"Preview of {file_path.name} (first 10 records):\n{preview}"
                         )]
-            except Exception as e:
+            except Exception:
                 return None
             return None
 

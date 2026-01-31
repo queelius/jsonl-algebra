@@ -2,7 +2,6 @@ import unittest
 
 from ja.core import (
     Relation,
-    Row,
     _row_to_hashable_key,
     difference,
     distinct,

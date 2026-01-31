@@ -158,7 +158,7 @@ tests/
 
 ### Test Principles
 
-All tests follow TDD best practices (see `TESTING_STRATEGY.md`):
+All tests follow TDD best practices:
 - Test behavior, not implementation
 - Given-When-Then structure
 - Meaningful names describing behavior and outcome
@@ -166,7 +166,7 @@ All tests follow TDD best practices (see `TESTING_STRATEGY.md`):
 
 ### Test Status
 
-All tests passing. See `TEST_FINDINGS.md` for historical bug documentation and fixes applied.
+All tests passing.
 
 ## Integration Development
 
@@ -300,5 +300,4 @@ Full MCP server testing requires `pip install mcp`. Basic functionality tests wo
 
 - User-facing docs in `docs/` (MkDocs with Material theme)
 - Integration guides in `integrations/*_README.md`
-- Testing strategy in `TESTING_STRATEGY.md`
 - This file for development guidance

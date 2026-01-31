@@ -9,7 +9,7 @@ import json
 import sys
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 import jmespath.exceptions
 
@@ -47,9 +47,9 @@ from .agg import (
     aggregate_grouped_data,
     aggregate_single_group,
 )
-from .export import json_array_to_jsonl_lines, jsonl_to_dir, jsonl_to_json_array_string
+from .export import dir_to_jsonl, json_array_to_jsonl_lines, jsonl_to_dir, jsonl_to_json_array_string
 from .exporter import jsonl_to_csv_stream
-from .importer import csv_to_jsonl_lines, dir_to_jsonl_lines
+from .importer import csv_to_jsonl_lines
 from .schema import infer_schema
 
 
@@ -87,14 +87,13 @@ def write_json_object(obj: Any) -> None:
     print(json.dumps(obj, indent=2))
 
 
-def json_error(error_type: str, message: str, details: Dict[str, Any] = None) -> None:
+def json_error(error_type: str, message: str, details: Optional[Dict[str, Any]] = None) -> None:
     """Print a JSON error message to stderr and exit."""
-    error_info = {
-        "error": {
-            "type": error_type,
-            "message": message,
-        }
+    error_obj: Dict[str, Any] = {
+        "type": error_type,
+        "message": message,
     }
+    error_info: Dict[str, Any] = {"error": error_obj}
     if details:
         error_info["error"]["details"] = details
     print(json.dumps(error_info), file=sys.stderr)
@@ -324,7 +323,7 @@ def handle_explode(args):
 def handle_implode(args):
     """Handle implode command."""
     try:
-        for line in dir_to_jsonl_lines(
+        for line in dir_to_jsonl(
             args.input_dir, args.add_filename_key, args.recursive
         ):
             print(line)
@@ -500,10 +499,10 @@ def handle_window(args):
     }
 
     if func_name in window_funcs:
-        kwargs = {"partition_by": partition_by, "order_by": order_by}
+        wkwargs: Dict[str, Any] = {"partition_by": partition_by, "order_by": order_by}
         if output_field:
-            kwargs["output_field"] = output_field
-        result = window_funcs[func_name](data, **kwargs)
+            wkwargs["output_field"] = output_field
+        result = window_funcs[func_name](data, **wkwargs)
 
     elif func_name in field_funcs:
         field = getattr(args, "field", None)
@@ -511,25 +510,26 @@ def handle_window(args):
             json_error("MissingArgument", f"{func_name} requires --field argument")
             return
 
-        kwargs = {
+        fkwargs: Dict[str, Any] = {
             "field": field,
             "partition_by": partition_by,
             "order_by": order_by,
         }
         if output_field:
-            kwargs["output_field"] = output_field
+            fkwargs["output_field"] = output_field
 
         if func_name in ("lag", "lead"):
-            kwargs["offset"] = getattr(args, "offset", 1)
+            fkwargs["offset"] = getattr(args, "offset", 1)
             default = getattr(args, "default", None)
             if default is not None:
                 # Try to parse as JSON, fall back to string
                 try:
-                    kwargs["default"] = json.loads(default)
+                    fkwargs["default"] = json.loads(default)
                 except json.JSONDecodeError:
-                    kwargs["default"] = default
+                    fkwargs["default"] = default
 
-        result = field_funcs[func_name](data, **kwargs)
+        func = field_funcs[func_name]
+        result = func(data, **fkwargs)  # type: ignore[operator]
 
     elif func_name == "ntile":
         n = getattr(args, "n", None)
@@ -537,10 +537,10 @@ def handle_window(args):
             json_error("MissingArgument", "ntile requires --n argument")
             return
 
-        kwargs = {"n": n, "partition_by": partition_by, "order_by": order_by}
+        nkwargs: Dict[str, Any] = {"n": n, "partition_by": partition_by, "order_by": order_by}
         if output_field:
-            kwargs["output_field"] = output_field
-        result = ntile(data, **kwargs)
+            nkwargs["output_field"] = output_field
+        result = ntile(data, **nkwargs)
 
     else:
         json_error("UnknownFunction", f"Unknown window function: {func_name}")

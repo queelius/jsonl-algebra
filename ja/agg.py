@@ -186,6 +186,7 @@ def apply_single_agg(spec: Tuple[str, str], data: Relation) -> Dict[str, Any]:
             # Collect values for aggregation
             values = []
             for row in data:
+                val: Any
                 if field_expr:
                     # Try arithmetic evaluation first
                     val = parser.evaluate_arithmetic(field_expr, row)

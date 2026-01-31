@@ -29,11 +29,9 @@ import time
 # Import ja components
 from ja import (
     Pipeline, lazy_pipeline,
-    Select, Project, GroupBy,
-    Map, Filter, Take, Batch,
-    select, project, groupby_agg
+    Select, Map, Filter, Batch,
+    select, groupby_agg
 )
-from ja.expr import ExprEval
 
 
 class LogAnalyzer:
@@ -102,7 +100,7 @@ class LogAnalyzer:
         # Parse timestamp
         try:
             log['_timestamp'] = datetime.fromisoformat(log['timestamp'].replace('Z', '+00:00'))
-        except:
+        except (ValueError, KeyError, AttributeError):
             log['_timestamp'] = datetime.now()
 
         # Classify response status

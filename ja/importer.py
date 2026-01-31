@@ -10,9 +10,10 @@ import csv
 import json
 import os
 import sys
+from typing import Any
 
 
-def _infer_value(value: str):
+def _infer_value(value: Any) -> Any:
     """Intelligently guess the data type of a string value.
 
     When importing from formats like CSV, everything starts as a string.
@@ -117,8 +118,8 @@ def csv_to_jsonl_lines(csv_input_stream, has_header: bool, infer_types: bool = F
 
     if has_header:
         # Use DictReader which handles headers automatically
-        reader = csv.DictReader(csv_input_stream)
-        for row in reader:
+        dict_reader = csv.DictReader(csv_input_stream)
+        for row in dict_reader:
             yield json.dumps(process_row(row))
     else:
         # Use the standard reader and manually create dictionaries
@@ -135,6 +136,6 @@ def csv_to_jsonl_lines(csv_input_stream, has_header: bool, infer_types: bool = F
             return  # Handle empty file
 
         # Yield the rest of the rows
-        for row in reader:
-            row_dict = dict(zip(headers, row))
+        for csv_row in reader:
+            row_dict = dict(zip(headers, csv_row))
             yield json.dumps(process_row(row_dict))

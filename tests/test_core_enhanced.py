@@ -14,7 +14,6 @@ from .test_utils import (
 )
 
 from ja.core import (
-    Relation,
     select,
     project,
     join,
@@ -316,7 +315,7 @@ class TestCoreWithGeneratedData(unittest.TestCase):
         
         # Project non-existent field (should handle gracefully)
         try:
-            empty_project = project(self.people, ["nonexistent.field"])
+            project(self.people, ["nonexistent.field"])
             # Should not crash, may return empty or partial results
         except Exception as e:
             # If it throws, should be a meaningful error

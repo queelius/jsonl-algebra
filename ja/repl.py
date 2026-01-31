@@ -273,7 +273,7 @@ class ReplSession:
         # args is already the full command (without the !)
         cmd = " ".join(args)
         try:
-            result = subprocess.run(
+            subprocess.run(
                 cmd,
                 shell=True,
                 check=False,
@@ -342,7 +342,7 @@ class ReplSession:
 
             # Count rows and collect field names
             row_count = 0
-            all_fields = set()
+            all_fields: set[str] = set()
             first_row = None
 
             with open(file_path, 'r') as f:
@@ -375,7 +375,7 @@ class ReplSession:
                     print(f"Fields ({len(fields)} total): {', '.join(fields[:20])}, ...")
 
             if first_row:
-                print(f"\nSample (first row):")
+                print("\nSample (first row):")
                 print(f"  {json.dumps(first_row, indent=2)}")
 
             print()

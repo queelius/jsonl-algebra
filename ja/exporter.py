@@ -12,6 +12,7 @@ CSV format.
 import csv
 import json
 import sys
+from typing import Optional
 
 
 def _flatten_dict(d, parent_key="", sep="."):
@@ -47,7 +48,7 @@ def jsonl_to_csv_stream(
     output_stream,
     flatten: bool = True,
     flatten_sep: str = ".",
-    column_functions: dict = None,
+    column_functions: Optional[dict] = None,
 ):
     """Convert a stream of JSONL data into a CSV stream.
 

@@ -522,7 +522,7 @@ def cume_dist(
         total = len(sorted_partition)
 
         # Count rows with each order value
-        value_counts = defaultdict(int)
+        value_counts: dict = defaultdict(int)
         for _, row in sorted_partition:
             value_counts[get_order_value(row)] += 1
 

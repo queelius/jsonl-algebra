@@ -6,19 +6,15 @@ and verify that ja operations work correctly on complex, nested data.
 """
 
 import unittest
-import tempfile
-import os
-from typing import List, Dict, Any
 
 from .test_utils import (
     TestDataGenerator,
     TempDataFiles,
-    assert_jsonl_equal,
     run_ja_command,
     parse_jsonl_output
 )
 
-from ja.core import Relation, select, project, join
+from ja.core import select, project, join
 from ja.group import groupby_with_metadata
 from ja.agg import aggregate_grouped_data
 

@@ -26,13 +26,11 @@ import readline
 import argparse
 from pathlib import Path
 from typing import Dict, List, Any, Optional, Tuple
-from collections import Counter, defaultdict
+from collections import Counter
 import statistics
 
 from ja import (
-    select, project, join, rename, union, difference,
-    distinct, intersection, sort_by, product, collect,
-    groupby_agg, Pipeline, Select, Project, Sort
+    select, project, distinct, sort_by, groupby_agg, Pipeline, Select, Project, Sort
 )
 from ja.commands import read_jsonl
 from ja.schema import infer_schema
@@ -82,7 +80,7 @@ class SQLTranslator:
 
         # GROUP BY clause
         groupby = match.group('groupby')
-        having = match.group('having')
+        _having = match.group('having')
         if groupby:
             # Detect aggregations in SELECT
             fields = match.group('fields') or '*'
@@ -184,7 +182,7 @@ class DataProfiler:
         # Schema inference
         try:
             profile['schema'] = infer_schema(data)
-        except:
+        except Exception:
             profile['schema'] = None
 
         return profile
@@ -528,7 +526,7 @@ Tips:
     def repl(self):
         """Run interactive REPL."""
         print(f"\nData Explorer - {self.filename}")
-        print(f"Type 'help' for commands, 'quit' to exit\n")
+        print("Type 'help' for commands, 'quit' to exit\n")
 
         while True:
             try:

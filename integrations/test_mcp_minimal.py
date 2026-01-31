@@ -121,7 +121,7 @@ def test_core_operations():
     # Cleanup
     import shutil
     shutil.rmtree(temp_dir)
-    print(f"\n✓ Cleaned up test data")
+    print("\n✓ Cleaned up test data")
 
     print("\n" + "="*50)
     print("All tests passed! MCP server core logic is working.")
@@ -141,7 +141,7 @@ def test_mcp_server_module():
         print("✓ MCP server module imported successfully")
 
         # Try creating a server instance
-        server = JSONLAlgebraServer()
+        _ = JSONLAlgebraServer()
         print("✓ MCP server instance created successfully")
 
     except ImportError as e:

@@ -6,7 +6,7 @@ syntax without quotes for most common cases.
 
 import operator
 import re
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, Optional
 
 
 class ExprEval:
@@ -22,6 +22,7 @@ class ExprEval:
             (">", operator.gt),
             ("<", operator.lt),
         ]
+        self._operator_map = dict(self.operators)
 
     def parse_value(self, value_str: str) -> Any:
         """Parse a value string into appropriate Python type.
@@ -77,7 +78,7 @@ class ExprEval:
         if not field_path:
             return obj
 
-        current = obj
+        current: Any = obj
 
         # Handle array indexing and dots
         parts = re.split(r"\.|\[|\]", field_path)
@@ -121,11 +122,7 @@ class ExprEval:
 
     def evaluate_comparison(self, left: Any, op_str: str, right: Any) -> bool:
         """Evaluate a comparison operation."""
-        op_func = None
-        for op, func in self.operators:
-            if op == op_str:
-                op_func = func
-                break
+        op_func = self._operator_map.get(op_str)
 
         if op_func is None:
             raise ValueError(f"Unknown operator: {op_str}")
@@ -133,20 +130,20 @@ class ExprEval:
         # Special handling for null comparisons
         if left is None or right is None:
             if op_str == "==":
-                return left == right
+                return bool(left == right)
             elif op_str == "!=":
-                return left != right
+                return bool(left != right)
             else:
                 return False
 
         # Type coercion for comparison
         try:
-            return op_func(left, right)
+            return bool(op_func(left, right))
         except (TypeError, ValueError):
             # If comparison fails, try string comparison
             try:
-                return op_func(str(left), str(right))
-            except:
+                return bool(op_func(str(left), str(right)))
+            except Exception:
                 return False
 
     def evaluate(self, expr: str, context: Dict[str, Any]) -> bool:
@@ -224,7 +221,7 @@ class ExprEval:
                         right_val = self.parse_value(right_str)
 
                     try:
-                        return func(float(left_val), float(right_val))
+                        return float(func(float(left_val), float(right_val)))
                     except (TypeError, ValueError):
                         return None
 

@@ -97,7 +97,8 @@ def groupby_chained(grouped_data: Relation, new_group_key: str) -> Relation:
             nested_groups[group_tuple].append(row)
         except Exception:
             # Make group_tuple hashable
-            group_tuple = tuple(map(str, group_tuple))
+            hashable_key = tuple(str(item) for item in group_tuple)
+            nested_groups[hashable_key].append(row)  # type: ignore[index]
             nested_groups[group_tuple].append(row)
 
     # Add new metadata

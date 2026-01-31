@@ -12,14 +12,12 @@ Tests verify contracts and observable behavior, not implementation details.
 """
 
 import pytest
-from typing import Iterator
 
 from ja.compose import (
     Pipeline, lazy_pipeline, pipeline,
     Select, Project, Sort, Distinct, Rename, GroupBy,
     Take, Skip, Map, Filter, Batch,
-    compose, pipe,
-    Operation
+    compose, pipe
 )
 from ja.core import select, project, distinct
 

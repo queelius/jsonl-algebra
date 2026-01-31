@@ -9,7 +9,6 @@ Provides a filesystem-like interface with:
 - Syntax highlighting
 """
 
-import os
 import sys
 import json
 from pathlib import Path
@@ -17,10 +16,10 @@ from typing import List, Optional, Dict, Any
 
 try:
     from prompt_toolkit import PromptSession
-    from prompt_toolkit.completion import Completer, Completion, WordCompleter
+    from prompt_toolkit.completion import Completer, Completion
     from prompt_toolkit.history import FileHistory
     from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
-    from prompt_toolkit.styles import Style
+
 except ImportError:
     print("Error: prompt_toolkit not installed. Install with: pip install prompt_toolkit", file=sys.stderr)
     sys.exit(1)
@@ -116,7 +115,7 @@ class JAShell:
 
         # Setup prompt_toolkit session
         history_file = Path.home() / '.ja_shell_history'
-        self.session = PromptSession(
+        self.session: PromptSession = PromptSession(
             history=FileHistory(str(history_file)),
             auto_suggest=AutoSuggestFromHistory(),
             enable_history_search=True,
@@ -247,7 +246,7 @@ class JAShell:
 
             self.console.print(table)
 
-        except Exception as e:
+        except Exception:
             raise
 
     def cmd_cd(self, args: List[str]):
@@ -300,7 +299,7 @@ class JAShell:
         try:
             self._build_tree(tree, target_path, max_depth, 0)
             self.console.print(tree)
-        except Exception as e:
+        except Exception:
             raise
 
     def _build_tree(self, tree: Tree, path: str, max_depth: int, current_depth: int):
@@ -322,7 +321,7 @@ class JAShell:
                     icon = "📄"
                     style = "green"
 
-                label = f"{icon} [/]{style}]{name}[/{style}]"
+                label = f"{icon} [{style}]{name}[/{style}]"
                 branch = tree.add(label)
 
                 if is_dir:
@@ -365,7 +364,7 @@ class JAShell:
         if node.node_type == NodeType.JSONL_FILE:
             if isinstance(data, LazyJSONL):
                 return list(data)
-            return data
+            return list(data) if not isinstance(data, list) else data
         elif node.node_type == NodeType.ARRAY:
             return list(data) if not isinstance(data, list) else data
         else:

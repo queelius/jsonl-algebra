@@ -11,6 +11,7 @@ import os
 import pathlib
 import re
 import sys
+from typing import Optional
 
 
 def jsonl_to_json_array_string(jsonl_input_stream) -> str:
@@ -149,7 +150,7 @@ def _sort_files_for_implode(filenames_with_paths):
 
 
 def dir_to_jsonl(
-    input_dir_path_str: str, add_filename_key: str = None, recursive: bool = False
+    input_dir_path_str: str, add_filename_key: Optional[str] = None, recursive: bool = False
 ):
     """
     Converts JSON files in a directory to JSONL lines.
