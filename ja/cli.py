@@ -182,11 +182,6 @@ def main():
             action="store_true",
             help="Force interpretation as JMESPath expression (for complex projections)",
         )
-        sp_proj.add_argument(
-            "--flatten",
-            action="store_true",
-            help="Flatten nested fields using dot notation as keys (e.g. 'person.name': 'Alice')",
-        )
 
         # join
         sp_join = subparsers.add_parser("join", help="Join two tables on a key")

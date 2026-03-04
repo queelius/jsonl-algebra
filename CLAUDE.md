@@ -4,74 +4,29 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**jsonl-algebra** is a Python toolkit for manipulating JSONL (JSON Lines) data using relational algebra operations. It provides:
-
-1. **Core Library** (`ja/` directory) - Relational operations on JSONL data
-2. **CLI Tool** (`ja` command) - Command-line interface for data processing
-3. **Interactive Shell** (`ja-shell` command) - Navigate JSON/JSONL like a filesystem
-4. **Integrations** (`integrations/` directory) - MCP server, log analyzer, data explorer, ML pipeline
+**jsonl-algebra** (v1.04) is a Python toolkit for manipulating JSONL data using relational algebra operations. Entry points: `ja` (CLI), `ja-shell` (interactive filesystem navigator), `ja repl` (interactive REPL). Published on PyPI as `jsonl-algebra`.
 
 ## Essential Commands
 
-### Development Setup
 ```bash
-# Install in development mode with all dependencies
+# Dev install
 pip install -e ".[dev]"
 
-# Install optional integrations
-pip install -e ".[dataset]"  # For dataset generation
-pip install mcp              # For MCP server testing
-```
+# Tests
+pytest                                              # all tests (~300 tests)
+pytest --cov=ja --cov=integrations --cov-report=html  # with coverage
+pytest tests/test_compose.py                        # single file
+pytest tests/test_compose.py::test_pipeline_with_select_and_project  # single test
+pytest -k "test_select"                             # pattern match
 
-### Running Tests
-```bash
-# Run all tests
-pytest
+# Code quality
+black . && isort .   # format (both configured for line-length 88)
+mypy ja/             # type check
+flake8 ja/           # lint
 
-# Run with coverage report
-pytest --cov=ja --cov=integrations --cov-report=html
-
-# Run specific test file
-pytest tests/test_compose.py
-
-# Run single test
-pytest tests/test_compose.py::test_pipeline_with_select_and_project
-
-# Run tests matching pattern
-pytest -k "test_select"
-```
-
-### Code Quality
-```bash
-# Format code (Black + isort configured to work together)
-black .
-isort .
-
-# Type checking
-mypy ja/
-
-# Linting
-flake8 ja/
-```
-
-### Documentation
-```bash
-# Serve documentation locally (with live reload)
-mkdocs serve
-# Visit http://127.0.0.1:8000
-
-# Build static documentation
-mkdocs build
-
-# Deploy to GitHub Pages
-mkdocs gh-deploy
-```
-
-### CLI Usage Examples
-```bash
-# Test the CLI tools
-ja select 'age > 25' tests/data/users.jsonl
-ja-shell tests/data/
+# Docs
+mkdocs serve         # local dev server at http://127.0.0.1:8000
+mkdocs gh-deploy     # deploy to GitHub Pages
 ```
 
 ## Architecture
@@ -79,225 +34,129 @@ ja-shell tests/data/
 ### Core Data Flow
 
 ```
-JSONL File → ja.commands → ja.core operations → Output
-                ↓
-           ja.expr (expression evaluation)
-           ja.group (groupby operations)
-           ja.agg (aggregation functions)
+CLI (ja/cli.py) → argparse dispatches to ja/commands.py handle_*() functions
+                                    ↓
+                        ja/core.py (relational ops)
+                        ja/expr.py (expression eval)
+                        ja/group.py + ja/agg.py (groupby/aggregation)
+                        ja/window.py (window functions)
+                        ja/schema.py (schema infer/validate)
+                                    ↓
+                              stdout (JSONL)
 ```
 
-### Key Modules
+### Module Map
 
-**`ja/core.py`** - Fundamental relational algebra operations
-- `select()` - Filter rows using JMESPath or simple expressions
-- `project()` - Select specific fields (dot notation for nested data)
-- `join()` - Join two datasets on common keys
-- `union()`, `difference()`, `intersection()` - Set operations
-- `distinct()` - Remove duplicates
-- `sort_by()` - Sort by field
+| Module | Role |
+|--------|------|
+| `cli.py` | argparse CLI with 18 top-level subcommands (schema/export/import have nested sub-subcommands), dispatches to `commands.py` |
+| `commands.py` | `handle_*()` functions that bridge CLI args → core operations → output |
+| `core.py` | `select`, `project`, `join` (inner/left/right/outer/cross), `union`, `difference`, `intersection`, `distinct`, `sort_by`, `rename`, `product`, `collect` |
+| `expr.py` | Two-mode expression evaluation: simple Python-like expressions (fast path) with JMESPath fallback. `get_field_value()` handles dot notation everywhere. |
+| `group.py` | `groupby_agg()` for single-pass grouping, `groupby_with_metadata()` for chained groupby |
+| `agg.py` | Aggregation functions: sum, avg, min, max, count, list, first, last |
+| `window.py` | SQL-style window functions: `row_number`, `rank`, `dense_rank`, `lag`, `lead`, `first_value`, `last_value`, `ntile`, `percent_rank`, `cume_dist`. Partition-by and order-by support. |
+| `compose.py` | `Pipeline` class with `|` operator. Operation classes: `Select`, `Project`, `Sort`, `Distinct`, `Rename`, `GroupBy`, `Take`, `Skip`, `Map`, `Filter`, `Batch` |
+| `schema.py` | JSON Schema inference from JSONL data, schema merging. Validation handled by `jsonschema` library in `commands.py`. |
+| `vfs.py` | Virtual filesystem: JSONL files as directories, `LazyJSONL` with LRU cache (max 100 records), path parsing with `[0]` indices and `@[expr]` filters |
+| `shell.py` | `ja-shell` entry point: `prompt_toolkit` + `rich` UI, 13 commands (ls/cd/pwd/cat/tree/stat/head/tail/count/grep/select/help/exit), tab completion |
+| `repl.py` | `ja repl` entry point: named datasets, load/save/cd/datasets/info/ls, all core operations as REPL commands |
+| `export.py` | JSONL ↔ JSON array, JSONL → directory of JSON files |
+| `exporter.py` | JSONL → CSV (handles nested field flattening) |
+| `importer.py` | CSV → JSONL, directory of JSON → JSONL |
 
-**`ja/expr.py`** - Expression evaluation engine
-- Parses simple expressions like `age > 25` or `status == "active"`
-- Supports dot notation for nested field access
-- Falls back to JMESPath for complex queries
+### CLI Commands (18 top-level, 23 leaf commands)
 
-**`ja/group.py`** - Grouping and aggregation
-- `groupby_agg()` - Single-pass grouping with aggregation
-- `groupby_with_metadata()` - Adds metadata for chained grouping
-- Supports chained groupby operations with metadata propagation
+Core: `select`, `project`, `join`, `product`, `rename`, `union`, `intersection`, `difference`, `distinct`, `sort`
+Grouping: `groupby` (with `--agg` for immediate aggregation), `agg`, `collect`
+Window: `window <function>` (positional arg, with `--partition-by`, `--order-by`)
+Schema: `schema infer`, `schema validate`
+Format: `export array|jsonl|explode|csv`, `import csv|implode`
+Interactive: `repl`
 
-**`ja/compose.py`** - Functional composition patterns
-- `Pipeline` class with Unix pipe operator (`|`) support
-- Lazy evaluation for large datasets
-- Operation classes: `Select`, `Project`, `Sort`, `GroupBy`, `Take`, `Skip`, `Map`, `Filter`, `Batch`
+## Key Design Patterns
 
-**`ja/vfs.py`** - Virtual filesystem abstraction (NEW)
-- Treat JSONL files as directories of records
-- Navigate JSON objects like directories
-- `LazyJSONL` class for streaming large files
-- Path parsing with indices `[0]`, filters `@[expr]`, and keys
+### Memory Model
 
-**`ja/shell.py`** - Interactive shell (NEW)
-- Rich terminal UI with `prompt_toolkit` and `rich`
-- Commands: `ls`, `cd`, `pwd`, `cat`, `tree`, `stat`
-- Tab completion and command history
+Core operations (`ja/core.py`) work on and return `List[Row]` — data must fit in memory. The CLI (`commands.py`) loads entire files via `read_jsonl()` before processing. For large datasets, use `Pipeline(lazy=True)` from `ja/compose.py` which provides generator-based streaming via lazy operation variants.
 
-### Command Structure
+### File vs Data Boundary
 
-The CLI (`ja/cli.py`) dispatches to handlers in `ja/commands.py`:
-- Each command (select, project, etc.) has a `handle_*()` function
-- Handlers read input, call core operations, write output
-- All operations are streaming-compatible
+Core operations (`ja/core.py`) expect **data** (lists/iterators of dicts). Commands (`ja/commands.py`) handle file I/O. Don't pass filenames to core functions.
+
+```python
+# Core: expects data
+from ja.core import select
+results = select(data_iterator, "age > 25")
+
+# Commands: handle files
+from ja.commands import handle_select
+handle_select(args)  # reads from args.file
+```
 
 ### Expression Language
 
-Two expression evaluators:
-1. **Simple expressions** (`ja/expr.py`) - Fast, for basic comparisons
-2. **JMESPath** - Full JSON query language for complex operations
+Two modes with automatic fallback:
+1. **Simple expressions** (`ja/expr.py`) — Python-like: `age > 25 and status == 'active'`
+2. **JMESPath** — `--jmespath` flag on `project` command only
 
-Use `--jmespath` flag or set `use_jmespath=True` to force JMESPath mode.
-
-### Dot Notation
-
-Access nested data with dots: `user.address.city`
-- Implemented in `ja/expr.py:get_field_value()`
-- Works consistently across all operations
-- Handles arrays with numeric indices
-
-## Testing Architecture
-
-### Test Organization
-
-```
-tests/
-├── test_core.py          # Core operations (81% coverage)
-├── test_compose.py       # Composability (81% coverage) - 65 tests
-├── test_mcp_server.py    # MCP server (58% coverage) - 36 tests
-└── test_expr_eval.py     # Expression evaluation (89% coverage)
-```
-
-### Test Principles
-
-All tests follow TDD best practices:
-- Test behavior, not implementation
-- Given-When-Then structure
-- Meaningful names describing behavior and outcome
-- Independent, repeatable tests
-
-### Test Status
-
-All tests passing.
-
-## Integration Development
-
-### MCP Server (`integrations/mcp_server.py`)
-
-Model Context Protocol server for AI assistants:
-- 9 tools: query, select, project, aggregate, join, sort, sample, stats, transform
-- Uses `ja/vfs.py` for file access
-- Returns data in multiple formats: JSONL, JSON, table, summary
-
-**Testing**: Run `integrations/test_mcp_minimal.py` for core logic tests (doesn't require MCP SDK).
-
-### Other Integrations
-
-See `integrations/README.md` for:
-- Log Analyzer - streaming log analysis
-- Data Explorer - interactive REPL
-- ML Pipeline - scikit-learn integration
-
-## Important Design Patterns
-
-### Streaming by Default
-
-All core operations return generators/iterators, enabling:
-```python
-# Process gigabyte files without loading into memory
-for record in select(huge_file, "status == 'active'"):
-    process(record)
-```
-
-### Lazy Loading for JSONL
-
-`LazyJSONL` class (in `ja/vfs.py`):
-- Builds index of record positions on first access
-- Loads records on-demand
-- Caches recently accessed records (LRU, max 100)
+Dot notation everywhere: `user.address.city` (never brackets).
 
 ### Composability
 
-Two ways to compose operations:
-
-**1. Unix Pipes** (in shell):
-```bash
-ja select 'age > 25' data.jsonl | ja project name,email
-```
-
-**2. Python Pipelines** (in code):
 ```python
 from ja.compose import Pipeline, Select, Project
-
 pipeline = Pipeline() | Select("age > 25") | Project(["name", "email"])
-results = pipeline.run("data.jsonl")
+results = pipeline(data)  # pass data (list/iterator), not filename
 ```
+
+Or via Unix pipes: `ja select 'age > 25' data.jsonl | ja project name,email`
+
+## Testing
+
+~300 tests across 12 active test files (`test_cli.py` and `test_utils.py` exist but have no collected tests). Key test files:
+
+| File | Focus |
+|------|-------|
+| `test_core.py` + `test_core_enhanced.py` | Core relational operations |
+| `test_compose.py` | Pipeline, composable operations (65 tests) |
+| `test_window.py` | Window functions (27 tests) |
+| `test_mcp_server.py` | MCP server integration (34 tests) |
+| `test_groupby.py` | Grouping operations |
+| `test_schema.py` | Schema inference/validation |
+| `test_export.py` + `test_exporter.py` + `test_importer.py` | Format conversion |
+| `test_expr_eval.py` | Expression evaluation |
+| `test_dataset_integration.py` | End-to-end dataset integration |
+
+Test data lives in `tests/data/`.
+
+## Integrations
+
+In `integrations/` directory (not installed as a package — standalone scripts):
+
+- **MCP Server** (`mcp_server.py`) — Model Context Protocol for AI assistants. 9 tools. Requires `pip install mcp`. Basic tests via `test_mcp_minimal.py` don't need the SDK.
+- **Log Analyzer** (`log_analyzer.py`) — Streaming log processing with sliding windows
+- **Data Explorer** (`data_explorer.py`) — Interactive REPL with SQL-like syntax
+- **ML Pipeline** (`ml_pipeline.py`) — scikit-learn integration
 
 ## Common Gotchas
 
-### Import Differences
+- `ja/core.py:join()` supports 5 join types (`inner`, `left`, `right`, `outer`, `cross`) — the `--type` CLI flag
+- `groupby` has two modes: immediate aggregation with `--agg sum:amount` vs. metadata-based for chaining with downstream `agg` command
+- Window functions require `--order-by` to be meaningful (rank, lag, etc.)
+- `LazyJSONL` caches up to 100 records — watch for stale data if underlying file changes
+- The `integrations/` directory is **not** in `[tool.setuptools] packages` — it's standalone scripts, not importable as a package
+- `select` expression parsing splits on ` and ` / ` or ` via string splitting — no parenthesized grouping, no mixing `and`+`or` in a single expression
+- `export csv --apply` uses dynamic code execution on user-provided expressions — security boundary; don't expose via MCP or untrusted input
+- `TestDataGenerator` in `tests/test_utils.py` triggers `PytestCollectionWarning` due to `Test` prefix — it's a utility, not a test class
 
-- Core operations: `from ja import select, project, join`
-- Commands (CLI handlers): `from ja.commands import handle_select`
-- Composability: `from ja.compose import Pipeline, Select`
-
-### File vs Data
-
-Core operations in `ja/core.py` expect data (lists/iterators):
-```python
-select(data, "expr")  # ✅ Pass data
-select("file.jsonl", "expr")  # ❌ Won't work
-```
-
-Commands in `ja/commands.py` handle file I/O:
-```python
-handle_select(args)  # ✅ Reads file from args
-```
-
-### Expression Syntax
-
-Simple expressions use Python-like syntax:
-```bash
-ja select "age > 25 and status == 'active'"  # Simple
-ja select "age > \`25\` && status == \`'active'\`" --jmespath  # JMESPath
-```
-
-### Nested Field Access
-
-Always use dots, never brackets:
-```bash
-ja project user.address.city  # ✅ Correct
-ja project user[address][city]  # ❌ Wrong
-```
-
-## ja-shell Specific
-
-### Path Syntax
-
-- `/` - Root (physical directory)
-- `users.jsonl/` - JSONL file (directory of records)
-- `[0]/` - Array index or record number
-- `@[expr]` - Filter (future feature, partially implemented)
-- `name` - Object key
-
-### Virtual Filesystem Mapping
+## VFS / ja-shell Path Syntax
 
 | JSON/JSONL Element | Appears As |
 |-------------------|------------|
-| JSONL file | Directory |
-| JSON object | Directory |
-| JSON array | Directory with `[0]`, `[1]`, ... |
-| Atomic value | File |
+| JSONL file | Directory of records |
+| JSON object | Directory of keys |
+| JSON array | Directory with `[0]`, `[1]`, ... entries |
+| Atomic value | File (leaf) |
 
-### Example Navigation
-
-```bash
-ja-shell
-ja:/$ cd users.jsonl/[0]/address
-ja:/users.jsonl/[0]/address$ cat city
-NYC
-```
-
-## Special Notes
-
-### Remember to Run Tests
-
-After any changes, especially to core operations or new features, run the full test suite with coverage to ensure nothing breaks.
-
-### MCP Server Requires SDK
-
-Full MCP server testing requires `pip install mcp`. Basic functionality tests work without it (see `integrations/test_mcp_minimal.py`).
-
-### Documentation Structure
-
-- User-facing docs in `docs/` (MkDocs with Material theme)
-- Integration guides in `integrations/*_README.md`
-- This file for development guidance
+Navigation: `cd users.jsonl/[0]/address` then `cat city`
