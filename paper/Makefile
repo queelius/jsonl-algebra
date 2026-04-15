@@ -21,3 +21,14 @@ clean:
 # Clean everything including PDF
 distclean: clean
 	rm -f main.pdf
+
+# --- HTML via tex2html ---
+HTMLDIR = html_paper
+
+.PHONY: html
+
+html: $(HTMLDIR)/index.html
+
+$(HTMLDIR)/index.html: main.tex
+	@mkdir -p $(HTMLDIR)
+	tex2html main.tex -o $(HTMLDIR)
